@@ -178,100 +178,100 @@
     <!-- 10 tiles, same 100 x 30 size                      -->
     <!-- ================================================= -->
 
-    <Rectangle fx:id="redFinish0" fill="RED" height="30" stroke="BLACK" width="100" x="345" y="40"/>
+    <Rectangle fx:id="finish0_0" fill="RED" height="30" stroke="BLACK" width="100" x="345" y="40"/>
 
-    <Rectangle fx:id="redFinish1" fill="RED" height="30" stroke="BLACK" width="100" x="345" y="70"/>
+    <Rectangle fx:id="finish0_1" fill="RED" height="30" stroke="BLACK" width="100" x="345" y="70"/>
 
-    <Rectangle fx:id="redFinish2" fill="RED" height="30" stroke="BLACK" width="100" x="345" y="100"/>
+    <Rectangle fx:id="finish0_2" fill="RED" height="30" stroke="BLACK" width="100" x="345" y="100"/>
 
-    <Rectangle fx:id="redFinish3" fill="RED" height="30" stroke="BLACK" width="100" x="345" y="130"/>
+    <Rectangle fx:id="finish0_3" fill="RED" height="30" stroke="BLACK" width="100" x="345" y="130"/>
 
-    <Rectangle fx:id="redFinish4" fill="RED" height="30" stroke="BLACK" width="100" x="345" y="160"/>
+    <Rectangle fx:id="finish0_4" fill="RED" height="30" stroke="BLACK" width="100" x="345" y="160"/>
 
-    <Rectangle fx:id="redFinish5" fill="RED" height="30" stroke="BLACK" width="100" x="345" y="190"/>
+    <Rectangle fx:id="finish0_5" fill="RED" height="30" stroke="BLACK" width="100" x="345" y="190"/>
 
-    <Rectangle fx:id="redFinish6" fill="RED" height="30" stroke="BLACK" width="100" x="345" y="220"/>
+    <Rectangle fx:id="finish0_6" fill="RED" height="30" stroke="BLACK" width="100" x="345" y="220"/>
 
-    <Rectangle fx:id="redFinish7" fill="RED" height="30" stroke="BLACK" width="100" x="345" y="250"/>
+    <Rectangle fx:id="finish0_7" fill="RED" height="30" stroke="BLACK" width="100" x="345" y="250"/>
 
-    <Rectangle fx:id="redFinish8" fill="RED" height="30" stroke="BLACK" width="100" x="345" y="280"/>
+    <Rectangle fx:id="finish0_8" fill="RED" height="30" stroke="BLACK" width="100" x="345" y="280"/>
 
-    <Rectangle fx:id="redFinish9" fill="RED" height="30" stroke="BLACK" width="100" x="345" y="310"/>
+    <Rectangle fx:id="finish0_9" fill="RED" height="30" stroke="BLACK" width="100" x="345" y="310"/>
 
     <!-- ================================================= -->
     <!-- YELLOW FINISH AREA                                -->
     <!-- 10 tiles, same size as the path tiles             -->
     <!-- ================================================= -->
 
-    <Rectangle fx:id="yellowFinish0" fill="YELLOW" height="100" stroke="BLACK" width="30" x="40" y="345"/>
+    <Rectangle fx:id="finish1_0" fill="YELLOW" height="100" stroke="BLACK" width="30" x="40" y="345"/>
 
-    <Rectangle fx:id="yellowFinish1" fill="YELLOW" height="100" stroke="BLACK" width="30" x="70" y="345"/>
+    <Rectangle fx:id="finish1_1" fill="YELLOW" height="100" stroke="BLACK" width="30" x="70" y="345"/>
 
-    <Rectangle fx:id="yellowFinish2" fill="YELLOW" height="100" stroke="BLACK" width="30" x="100" y="345"/>
+    <Rectangle fx:id="finish1_2" fill="YELLOW" height="100" stroke="BLACK" width="30" x="100" y="345"/>
 
-    <Rectangle fx:id="yellowFinish3" fill="YELLOW" height="100" stroke="BLACK" width="30" x="130" y="345"/>
+    <Rectangle fx:id="finish1_3" fill="YELLOW" height="100" stroke="BLACK" width="30" x="130" y="345"/>
 
-    <Rectangle fx:id="yellowFinish4" fill="YELLOW" height="100" stroke="BLACK" width="30" x="160" y="345"/>
+    <Rectangle fx:id="finish1_4" fill="YELLOW" height="100" stroke="BLACK" width="30" x="160" y="345"/>
 
-    <Rectangle fx:id="yellowFinish5" fill="YELLOW" height="100" stroke="BLACK" width="30" x="190" y="345"/>
+    <Rectangle fx:id="finish1_5" fill="YELLOW" height="100" stroke="BLACK" width="30" x="190" y="345"/>
 
-    <Rectangle fx:id="yellowFinish6" fill="YELLOW" height="100" stroke="BLACK" width="30" x="220" y="345"/>
+    <Rectangle fx:id="finish1_6" fill="YELLOW" height="100" stroke="BLACK" width="30" x="220" y="345"/>
 
-    <Rectangle fx:id="yellowFinish7" fill="YELLOW" height="100" stroke="BLACK" width="30" x="250" y="345"/>
+    <Rectangle fx:id="finish1_7" fill="YELLOW" height="100" stroke="BLACK" width="30" x="250" y="345"/>
 
-    <Rectangle fx:id="yellowFinish8" fill="YELLOW" height="100" stroke="BLACK" width="30" x="280" y="345"/>
+    <Rectangle fx:id="finish1_8" fill="YELLOW" height="100" stroke="BLACK" width="30" x="280" y="345"/>
 
-    <Rectangle fx:id="yellowFinish9" fill="YELLOW" height="100" stroke="BLACK" width="30" x="310" y="345"/>
+    <Rectangle fx:id="finish1_9" fill="YELLOW" height="100" stroke="BLACK" width="30" x="310" y="345"/>
 
     <!-- ================================================= -->
     <!-- GREEN FINISH AREA                                 -->
     <!-- 10 tiles                                          -->
     <!-- ================================================= -->
 
-    <Rectangle fx:id="greenFinish0" fill="LIMEGREEN" height="100" stroke="BLACK" width="30" x="720" y="345"/>
+    <Rectangle fx:id="finish2_0" fill="LIMEGREEN" height="100" stroke="BLACK" width="30" x="720" y="345"/>
 
-    <Rectangle fx:id="greenFinish1" fill="LIMEGREEN" height="100" stroke="BLACK" width="30" x="690" y="345"/>
+    <Rectangle fx:id="finish2_1" fill="LIMEGREEN" height="100" stroke="BLACK" width="30" x="690" y="345"/>
 
-    <Rectangle fx:id="greenFinish2" fill="LIMEGREEN" height="100" stroke="BLACK" width="30" x="660" y="345"/>
+    <Rectangle fx:id="finish2_2" fill="LIMEGREEN" height="100" stroke="BLACK" width="30" x="660" y="345"/>
 
-    <Rectangle fx:id="greenFinish3" fill="LIMEGREEN" height="100" stroke="BLACK" width="30" x="630" y="345"/>
+    <Rectangle fx:id="finish2_3" fill="LIMEGREEN" height="100" stroke="BLACK" width="30" x="630" y="345"/>
 
-    <Rectangle fx:id="greenFinish4" fill="LIMEGREEN" height="100" stroke="BLACK" width="30" x="600" y="345"/>
+    <Rectangle fx:id="finish2_4" fill="LIMEGREEN" height="100" stroke="BLACK" width="30" x="600" y="345"/>
 
-    <Rectangle fx:id="greenFinish5" fill="LIMEGREEN" height="100" stroke="BLACK" width="30" x="570" y="345"/>
+    <Rectangle fx:id="finish2_5" fill="LIMEGREEN" height="100" stroke="BLACK" width="30" x="570" y="345"/>
 
-    <Rectangle fx:id="greenFinish6" fill="LIMEGREEN" height="100" stroke="BLACK" width="30" x="540" y="345"/>
+    <Rectangle fx:id="finish2_6" fill="LIMEGREEN" height="100" stroke="BLACK" width="30" x="540" y="345"/>
 
-    <Rectangle fx:id="greenFinish7" fill="LIMEGREEN" height="100" stroke="BLACK" width="30" x="510" y="345"/>
+    <Rectangle fx:id="finish2_7" fill="LIMEGREEN" height="100" stroke="BLACK" width="30" x="510" y="345"/>
 
-    <Rectangle fx:id="greenFinish8" fill="LIMEGREEN" height="100" stroke="BLACK" width="30" x="480" y="345"/>
+    <Rectangle fx:id="finish2_8" fill="LIMEGREEN" height="100" stroke="BLACK" width="30" x="480" y="345"/>
 
-    <Rectangle fx:id="greenFinish9" fill="LIMEGREEN" height="100" stroke="BLACK" width="30" x="450" y="345"/>
+    <Rectangle fx:id="finish2_9" fill="LIMEGREEN" height="100" stroke="BLACK" width="30" x="450" y="345"/>
 
     <!-- ================================================= -->
     <!-- BLUE FINISH AREA                                  -->
     <!-- 10 tiles                                          -->
     <!-- ================================================= -->
 
-    <Rectangle fx:id="blueFinish0" fill="DODGERBLUE" height="30" stroke="BLACK" width="100" x="345" y="720"/>
+    <Rectangle fx:id="finish3_0" fill="DODGERBLUE" height="30" stroke="BLACK" width="100" x="345" y="720"/>
 
-    <Rectangle fx:id="blueFinish1" fill="DODGERBLUE" height="30" stroke="BLACK" width="100" x="345" y="690"/>
+    <Rectangle fx:id="finish3_1" fill="DODGERBLUE" height="30" stroke="BLACK" width="100" x="345" y="690"/>
 
-    <Rectangle fx:id="blueFinish2" fill="DODGERBLUE" height="30" stroke="BLACK" width="100" x="345" y="660"/>
+    <Rectangle fx:id="finish3_2" fill="DODGERBLUE" height="30" stroke="BLACK" width="100" x="345" y="660"/>
 
-    <Rectangle fx:id="blueFinish3" fill="DODGERBLUE" height="30" stroke="BLACK" width="100" x="345" y="630"/>
+    <Rectangle fx:id="finish3_3" fill="DODGERBLUE" height="30" stroke="BLACK" width="100" x="345" y="630"/>
 
-    <Rectangle fx:id="blueFinish4" fill="DODGERBLUE" height="30" stroke="BLACK" width="100" x="345" y="600"/>
+    <Rectangle fx:id="finish3_4" fill="DODGERBLUE" height="30" stroke="BLACK" width="100" x="345" y="600"/>
 
-    <Rectangle fx:id="blueFinish5" fill="DODGERBLUE" height="30" stroke="BLACK" width="100" x="345" y="570"/>
+    <Rectangle fx:id="finish3_5" fill="DODGERBLUE" height="30" stroke="BLACK" width="100" x="345" y="570"/>
 
-    <Rectangle fx:id="blueFinish6" fill="DODGERBLUE" height="30" stroke="BLACK" width="100" x="345" y="540"/>
+    <Rectangle fx:id="finish3_6" fill="DODGERBLUE" height="30" stroke="BLACK" width="100" x="345" y="540"/>
 
-    <Rectangle fx:id="blueFinish7" fill="DODGERBLUE" height="30" stroke="BLACK" width="100" x="345" y="510"/>
+    <Rectangle fx:id="finish3_7" fill="DODGERBLUE" height="30" stroke="BLACK" width="100" x="345" y="510"/>
 
-    <Rectangle fx:id="blueFinish8" fill="DODGERBLUE" height="30" stroke="BLACK" width="100" x="345" y="480"/>
+    <Rectangle fx:id="finish3_8" fill="DODGERBLUE" height="30" stroke="BLACK" width="100" x="345" y="480"/>
 
-    <Rectangle fx:id="blueFinish9" fill="DODGERBLUE" height="30" stroke="BLACK" width="100" x="345" y="450"/>
+    <Rectangle fx:id="finish3_9" fill="DODGERBLUE" height="30" stroke="BLACK" width="100" x="345" y="450"/>
 
 
     <!-- ================================================= -->
