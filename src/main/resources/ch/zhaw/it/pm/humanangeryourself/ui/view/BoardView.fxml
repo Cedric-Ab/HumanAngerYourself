@@ -291,18 +291,11 @@
                strokeWidth="4" width="150" x="40" y="600"/>
 
     <!-- Blue: bottom-right -->
-    <Rectangle fx:id="blueHome"
-               fill="TRANSPARENT"
-               height="150"
-               width="150"
-               x="600"
-               y="600"
-               arcWidth="30"
-               arcHeight="30"
-               stroke="DODGERBLUE"
-               strokeWidth="4"/>
     <Rectangle fx:id="blueHome" arcHeight="30" arcWidth="30" fill="TRANSPARENT" height="150" stroke="DODGERBLUE"
                strokeWidth="4" width="150" x="600" y="600"/>
+
+    <Rectangle fx:id="finishArea" arcHeight="10.0" arcWidth="10.0" fill="SADDLEBROWN" height="110.0" stroke="SADDLEBROWN"
+               strokeWidth="4" width="110.0" x="340.0" y="340.0"/>
   </Pane>
 
 </StackPane>
