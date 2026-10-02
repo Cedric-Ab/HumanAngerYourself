@@ -13,16 +13,9 @@ public class BoardViewController {
     private Pane boardPane;
 
     @FXML
-    private Rectangle redHome;
-    @FXML
-    private Rectangle greenHome;
-    @FXML
-    private Rectangle yellowHome;
-    @FXML
-    private Rectangle blueHome;
-    @FXML
     private Rectangle finishArea;
 
+    private final Rectangle[] homes = new Rectangle[NUM_COLORS];
     private final Rectangle[] tiles = new Rectangle[NUM_TILES];
     private final Rectangle[][] finishLanes = new Rectangle[NUM_COLORS][LENGHT_FINISH_LANE];
 
@@ -30,6 +23,7 @@ public class BoardViewController {
     public void initialize() {
         initializeTiles();
         initializeFinishLanes();
+        initializeHomes();
     }
 
     private void initializeTiles() {
@@ -55,6 +49,18 @@ public class BoardViewController {
 
                 finishLanes[i][j] = tile;
             }
+        }
+    }
+
+    private void initializeHomes() {
+        for (int i = 0; i < NUM_COLORS; i++) {
+            Rectangle tile = (Rectangle) boardPane.lookup("#home" + i);
+
+            if (tile == null) {
+                throw new IllegalStateException("Missing home" + i);
+            }
+
+            homes[i] = tile;
         }
     }
 }

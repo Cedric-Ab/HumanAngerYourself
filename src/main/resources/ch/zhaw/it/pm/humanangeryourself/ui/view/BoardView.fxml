@@ -279,23 +279,23 @@
     <!-- ================================================= -->
 
     <!-- Red: top-left -->
-    <Rectangle fx:id="redHome" arcHeight="30" arcWidth="30" fill="TRANSPARENT" height="150" stroke="RED" strokeWidth="4"
+    <Rectangle fx:id="home1" arcHeight="30" arcWidth="30" fill="TRANSPARENT" height="150" stroke="RED" strokeWidth="4"
                width="150" x="40" y="40"/>
 
-    <!-- Green: top-right -->
-    <Rectangle fx:id="greenHome" arcHeight="30" arcWidth="30" fill="TRANSPARENT" height="150" stroke="LIMEGREEN"
-               strokeWidth="4" width="150" x="600" y="40"/>
-
     <!-- Yellow: bottom-left -->
-    <Rectangle fx:id="yellowHome" arcHeight="30" arcWidth="30" fill="TRANSPARENT" height="150" stroke="YELLOW"
+    <Rectangle fx:id="home2" arcHeight="30" arcWidth="30" fill="TRANSPARENT" height="150" stroke="YELLOW"
                strokeWidth="4" width="150" x="40" y="600"/>
 
+    <!-- Green: top-right -->
+    <Rectangle fx:id="home3" arcHeight="30" arcWidth="30" fill="TRANSPARENT" height="150" stroke="LIMEGREEN"
+               strokeWidth="4" width="150" x="600" y="40"/>
+
     <!-- Blue: bottom-right -->
-    <Rectangle fx:id="blueHome" arcHeight="30" arcWidth="30" fill="TRANSPARENT" height="150" stroke="DODGERBLUE"
+    <Rectangle fx:id="home4" arcHeight="30" arcWidth="30" fill="TRANSPARENT" height="150" stroke="DODGERBLUE"
                strokeWidth="4" width="150" x="600" y="600"/>
 
-    <Rectangle fx:id="finishArea" arcHeight="10.0" arcWidth="10.0" fill="SADDLEBROWN" height="110.0" stroke="SADDLEBROWN"
-               strokeWidth="4" width="110.0" x="340.0" y="340.0"/>
+    <Rectangle fx:id="finishArea" arcHeight="10.0" arcWidth="10.0" fill="SADDLEBROWN" height="110.0"
+               stroke="SADDLEBROWN" strokeWidth="4" width="110.0" x="340.0" y="340.0"/>
   </Pane>
 
 </StackPane>
