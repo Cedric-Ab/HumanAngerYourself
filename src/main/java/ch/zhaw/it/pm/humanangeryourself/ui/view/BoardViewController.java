@@ -9,15 +9,14 @@ public class BoardViewController {
     public static final int NUM_COLORS = 10;
     public static final int LENGHT_FINISH_LANE = 10;
 
-    @FXML
-    private Pane boardPane;
-
-    @FXML
-    private Rectangle finishArea;
-
     private final Rectangle[] homes = new Rectangle[NUM_COLORS];
     private final Rectangle[] tiles = new Rectangle[NUM_TILES];
     private final Rectangle[][] finishLanes = new Rectangle[NUM_COLORS][LENGHT_FINISH_LANE];
+
+    @FXML
+    private Pane boardPane;
+    @FXML
+    private Rectangle finishArea;
 
     @FXML
     public void initialize() {
