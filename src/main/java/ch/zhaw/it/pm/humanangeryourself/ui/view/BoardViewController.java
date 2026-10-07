@@ -117,6 +117,9 @@ public class BoardViewController {
     // will actually require: Map<Rectangle, Set<Piece>> tileOccupancyMap
     // will actually return: Map<Piece, Point>
     private void calculatePositions(Map<Rectangle, Set<Object>> tileOccupancyMap) {
+        if (tileOccupancyMap.values().stream().anyMatch(Set::isEmpty))
+            throw new IllegalArgumentException("tileOccupancyMap contains empty sets");
+
         for (Rectangle tile : tileOccupancyMap.keySet()) {
             if (tiles.contains(tile) || finishLanes.stream().anyMatch(lane -> lane.contains(tile))) {
                 calculatePositionOnTile(tile, tileOccupancyMap.get(tile));
@@ -197,6 +200,11 @@ public class BoardViewController {
 
     // endregion Piece rendering
 
-    public record Point(double x, double y) {
+    private record Point(double x, double y) {
+        public Point {
+            if (x < 0 || y < 0) {
+                throw new IllegalArgumentException("Point coordinates must be non-negative");
+            }
+        }
     }
 }
