@@ -4,14 +4,23 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.DoubleFunction;
+
 public class BoardViewController {
     public static final int NUM_TILES = 60;
     public static final int NUM_COLORS = 10;
     public static final int LENGHT_FINISH_LANE = 10;
 
-    private final Rectangle[] homes = new Rectangle[NUM_COLORS];
-    private final Rectangle[] tiles = new Rectangle[NUM_TILES];
-    private final Rectangle[][] finishLanes = new Rectangle[NUM_COLORS][LENGHT_FINISH_LANE];
+    private final List<Rectangle> homes = new ArrayList<>(NUM_COLORS);
+    private final List<Rectangle> tiles = new ArrayList<>(NUM_TILES);
+    private final List<List<Rectangle>> finishLanes = new ArrayList<>(NUM_COLORS);
 
     @FXML
     private Pane boardPane;
@@ -25,6 +34,8 @@ public class BoardViewController {
         initializeTiles();
         initializeFinishLanes();
         initializeHomes();
+
+        verifyInitialization();
     }
 
     private void initializeTiles() {
@@ -35,12 +46,13 @@ public class BoardViewController {
                 throw new IllegalStateException("Missing tile" + i);
             }
 
-            tiles[i] = tile;
+            tiles.add(tile);
         }
     }
 
     private void initializeFinishLanes() {
         for (int i = 0; i < NUM_COLORS; i++) {
+            finishLanes.add(new ArrayList<>(LENGHT_FINISH_LANE));
             for (int j = 0; j < LENGHT_FINISH_LANE; j++) {
                 Rectangle tile = (Rectangle) boardPane.lookup("#finish%d_%d".formatted(i, j));
 
@@ -48,7 +60,7 @@ public class BoardViewController {
                     throw new IllegalStateException("Missing tile: " + "#finish%d_%d".formatted(i, j));
                 }
 
-                finishLanes[i][j] = tile;
+                finishLanes.get(i).add(tile);
             }
         }
     }
@@ -61,7 +73,24 @@ public class BoardViewController {
                 throw new IllegalStateException("Missing home" + i);
             }
 
-            homes[i] = tile;
+            homes.add(tile);
+        }
+    }
+
+    private void verifyInitialization() {
+        if (tiles.size() != NUM_TILES) {
+            throw new IllegalStateException("Missing tiles, expected: " + NUM_TILES + ", found: " + tiles.size());
+        }
+        if (finishLanes.size() != NUM_COLORS) {
+            throw new IllegalStateException("Missing finish lanes, expected: " + NUM_COLORS + ", found: " + finishLanes.size());
+        }
+        for (int i = 0; i < NUM_COLORS; i++) {
+            if (finishLanes.get(i).size() != LENGHT_FINISH_LANE) {
+                throw new IllegalStateException("Missing finish lane tiles for color " + i + ", expected: " + LENGHT_FINISH_LANE + ", found: " + finishLanes.get(i).size());
+            }
+        }
+        if (homes.size() != NUM_COLORS) {
+            throw new IllegalStateException("Missing homes, expected: " + NUM_COLORS + ", found: " + homes.size());
         }
     }
 
