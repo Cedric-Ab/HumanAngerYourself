@@ -18,6 +18,8 @@ public class BoardViewController {
     @FXML
     private Rectangle finishArea;
 
+    // region Initialization
+
     @FXML
     public void initialize() {
         initializeTiles();
@@ -62,4 +64,6 @@ public class BoardViewController {
             homes[i] = tile;
         }
     }
+
+    // endregion initializing
 }
