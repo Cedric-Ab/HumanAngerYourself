@@ -43,10 +43,11 @@ public class BoardViewController {
 
     private void initializeTiles() {
         for (int i = 0; i < NUM_TILES; i++) {
-            Rectangle tile = (Rectangle) boardPane.lookup("#tile" + i);
+            String tileId = "#tile" + i;
+            Rectangle tile = (Rectangle) boardPane.lookup(tileId);
 
             if (tile == null) {
-                throw new IllegalStateException("Missing tile" + i);
+                throw new IllegalStateException("Missing tile: " + tileId);
             }
 
             tiles.add(tile);
@@ -60,10 +61,11 @@ public class BoardViewController {
         for (int i = 0; i < NUM_COLORS; i++) {
             finishLanes.add(new ArrayList<>(LENGHT_FINISH_LANE));
             for (int j = 0; j < LENGHT_FINISH_LANE; j++) {
-                Rectangle tile = (Rectangle) boardPane.lookup("#finish%d_%d".formatted(i, j));
+                String tileId = "#finish%d_%d".formatted(i, j);
+                Rectangle tile = (Rectangle) boardPane.lookup(tileId);
 
                 if (tile == null) {
-                    throw new IllegalStateException("Missing tile: " + "#finish%d_%d".formatted(i, j));
+                    throw new IllegalStateException("Missing tile: " + tileId);
                 }
 
                 finishLanes.get(i).add(tile);
@@ -84,10 +86,11 @@ public class BoardViewController {
 
     private void initializeHomes() {
         for (int i = 0; i < NUM_COLORS; i++) {
-            Rectangle tile = (Rectangle) boardPane.lookup("#home" + i);
+            String tileId = "#home" + i;
+            Rectangle tile = (Rectangle) boardPane.lookup(tileId);
 
             if (tile == null) {
-                throw new IllegalStateException("Missing home" + i);
+                throw new IllegalStateException("Missing home: " + tileId);
             }
 
             homes.add(tile);
