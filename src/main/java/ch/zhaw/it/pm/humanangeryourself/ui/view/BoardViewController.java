@@ -39,8 +39,6 @@ public class BoardViewController {
         initializeTiles();
         initializeFinishLanes();
         initializeHomes();
-
-        verifyInitialization();
     }
 
     private void initializeTiles() {
@@ -52,6 +50,9 @@ public class BoardViewController {
             }
 
             tiles.add(tile);
+        }
+        if (tiles.size() != NUM_TILES) {
+            throw new IllegalStateException("Missing tiles, expected: " + NUM_TILES + ", found: " + tiles.size());
         }
     }
 
@@ -68,6 +69,17 @@ public class BoardViewController {
                 finishLanes.get(i).add(tile);
             }
         }
+        if (finishLanes.size() != NUM_COLORS) {
+            throw new IllegalStateException(
+                    "Missing finish lanes, expected: %d, found: %d".formatted(NUM_COLORS, finishLanes.size()));
+        }
+        for (int i = 0; i < NUM_COLORS; i++) {
+            if (finishLanes.get(i).size() != LENGHT_FINISH_LANE) {
+                throw new IllegalStateException(
+                        "Missing finish lane tiles for color %d, expected: %d, found: %d".formatted(
+                                i, LENGHT_FINISH_LANE, finishLanes.get(i).size()));
+            }
+        }
     }
 
     private void initializeHomes() {
@@ -79,20 +91,6 @@ public class BoardViewController {
             }
 
             homes.add(tile);
-        }
-    }
-
-    private void verifyInitialization() {
-        if (tiles.size() != NUM_TILES) {
-            throw new IllegalStateException("Missing tiles, expected: " + NUM_TILES + ", found: " + tiles.size());
-        }
-        if (finishLanes.size() != NUM_COLORS) {
-            throw new IllegalStateException("Missing finish lanes, expected: " + NUM_COLORS + ", found: " + finishLanes.size());
-        }
-        for (int i = 0; i < NUM_COLORS; i++) {
-            if (finishLanes.get(i).size() != LENGHT_FINISH_LANE) {
-                throw new IllegalStateException("Missing finish lane tiles for color " + i + ", expected: " + LENGHT_FINISH_LANE + ", found: " + finishLanes.get(i).size());
-            }
         }
         if (homes.size() != NUM_COLORS) {
             throw new IllegalStateException("Missing homes, expected: " + NUM_COLORS + ", found: " + homes.size());
