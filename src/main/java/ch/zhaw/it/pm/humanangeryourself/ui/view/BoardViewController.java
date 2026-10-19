@@ -15,7 +15,7 @@ import java.util.function.DoubleFunction;
 
 public class BoardViewController {
     public static final int NUM_TILES = 60;
-    public static final int NUM_COLORS = 10;
+    public static final int NUM_COLORS = 4;
     public static final int LENGHT_FINISH_LANE = 10;
 
     private final List<Rectangle> homes = new ArrayList<>(NUM_COLORS);
