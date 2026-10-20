@@ -4,14 +4,8 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.DoubleFunction;
 
 public class BoardViewController {
     public static final int NUM_TILES = 60;
@@ -26,11 +20,6 @@ public class BoardViewController {
     private Pane boardPane;
     @FXML
     private Rectangle finishArea;
-
-    private static @NotNull List<Object> sortPieces(Set<Object> pieces) {
-        return pieces.stream()
-                .toList();
-    }
 
     // region Initialization
 
@@ -101,111 +90,4 @@ public class BoardViewController {
     }
 
     // endregion initializing
-
-    // region Piece rendering
-
-//     public void registerPieces(List<Piece> pieces) {
-//
-//     }
-
-    // TODO: add @NotNull etc.
-    // TODO: add parameter checks etc.
-
-    public void renderPieces() {
-
-    }
-
-    // will actually require: Map<Rectangle, Set<Piece>> tileOccupancyMap
-    // will actually return: Map<Piece, Point>
-    private void calculatePositions(Map<Rectangle, Set<Object>> tileOccupancyMap) {
-        if (tileOccupancyMap.values().stream().anyMatch(Set::isEmpty))
-            throw new IllegalArgumentException("tileOccupancyMap contains empty sets");
-
-        for (Rectangle tile : tileOccupancyMap.keySet()) {
-            if (tiles.contains(tile) || finishLanes.stream().anyMatch(lane -> lane.contains(tile))) {
-                calculatePositionOnTile(tile, tileOccupancyMap.get(tile));
-            } else if (finishArea.equals(tile) || homes.contains(tile)) {
-                calculatePositionOnSquare(tile, tileOccupancyMap.get(tile));
-            }
-
-        }
-    }
-
-    // will actually return: Map<Piece, Point>
-    private void calculatePositionOnTile(Rectangle tile, Set<Object> pieces) {
-        List<Object> piecesSorted = sortPieces(pieces);
-
-        double width = tile.getWidth();
-        double height = tile.getHeight();
-
-        double sideDistance = Math.max(width, height) / pieces.size();
-
-        DoubleFunction<Point> pointCreator;
-        if (width > height) {
-            pointCreator = x -> new Point(x, height / 2);
-        } else {
-            pointCreator = y -> new Point(width / 2, y);
-        }
-
-        Map<Object, Point> result = new HashMap<>();
-        for (int i = 0; i < pieces.size(); i++) {
-            Point point = pointCreator.apply((i + 1) * sideDistance);
-            result.put(piecesSorted.get(i), point);
-        }
-
-//         return result;
-    }
-
-    // will actually return: Map<Piece, Point>
-    private void calculatePositionOnSquare(Rectangle tile, Set<Object> pieces) {
-        List<Object> piecesSorted = sortPieces(pieces);
-
-        int numPieces = pieces.size();
-
-        int[] numPiecesPerAxis = calculateNumPiecesPerAxis(numPieces);
-
-        double[] spacings = {
-                tile.getWidth() / (numPiecesPerAxis[0] + 1),
-                tile.getHeight() / (numPiecesPerAxis[1] + 1)
-        };
-
-        Map<Object, Point> result = new HashMap<>();
-        for (int i_y = 0; i_y < numPiecesPerAxis[1]; i_y++) {
-            for (int i_x = 0; i_x < numPiecesPerAxis[0]; i_x++) {
-                int pieceIndex = i_y * numPiecesPerAxis[0] + i_x;
-
-                if (pieceIndex >= numPieces) break;
-
-                Point point = new Point(
-                        (i_x + 1) * spacings[0],
-                        (i_y + 1) * spacings[1]
-                );
-                result.put(piecesSorted.get(pieceIndex), point);
-            }
-        }
-//         return result;
-    }
-
-    private int[] calculateNumPiecesPerAxis(int numPieces) {
-        int x = (int) Math.ceil(Math.sqrt(numPieces));
-        @SuppressWarnings({"ReassignedVariable", "SuspiciousNameCombination"})
-        int y = x;
-
-        while (x * y > numPieces) {
-            y--;
-        }
-        y++;
-
-        return new int[]{x, y};
-    }
-
-    // endregion Piece rendering
-
-    private record Point(double x, double y) {
-        public Point {
-            if (x < 0 || y < 0) {
-                throw new IllegalArgumentException("Point coordinates must be non-negative");
-            }
-        }
-    }
 }
