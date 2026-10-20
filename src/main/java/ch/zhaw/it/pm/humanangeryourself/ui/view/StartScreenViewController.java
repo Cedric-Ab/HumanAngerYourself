@@ -1,6 +1,6 @@
 package ch.zhaw.it.pm.humanangeryourself.ui.view;
 
-import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
@@ -24,6 +24,19 @@ public class StartScreenViewController {
 
     private TextField[] fields;
 
+    @FXML
+    public void initialize() {
+        fields = new TextField[]{player1Field, player2Field, player3Field, player4Field};
+    }
+
+    @FXML
+    void validateField(Event event) {
+        TextField field = (TextField) event.getSource();
+        field.setStyle("-fx-border-color: %s;".formatted(
+                field.getText().isBlank() ? "red" : "black"
+        ));
+    }
+
     private boolean areFieldsValid() {
         List<TextField> invalidFields = Arrays.stream(fields)
                 .filter(f -> f.getText().isBlank())
@@ -42,32 +55,13 @@ public class StartScreenViewController {
         return invalidFields.isEmpty();
     }
 
-    private void onFirstStartGameAttempt() {
-        fields = new TextField[]{player1Field, player2Field, player3Field, player4Field};
-
-        Arrays.stream(fields)
-                .forEach(f ->
-                        f.onActionProperty().addListener(e ->
-                                f.setStyle("-fx-border-color: %s;".formatted(
-                                        f.getText().isBlank() ? "red" : "none"
-                                ))
-                        )
-                );
-
-        Arrays.stream(fields)
-                .filter(f -> f.getText().isBlank())
-                .forEach(f -> f.setStyle("-fx-border-color: red;"));
-    }
-
     @FXML
-    void startGame(ActionEvent event) {
-        if (fields == null) onFirstStartGameAttempt();
-
+    void startGame() {
         if (!areFieldsValid()) return;
     }
 
     @FXML
-    void openSettings(ActionEvent event) {
+    void openSettings() {
         throw new UnsupportedOperationException("Settings are not implemented yet.");
     }
 }
