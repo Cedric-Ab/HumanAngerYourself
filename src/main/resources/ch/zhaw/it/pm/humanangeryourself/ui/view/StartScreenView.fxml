@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+<AnchorPane prefHeight="900.0" prefWidth="1600.0"
+            style="-fx-background-color: white; -fx-border-color: black; -fx-border-width: 2;"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ch.zhaw.it.pm.humanangeryourself.ui.view.StartScreenViewController">
+
+  <!-- Title Area -->
+  <VBox alignment="CENTER" layoutX="140.0" layoutY="110.0" prefHeight="320.0" prefWidth="1280.0"
+        style="-fx-border-color: black; -fx-border-width: 2;">
+
+    <Text style="-fx-font-size: 90px;" text="HUMAN ANGER YOURSELF" textAlignment="CENTER"/>
+  </VBox>
+
+  <!-- Player Inputs -->
+  <HBox alignment="CENTER" layoutX="140.0" layoutY="500.0" spacing="85">
+
+    <TextField fx:id="player1Field" prefHeight="70" prefWidth="250" promptText="Enter Player 1"/>
+
+    <TextField fx:id="player2Field" prefHeight="70" prefWidth="250" promptText="Enter Player 2"/>
+
+    <TextField fx:id="player3Field" prefHeight="70" prefWidth="250" promptText="Enter Player 3"/>
+
+    <TextField fx:id="player4Field" prefHeight="70" prefWidth="250" promptText="Enter Player 4"/>
+  </HBox>
+
+  <!-- Start Button -->
+  <Button layoutX="640.0" layoutY="680.0" onAction="#startGame" prefHeight="70.0" prefWidth="250.0"
+          style="-fx-font-size: 28px;" text="Start Game"/>
+
+  <!-- Settings Button -->
+  <Button disable="true" layoutX="1220.0" layoutY="750.0" onAction="#openSettings" prefHeight="80.0" prefWidth="220.0"
+          style="-fx-font-size: 28px;" text="Settings"/>
+
+</AnchorPane>

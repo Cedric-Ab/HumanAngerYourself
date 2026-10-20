@@ -40,7 +40,7 @@ public class App extends Application {
 
     private void openMainWindow(Stage stage) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("ui/view/BoardView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ui/view/StartScreenView.fxml"));
             Pane rootNode = loader.load();
 
             loader.getController();
