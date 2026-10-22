@@ -76,7 +76,7 @@
     <!-- IntelliJ-style import order -->
     <module name="ImportOrder">
       <property name="option" value="bottom"/> <!-- static imports after normal imports -->
-      <property name="groups" value="*, ch.zhaw, org.jetbrains, javax, java"/>
+      <property name="groups" value="*, ch.zhaw, org.jetbrains, java, javax"/>
       <property name="ordered" value="true"/>  <!-- alphabetical inside groups -->
       <property name="separated" value="true"/> <!-- blank line between groups -->
       <property name="sortStaticImportsAlphabetically" value="true"/>
