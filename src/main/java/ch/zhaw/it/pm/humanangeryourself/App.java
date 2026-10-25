@@ -25,20 +25,21 @@ public class App extends Application {
      */
     @Override
     public void init() {
+        // TODO: maybe move into start:
+        //  "Maybe a bit much for init? the loader allready creates a scene in the init,
+        //  which normally should be made in start."
         boardViewLoader = new BoardViewLoader(DESIRED_SIZE);
     }
 
     /**
      * Start method for the JavaFX application.
-     * <p>
-     * Opens the main window and sets the study data in the main presenter.
      *
      * @param primaryStage the primary stage for this application, onto which the application scene can be set
      */
     @Override
     public void start(Stage primaryStage) {
         openMainWindow(primaryStage);
-        primaryStage.setTitle("EasyGrade");
+        primaryStage.setTitle("Human Anger Yourself");
     }
 
     private void openMainWindow(Stage stage) {
