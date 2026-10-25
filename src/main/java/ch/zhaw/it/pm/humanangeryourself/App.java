@@ -27,15 +27,12 @@ public class App extends Application {
 
     /**
      * Start method for the JavaFX application.
-     * <p>
-     * Opens the main window and sets the study data in the main presenter.
      *
      * @param primaryStage the primary stage for this application, onto which the application scene can be set
      */
     @Override
     public void start(Stage primaryStage) {
         openMainWindow(primaryStage);
-        primaryStage.setTitle("EasyGrade");
     }
 
     private void openMainWindow(Stage stage) {
