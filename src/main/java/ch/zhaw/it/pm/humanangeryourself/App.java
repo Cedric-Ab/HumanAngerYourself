@@ -1,12 +1,15 @@
 package ch.zhaw.it.pm.humanangeryourself;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import ch.zhaw.it.pm.humanangeryourself.ui.view.BoardViewLoader;
+
 public class App extends Application {
+    public static final int DESIRED_SIZE = 700;
+
+    private BoardViewLoader boardViewLoader;
+
     /**
      * Creates a new instance.
      */
@@ -22,7 +25,10 @@ public class App extends Application {
      */
     @Override
     public void init() {
-
+        // TODO: maybe move into start:
+        //  "Maybe a bit much for init? the loader allready creates a scene in the init,
+        //  which normally should be made in start."
+        boardViewLoader = new BoardViewLoader(DESIRED_SIZE);
     }
 
     /**
@@ -33,21 +39,11 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
         openMainWindow(primaryStage);
+        primaryStage.setTitle("Human Anger Yourself");
     }
 
     private void openMainWindow(Stage stage) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("ui/view/StartScreenView.fxml"));
-            Pane rootNode = loader.load();
-
-            loader.getController();
-
-            Scene scene = new Scene(rootNode);
-
-            stage.setScene(scene);
-            stage.show();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        stage.setScene(boardViewLoader.getScene());
+        stage.show();
     }
 }
