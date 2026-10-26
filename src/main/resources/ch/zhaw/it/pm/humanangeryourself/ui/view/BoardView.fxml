@@ -2,7 +2,9 @@
 
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.shape.*?>
+<?import javafx.scene.text.Text?>
 <StackPane prefHeight="790" prefWidth="790" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="ch.zhaw.it.pm.humanangeryourself.ui.view.BoardViewController">
 
@@ -281,18 +283,26 @@
     <!-- Red: top-left -->
     <Rectangle fx:id="home0" arcHeight="30" arcWidth="30" fill="TRANSPARENT" height="150" stroke="RED" strokeWidth="4"
                width="150" x="40" y="40"/>
+    <Text layoutX="92" layoutY="92" text="Home" />
+    <Label alignment="CENTER" layoutX="77" layoutY="135" prefHeight="30" prefWidth="76" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 12; -fx-background-radius: 12;" text="Money" />
 
     <!-- Yellow: bottom-left -->
     <Rectangle fx:id="home1" arcHeight="30" arcWidth="30" fill="TRANSPARENT" height="150" stroke="YELLOW"
                strokeWidth="4" width="150" x="40" y="600"/>
+    <Text layoutX="92" layoutY="652" text="Home" />
+    <Label alignment="CENTER" layoutX="77" layoutY="695" prefHeight="30" prefWidth="76" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 12; -fx-background-radius: 12;" text="Money" />
 
     <!-- Green: top-right -->
     <Rectangle fx:id="home2" arcHeight="30" arcWidth="30" fill="TRANSPARENT" height="150" stroke="LIMEGREEN"
                strokeWidth="4" width="150" x="600" y="40"/>
+    <Text layoutX="652" layoutY="92" text="Home" />
+    <Label alignment="CENTER" layoutX="637" layoutY="135" prefHeight="30" prefWidth="76" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 12; -fx-background-radius: 12;" text="Money" />
 
     <!-- Blue: bottom-right -->
     <Rectangle fx:id="home3" arcHeight="30" arcWidth="30" fill="TRANSPARENT" height="150" stroke="DODGERBLUE"
                strokeWidth="4" width="150" x="600" y="600"/>
+    <Text layoutX="652" layoutY="652" text="Home" />
+    <Label alignment="CENTER" layoutX="637" layoutY="695" prefHeight="30" prefWidth="76" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 12; -fx-background-radius: 12;" text="Money" />
 
     <Rectangle fx:id="finishArea" arcHeight="10.0" arcWidth="10.0" fill="SADDLEBROWN" height="110.0"
                stroke="SADDLEBROWN" strokeWidth="4" width="110.0" x="340.0" y="340.0"/>
