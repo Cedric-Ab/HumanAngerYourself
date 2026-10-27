@@ -20,8 +20,8 @@ import java.util.List;
  * @param winner player who won the game
  */
 public record GameSnapshot(
-        PlayerColor viewer, // Player for whom this Snapshot is created and who acts next
-        PlayerColor currentPlayer, // Player whose turn it is (not necessarily the player who will act)
+        PlayerColor viewer,
+        PlayerColor currentPlayer,
         List<PlayerInfo> players,
         List<PieceInfo> pieces,
         List<PropertyInfo> properties,

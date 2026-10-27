@@ -1,5 +1,8 @@
 package ch.zhaw.it.pm.humanangeryourself.api;
 
+/**
+ * Types of action cards.
+ */
 public enum CardType {
     DOUBLE_IT(false, false, true),
     TRY_AGAIN(false, false, false),
