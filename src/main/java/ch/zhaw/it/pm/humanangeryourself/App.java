@@ -3,12 +3,10 @@ package ch.zhaw.it.pm.humanangeryourself;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import ch.zhaw.it.pm.humanangeryourself.ui.view.BoardViewLoader;
+import ch.zhaw.it.pm.humanangeryourself.ui.view.MainViewLoader;
 
 public class App extends Application {
-    public static final int DESIRED_SIZE = 700;
-
-    private BoardViewLoader boardViewLoader;
+    private MainViewLoader mainViewLoader;
 
     /**
      * Creates a new instance.
@@ -25,10 +23,6 @@ public class App extends Application {
      */
     @Override
     public void init() {
-        // TODO: maybe move into start:
-        //  "Maybe a bit much for init? the loader allready creates a scene in the init,
-        //  which normally should be made in start."
-        boardViewLoader = new BoardViewLoader(DESIRED_SIZE);
     }
 
     /**
@@ -38,12 +32,13 @@ public class App extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
+        mainViewLoader = new MainViewLoader();
         openMainWindow(primaryStage);
         primaryStage.setTitle("Human Anger Yourself");
     }
 
     private void openMainWindow(Stage stage) {
-        stage.setScene(boardViewLoader.getScene());
+        stage.setScene(mainViewLoader.getScene());
         stage.show();
     }
 }
