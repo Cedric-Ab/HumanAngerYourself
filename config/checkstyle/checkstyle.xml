@@ -63,10 +63,6 @@
     <module name="NoWhitespaceBefore"/>
     <module name="GenericWhitespace"/>
 
-    <module name="OperatorWrap">
-      <property name="option" value="eol"/>
-    </module>
-
     <module name="ParenPad"/>
     <module name="MethodParamPad"/>
     <module name="EmptyForInitializerPad"/>
