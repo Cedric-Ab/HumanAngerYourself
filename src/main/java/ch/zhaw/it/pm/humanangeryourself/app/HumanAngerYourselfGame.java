@@ -1,14 +1,15 @@
 package ch.zhaw.it.pm.humanangeryourself.app;
 
+
 import ch.zhaw.it.pm.humanangeryourself.service.LocalGameService;
+import ch.zhaw.it.pm.humanangeryourself.ui.view.MainViewLoader;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class HumanAngerYourselfGame extends Application {
+    private MainViewLoader mainViewLoader;
+
     /**
      * Creates a new instance.
      */
@@ -31,21 +32,13 @@ public class HumanAngerYourselfGame extends Application {
         // TODO padd the viewmodel to the controller
         LocalGameService service = new LocalGameService();
 
-        openStartScreen(primaryStage);
+        mainViewLoader = new MainViewLoader();
+        openMainWindow(primaryStage);
+        primaryStage.setTitle("Human Anger Yourself");
     }
 
-    private void openStartScreen(Stage stage) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ch/zhaw/it/pm/humanangeryourself/ui/view/StartScreenView.fxml"));
-            Pane rootNode = loader.load();
-
-            Scene scene = new Scene(rootNode);
-
-            stage.setScene(scene);
-            stage.show();
-
-        } catch (Exception error) {
-            throw new RuntimeException(error);
-        }
+    private void openMainWindow(Stage stage) {
+        stage.setScene(mainViewLoader.getScene());
+        stage.show();
     }
 }
