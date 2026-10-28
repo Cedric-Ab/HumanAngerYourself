@@ -1,28 +1,23 @@
-package ch.zhaw.it.pm.humanangeryourself;
+package ch.zhaw.it.pm.humanangeryourself.app;
+
+
+import ch.zhaw.it.pm.humanangeryourself.service.LocalGameService;
+import ch.zhaw.it.pm.humanangeryourself.ui.view.MainViewLoader;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import ch.zhaw.it.pm.humanangeryourself.ui.view.MainViewLoader;
-
-public class App extends Application {
+public class HumanAngerYourselfGame extends Application {
     private MainViewLoader mainViewLoader;
 
     /**
      * Creates a new instance.
      */
-    public App() {
+    public HumanAngerYourselfGame() {
     }
 
     public static void main(String[] args) {
-        Application.launch(App.class);
-    }
-
-    /**
-     * Initialization method for the JavaFX application.
-     */
-    @Override
-    public void init() {
+        Application.launch(HumanAngerYourselfGame.class);
     }
 
     /**
@@ -32,6 +27,11 @@ public class App extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
+        // TODO composition root, add the config, game, viewmodel classes etc.
+        // TODO change type to interface later on, pass the game to localgameservice
+        // TODO padd the viewmodel to the controller
+        LocalGameService service = new LocalGameService();
+
         mainViewLoader = new MainViewLoader();
         openMainWindow(primaryStage);
         primaryStage.setTitle("Human Anger Yourself");
