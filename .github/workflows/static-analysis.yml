@@ -4,14 +4,19 @@ on:
   push:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
 jobs:
   analysis:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: "temurin"
           java-version: "21"
@@ -28,6 +33,18 @@ jobs:
           if [ ! -d "build/reports/checkstyle" ] && [ ! -d "build/reports/pmd" ]; then
             echo "::warning file=gradlew::Static analysis reports not found!"
           fi
+
+      - name: Annotate Checkstyle Results
+        if: always()
+        uses: jwgmeligmeyling/checkstyle-github-action@master
+        with:
+          path: '**/build/reports/checkstyle/*.xml'
+
+      - name: Annotate PMD Results
+        if: always()
+        uses: jwgmeligmeyling/pmd-github-action@master
+        with:
+          path: '**/build/reports/pmd/*.xml'
 
       - name: Upload static analysis reports
         if: always()

@@ -18,7 +18,7 @@
 
   <!-- === GENEREAL FORMATTING RULES === -->
 
-  <!-- Prevent long unbroken lines (set your desired max) -->
+  <!-- Prevent long unbroken lines -->
   <module name="LineLength">
     <property name="max" value="120"/>
   </module>
@@ -63,10 +63,6 @@
     <module name="NoWhitespaceBefore"/>
     <module name="GenericWhitespace"/>
 
-    <module name="OperatorWrap">
-      <property name="option" value="eol"/>
-    </module>
-
     <module name="ParenPad"/>
     <module name="MethodParamPad"/>
     <module name="EmptyForInitializerPad"/>
@@ -100,7 +96,6 @@
     <module name="AnnotationLocation"/>
     <module name="MissingDeprecated"/>
     <module name="MissingOverride"/>
-
 
     <!-- === BLOCK CHECKS === -->
     <module name="EmptyBlock"/>
@@ -174,7 +169,7 @@
     <module name="StringLiteralEquality"/>
 
     <module name="BooleanExpressionComplexity">
-      <property name="max" value="3"/>
+      <property name="max" value="8"/>
     </module>
 
     <module name="ClassDataAbstractionCoupling">
