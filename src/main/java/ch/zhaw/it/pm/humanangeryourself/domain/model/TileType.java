@@ -5,5 +5,5 @@ public enum TileType {
     SAFE,
     HOME,
     STAIRCASE,
-    FINAL_AREA
+    FINISH_AREA
 }
