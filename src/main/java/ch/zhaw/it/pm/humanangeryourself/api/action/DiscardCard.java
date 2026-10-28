@@ -9,4 +9,5 @@ import ch.zhaw.it.pm.humanangeryourself.api.CardType;
  */
 public record DiscardCard(
         CardType card
-) implements Action { }
+) implements Action {
+}

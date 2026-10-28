@@ -2,7 +2,7 @@ package ch.zhaw.it.pm.humanangeryourself.domain.model;
 
 public class Piece {
     private final Tile homeTile;
-    private Tile currentTile;
+    private final Tile currentTile;
 
     public Piece(Tile homeTile) {
         this.homeTile = homeTile;
