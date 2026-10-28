@@ -39,7 +39,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = "ch.zhaw.it.pm.teamname.projectname.App"
+    mainClass = "ch.zhaw.it.pm.humanangeryourself.App"
 }
 
 javafx {
