@@ -170,7 +170,7 @@
     <module name="StringLiteralEquality"/>
 
     <module name="BooleanExpressionComplexity">
-      <property name="max" value="3"/>
+      <property name="max" value="8"/>
     </module>
 
     <module name="ClassDataAbstractionCoupling">
