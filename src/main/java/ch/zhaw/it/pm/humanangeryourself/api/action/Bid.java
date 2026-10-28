@@ -7,4 +7,5 @@ package ch.zhaw.it.pm.humanangeryourself.api.action;
  */
 public record Bid(
         long amount
-) implements Action { }
+) implements Action {
+}
