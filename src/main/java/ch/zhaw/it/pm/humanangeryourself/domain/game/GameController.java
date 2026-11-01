@@ -1,11 +1,17 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game;
 
-import ch.zhaw.it.pm.humanangeryourself.api.Action;
-import ch.zhaw.it.pm.humanangeryourself.api.DecisionInfo;
+import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
+import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
+import ch.zhaw.it.pm.humanangeryourself.domain.game.phase.ChooseMovePhase;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.phase.GamePhase;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * The public interface of the game controller.
@@ -19,6 +25,8 @@ public class GameController {
 
     private @NotNull GamePhase currentPhase;
 
+    private final List<GameObserver> observers = new ArrayList<>();
+
     /**
      * Creates a new instance of the GameController with the specified game instance.
      *
@@ -26,6 +34,7 @@ public class GameController {
      */
     public GameController(@NotNull Game game) {
         this.game = game;
+        this.currentPhase = new ChooseMovePhase(game); // TODO - I just added this line that the project is buildable
     }
 
     /**
@@ -36,14 +45,36 @@ public class GameController {
     }
 
     /**
+     * Registers an observer that is notified after every state change.
+     *
+     * @param observer the observer to register
+     */
+    public void addObserver(GameObserver observer) {
+        observers.add(Objects.requireNonNull(observer, "observer"));
+    }
+
+    /**
+     * Notifies all registered observers that the game state has changed.
+     * <p>
+     * Called once per submitted action, after all phase transitions have been processed.
+     */
+    private void notifyObservers() {
+        for (GameObserver observer : List.copyOf(observers)) {
+            observer.onGameChanged();
+        }
+    }
+
+    /**
      * Submits an action for the specified player.
      *
-     * @param player the player submitting the action
+     * @param colour the color of the player submitting the action
      * @param action the action being submitted
      */
-    public void submit(@NotNull Player player, @NotNull Action action) {
+    public void submit(@NotNull PlayerColor colour, @NotNull Action action) {
+        Player player = game.getPlayer(colour);
         GamePhase nextPhase = currentPhase.handle(player, action);
         setPhaseTo(nextPhase);
+        notifyObservers();
     }
 
     /**

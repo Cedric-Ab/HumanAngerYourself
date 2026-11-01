@@ -1,6 +1,7 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.rules;
 
 import ch.zhaw.it.pm.humanangeryourself.api.PropertySize;
+import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;

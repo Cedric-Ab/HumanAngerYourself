@@ -1,6 +1,6 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.model;
 
-import ch.zhaw.it.pm.humanangeryourself.api.snapshot.ShopOffer;
+//import ch.zhaw.it.pm.humanangeryourself.api.snapshot.ShopOffer;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ public class Npc {
         this.name = name;
     }
 
-    public List<ShopOffer> getOffers() {
+    public <T> List<T> getOffers() {
         // TODO: implement
         return List.of();
     }

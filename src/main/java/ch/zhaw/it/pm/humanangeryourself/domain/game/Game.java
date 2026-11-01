@@ -1,5 +1,6 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game;
 
+import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
@@ -12,8 +13,8 @@ import java.util.List;
  * Represents a game of Human Anger Yourself, containing the board, players, and the current turn.
  */
 public class Game {
-    private final @NotNull Board board;
-    private final @NotNull List<Player> players;
+   // private final @NotNull Board board;
+  //  private final @NotNull List<Player> players;
 
     private @NotNull Turn turn;
 
@@ -25,8 +26,8 @@ public class Game {
      */
     public Game(@NotNull Board board, @NotNull List<Player> players) {
         // TODO: add parameter validation
-        this.board = board;
-        this.players = List.copyOf(players);
+       // this.board = board;
+      //  this.players = List.copyOf(players);
 
         turn = new Turn();
     }
@@ -36,7 +37,7 @@ public class Game {
      */
     public Game() {
         // TODO: implement properly
-        this(new Board(), List.of(new Player(), new Player(), new Player(), new Player()));
+        //this(new Board(), List.of(new Player(), new Player(), new Player(), new Player()));
     }
 
     /**
@@ -45,7 +46,7 @@ public class Game {
      * @return the board of the game
      */
     public @NotNull Board getBoard() {
-        return board;
+        return null;
     }
 
     /**
@@ -54,8 +55,16 @@ public class Game {
      * @return the players of the game
      */
     public @NotNull @Unmodifiable List<Player> getPlayers() {
-        return players;
+        return null;
     }
+
+    /**
+     * Returns the player with the given colour.
+     *
+     * @param colour the colour of the player to look up, must not be {@code null}
+     * @return the player with the given colour.
+     */
+    public Player getPlayer(PlayerColor colour) { return null; }
 
     /**
      * Returns the current turn of the game.
