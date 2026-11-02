@@ -6,6 +6,7 @@ import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a phase in the game, which can be processed, provide decision information, and handle player actions.
@@ -15,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 public abstract class GamePhase {
 
     private final @NotNull Game game;
+
+    private @Nullable DecisionInfo decisionInfo;
 
     /**
      * Creates a new instance of a game phase associated with the specified game.
@@ -36,8 +39,26 @@ public abstract class GamePhase {
      * Returns the decision information the player must make in this game phase.
      *
      * @return the decision information for the current game phase
+     * @throws IllegalStateException if the decision information has not been set for this game phase
      */
-    public abstract @NotNull DecisionInfo getDecision();
+    public @NotNull DecisionInfo getDecision() {
+        if (decisionInfo == null) {
+            throw new IllegalStateException("Decision information has not been set for this game phase." +
+                    "Ensure that process() has been called before calling getDecision().");
+        }
+        return decisionInfo;
+    }
+
+    /**
+     * Sets the decision information for the current game phase.
+     * <p>
+     * Use this to create the {@code DecisionInfo} object in {@link #process()} and set it for this game phase.
+     *
+     * @param decisionInfo the decision information to be set for this game phase
+     */
+    protected void setDecisionInfo(@NotNull DecisionInfo decisionInfo) {
+        this.decisionInfo = decisionInfo;
+    }
 
     /**
      * Handles the player's action and returns the next game phase.

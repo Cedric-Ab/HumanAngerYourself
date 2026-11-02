@@ -1,7 +1,6 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game.phase;
 
 import ch.zhaw.it.pm.humanangeryourself.api.Action;
-import ch.zhaw.it.pm.humanangeryourself.api.DecisionInfo;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
@@ -19,11 +18,6 @@ public class ChooseMovePhase extends GamePhase {
 
     @Override
     public @NotNull GamePhase process() {
-        return null;
-    }
-
-    @Override
-    public @NotNull DecisionInfo getDecision() {
         return null;
     }
 
