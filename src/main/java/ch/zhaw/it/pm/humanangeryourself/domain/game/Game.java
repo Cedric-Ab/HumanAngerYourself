@@ -15,7 +15,7 @@ public class Game {
     private final @NotNull Board board;
     private final @NotNull List<Player> players;
 
-    private final @NotNull Turn turn;
+    private @NotNull Turn turn;
 
     /**
      * Creates a new game with the given board and players.
@@ -36,7 +36,7 @@ public class Game {
      */
     public Game() {
         // TODO: implement properly
-        this(null, null);
+        this(new Board(), List.of(new Player(), new Player(), new Player(), new Player()));
     }
 
     /**

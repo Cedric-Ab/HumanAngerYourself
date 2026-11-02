@@ -2,7 +2,6 @@ package ch.zhaw.it.pm.humanangeryourself.domain.model;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +10,7 @@ public class Player {
     private final PlayerColor color;
     private final List<CardType> cards = new ArrayList<>();
     private final List<Piece> pieces;
-    private final long money;
+    private long money;
 
     public Player(String name, PlayerColor color, long money, List<Piece> pieces) {
         this.name = name;

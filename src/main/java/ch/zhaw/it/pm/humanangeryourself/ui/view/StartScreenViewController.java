@@ -57,9 +57,7 @@ public class StartScreenViewController {
 
     @FXML
     void startGame() {
-        if (!areFieldsValid()) {
-            throw new RuntimeException();
-        }
+        if (!areFieldsValid()) return;
     }
 
     @FXML

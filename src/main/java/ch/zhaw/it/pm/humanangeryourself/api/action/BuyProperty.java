@@ -11,5 +11,4 @@ import ch.zhaw.it.pm.humanangeryourself.api.PropertySize;
 public record BuyProperty(
         int tile,
         PropertySize size
-) implements Action {
-}
+) implements Action { }

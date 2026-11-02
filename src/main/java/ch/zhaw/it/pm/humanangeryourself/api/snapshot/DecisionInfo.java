@@ -11,5 +11,4 @@ import java.util.List;
  */
 public record DecisionInfo(
         List<Action> availableActions
-) {
-}
+) { }

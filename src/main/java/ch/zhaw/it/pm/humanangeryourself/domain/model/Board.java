@@ -3,7 +3,9 @@ package ch.zhaw.it.pm.humanangeryourself.domain.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public record Board(List<Tile> tiles) {
+public class Board {
+    private final List<Tile> tiles;
+
     public Board(List<Tile> tiles) {
         this.tiles = new ArrayList<>(tiles);
     }
@@ -23,8 +25,7 @@ public record Board(List<Tile> tiles) {
         return null;
     }
 
-    @Override
-    public List<Tile> tiles() {
+    public List<Tile> getTiles() {
         return List.copyOf(tiles);
     }
 }

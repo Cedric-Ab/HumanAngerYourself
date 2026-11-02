@@ -1,6 +1,6 @@
 package ch.zhaw.it.pm.humanangeryourself.service;
 
-import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
+import ch.zhaw.it.pm.humanangeryourself.api.GameSnapshot;
 
 /**
  * Creates {@link GameSnapshot}s from the current game state.
@@ -24,6 +24,7 @@ public final class SnapshotFactory {
      * @return a new immutable snapshot
      */
     public static GameSnapshot create() {
-        return null;
+
+        return new GameSnapshot();
     }
 }

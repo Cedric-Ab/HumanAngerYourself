@@ -9,5 +9,4 @@ import ch.zhaw.it.pm.humanangeryourself.api.CardType;
  */
 public record PlayCard(
         CardType card
-) implements Action {
-}
+) implements Action { }
