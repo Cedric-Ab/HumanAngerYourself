@@ -1,6 +1,10 @@
 package ch.zhaw.it.pm.humanangeryourself.config;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
+
+// TODO: convert into singleton
 
 /**
  * Immutable game settings that control the economy and the card limits.
@@ -40,5 +44,9 @@ public record GameConfig(
     @SuppressWarnings("checkstyle:MagicNumber")
     public static GameConfig defaults() {
         return new GameConfig(100_000, 50_000, 10, 5, GamblingConfig.defaults());
+    }
+
+    public static @NotNull GameConfig getInstance() {
+        return null;
     }
 }
