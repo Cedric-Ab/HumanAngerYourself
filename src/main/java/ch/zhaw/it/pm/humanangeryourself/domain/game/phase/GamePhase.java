@@ -61,6 +61,16 @@ public abstract class GamePhase {
     }
 
     /**
+     * Checks if the provided action is illegal in the context of this game phase.
+     *
+     * @param action the action to be checked for legality
+     * @return true if the action is illegal, false otherwise
+     */
+    protected boolean isIllegalAction(@NotNull Action action) {
+        return !getDecision().availableActions().contains(action);
+    }
+
+    /**
      * Handles the player's action and returns the next game phase.
      *
      * @param player the player making the action
