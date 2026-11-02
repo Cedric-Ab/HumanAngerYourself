@@ -28,7 +28,7 @@ public class Game {
         this.board = board;
         this.players = List.copyOf(players);
 
-        turn = new Turn();
+        turn = new Turn(players.getFirst());
     }
 
     /**
@@ -68,8 +68,19 @@ public class Game {
 
     /**
      * Advances the game to the next turn.
+     *
+     * @throws IllegalStateException if the current player is not found in the list of players,
+     *                               this should never happen if the game is in a valid state
      */
     public void nextTurn() {
-        // TODO: implement
+        int prevIndex = getPlayers().indexOf(getTurn().getPlayer());
+
+        if (prevIndex == -1) {
+            throw new IllegalStateException("Current player not found in the list of players.");
+        }
+
+        int nextIndex = (prevIndex + 1) % getPlayers().size();
+
+        turn = new Turn(getPlayers().get(nextIndex));
     }
 }
