@@ -1,8 +1,9 @@
 package ch.zhaw.it.pm.humanangeryourself.service;
 
-import ch.zhaw.it.pm.humanangeryourself.api.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.GameListener;
-import ch.zhaw.it.pm.humanangeryourself.api.GameSnapshot;
+import ch.zhaw.it.pm.humanangeryourself.api.GameService;
+import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
 
 
 /**

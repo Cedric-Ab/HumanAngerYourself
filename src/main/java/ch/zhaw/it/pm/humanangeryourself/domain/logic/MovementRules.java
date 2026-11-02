@@ -1,4 +1,4 @@
-package ch.zhaw.it.pm.humanangeryourself.domain.rules;
+package ch.zhaw.it.pm.humanangeryourself.domain.logic;
 
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;

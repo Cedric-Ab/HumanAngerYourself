@@ -1,6 +1,6 @@
-package ch.zhaw.it.pm.humanangeryourself.domain.rules;
+package ch.zhaw.it.pm.humanangeryourself.domain.logic;
 
-import ch.zhaw.it.pm.humanangeryourself.api.Action;
+import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 public class CardEffects {
