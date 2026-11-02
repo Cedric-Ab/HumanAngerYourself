@@ -6,10 +6,10 @@ import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
+import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ChooseMovePhase extends GamePhase {
@@ -24,13 +24,11 @@ public class ChooseMovePhase extends GamePhase {
 
     @Override
     public @NotNull GamePhase process() {
-        int roll = 6; // TODO: randomize
+        int roll = getGame().getGamblingRules().rollDie();
 
         Player player = getGame().getTurn().getPlayer();
 
-        // TODO: add getPossibleMoves()
-//         List<MovePiece> possibleMoves = getGame().getMovementRules().getPossibleMoves(player, roll);
-        List<MovePiece> possibleMoves = new ArrayList<>();
+        List<MovePiece> possibleMoves = getGame().getMovementRules().getPossibleMoves(player, roll);
 
         setDecisionInfo(new DecisionInfo(player, possibleMoves));
 
@@ -42,15 +40,16 @@ public class ChooseMovePhase extends GamePhase {
         if (getGame().getTurn().getPlayer().equals(player)) {
             throw new IllegalArgumentException("Only the current player can perform actions in this phase.");
         }
-        if (isIllegalAction(action) || !(action instanceof MovePiece(int startingTile, int targetTile))) {
+        if (isIllegalAction(action) || !(action instanceof MovePiece(int startTileID, int targetTileID))) {
             throw new IllegalArgumentException("Action is not available in this phase.");
         }
 
-        // TODO: add getPiece()
-//         Piece piece = player.getPiece(startingTile);
-        Piece piece = null;
+        Tile startTile = getGame().getBoard().getTileById(startTileID);
+        Tile endTile = getGame().getBoard().getTileById(targetTileID);
 
-        piece.moveTo(getGame().getBoard().getTileById(targetTile));
+        Piece piece = player.getPiece(startTile);
+
+        piece.moveTo(endTile);
 
         // TODO: add consequences
 
