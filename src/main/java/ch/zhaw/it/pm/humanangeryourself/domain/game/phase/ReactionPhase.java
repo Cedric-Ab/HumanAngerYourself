@@ -7,14 +7,15 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ReactionPhase extends GamePhase {
+public class ReactionPhase extends NonFlowGamePhase {
     /**
      * Creates a new instance of a game phase associated with the specified game.
      *
-     * @param game the game instance this phase belongs to
+     * @param game      the game instance this phase belongs to
+     * @param nextPhase the next game phase to transition to after this phase is completed
      */
-    public ReactionPhase(@NotNull Game game) {
-        super(game);
+    public ReactionPhase(@NotNull Game game, @NotNull GamePhase nextPhase) {
+        super(game, nextPhase);
     }
 
     @Override
