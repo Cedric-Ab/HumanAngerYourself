@@ -36,7 +36,7 @@ public class Game {
      */
     public Game() {
         // TODO: implement properly
-        this(new Board(), List.of(new Player(), new Player(), new Player(), new Player()));
+        this(null, null);
     }
 
     /**
