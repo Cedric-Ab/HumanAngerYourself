@@ -9,12 +9,19 @@ import java.util.Optional;
 
 public class MovementRules {
 
-    public boolean legalMove() { return false; }
+    public boolean legalMove() {
+        return false;
+    }
 
-    private boolean canEnterFinish() { return false; }
+    private boolean canEnterFinish() {
+        return false;
+    }
 
-    private boolean canLeaveHome(int rollResult) { return false; }
+    private boolean canLeaveHome(int rollResult) {
+        return false;
+    }
 
-    public Optional<Piece> pieceToSendBackHome(Piece pieceMoved, Board board, List<Player> players) { return Optional.of(null); }
-
+    public Optional<Piece> pieceToSendBackHome(Piece pieceMoved, Board board, List<Player> players) {
+        return Optional.empty();
+    }
 }

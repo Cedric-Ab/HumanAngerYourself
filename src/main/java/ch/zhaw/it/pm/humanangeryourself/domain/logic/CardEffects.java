@@ -5,7 +5,9 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 public class CardEffects {
 
-    public boolean canPlay(Player player, Action action) { return false; }
+    public boolean canPlay(Player player, Action action) {
+        return false;
+    }
 
     public void apply() { }
 
