@@ -30,7 +30,7 @@ public class HumanAngerYourselfGame extends Application {
         // TODO composition root, add the config, game, viewmodel classes etc.
         // TODO change type to interface later on, pass the game to localgameservice
         // TODO padd the viewmodel to the controller
-        LocalGameService service = new LocalGameService();
+        new LocalGameService();
 
         mainViewLoader = new MainViewLoader();
         openMainWindow(primaryStage);
