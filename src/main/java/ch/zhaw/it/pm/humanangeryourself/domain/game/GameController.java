@@ -3,6 +3,7 @@ package ch.zhaw.it.pm.humanangeryourself.domain.game;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.phase.GamePhase;
+import ch.zhaw.it.pm.humanangeryourself.domain.game.phase.StartOfTurnPhase;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,7 @@ public class GameController {
      */
     public GameController(@NotNull Game game) {
         this.game = game;
+        startGame();
     }
 
     /**
@@ -65,7 +67,7 @@ public class GameController {
     }
 
     private void startGame() {
-        // TODO: implement
+        currentPhase = new StartOfTurnPhase(game);
     }
 
     /**
