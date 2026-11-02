@@ -1,11 +1,11 @@
 package ch.zhaw.it.pm.humanangeryourself.app;
 
 
-import ch.zhaw.it.pm.humanangeryourself.service.LocalGameService;
-import ch.zhaw.it.pm.humanangeryourself.ui.view.MainViewLoader;
-
 import javafx.application.Application;
 import javafx.stage.Stage;
+
+import ch.zhaw.it.pm.humanangeryourself.service.LocalGameService;
+import ch.zhaw.it.pm.humanangeryourself.ui.view.MainViewLoader;
 
 public class HumanAngerYourselfGame extends Application {
     private MainViewLoader mainViewLoader;
