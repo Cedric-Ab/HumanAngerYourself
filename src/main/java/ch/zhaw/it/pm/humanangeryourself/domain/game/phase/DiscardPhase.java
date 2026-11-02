@@ -4,7 +4,6 @@ import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.action.DiscardCard;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
-import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
@@ -14,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * Represents a game phase where a player may be required to discard a card.
+ * Represents a game phase where a player is required to discard a card.
  * <p>
  * This phase is responsible for handling the discarding action of the specified player.
  * The phase can optionally restrict a certain card from being discarded.
@@ -25,7 +24,7 @@ public class DiscardPhase extends NonFlowGamePhase {
     private final @Nullable CardType notDiscardableCard;
 
     /**
-     * Creates a new instance of the discard phase associated with the specified game.
+     * Creates a new instance of a game phase associated with the specified game.
      *
      * @param game      the game instance this phase belongs to
      * @param nextPhase the next game phase to transition to after this phase is completed
@@ -37,7 +36,7 @@ public class DiscardPhase extends NonFlowGamePhase {
     }
 
     /**
-     * Creates a new instance of the discard phase associated with the specified game.
+     * Creates a new instance of a game phase associated with the specified game.
      *
      * @param game               the game instance this phase belongs to
      * @param nextPhase          the next game phase to transition to after this phase is completed
@@ -54,35 +53,20 @@ public class DiscardPhase extends NonFlowGamePhase {
 
     @Override
     public @NotNull GamePhase process() {
-        GameConfig gameConfig = GameConfig.getInstance();
-
         List<CardType> cards = discardingPlayer.getCards();
-
-        if (cards.size() <= gameConfig.maxHandSize()) {
-            return getNextPhase();
-        } else {
-            createDecisionInfo(discardingPlayer, cards);
-            return this;
-        }
-    }
-
-    private void createDecisionInfo(Player player, List<CardType> cards) {
-        if (notDiscardableCard != null) {
-            cards.remove(notDiscardableCard);
-        }
+        cards.remove(notDiscardableCard);
 
         List<DiscardCard> possibleCardDiscards = cards.stream()
                 .map(DiscardCard::new)
                 .toList();
 
-        setDecisionInfo(new DecisionInfo(player, possibleCardDiscards));
+        setDecisionInfo(new DecisionInfo(possibleCardDiscards));
+
+        return this;
     }
 
     /**
      * {@inheritDoc}
-     *
-     * @throws IllegalArgumentException if the action is not available in this phase
-     * @throws IllegalArgumentException if the player attempting the action is not the discarding player
      */
     @Override
     public @NotNull GamePhase handle(Player player, Action action) {
@@ -99,6 +83,6 @@ public class DiscardPhase extends NonFlowGamePhase {
 
         player.removeCard(card);
 
-        return process();
+        return getNextPhase();
     }
 }
