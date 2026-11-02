@@ -1,7 +1,7 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game;
 
 import ch.zhaw.it.pm.humanangeryourself.api.Action;
-import ch.zhaw.it.pm.humanangeryourself.api.DecisionInfo;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.phase.GamePhase;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
