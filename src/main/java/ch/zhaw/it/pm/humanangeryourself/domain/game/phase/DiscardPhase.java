@@ -89,12 +89,8 @@ public class DiscardPhase extends NonFlowGamePhase {
         if (discardingPlayer.equals(player)) {
             throw new IllegalArgumentException("Only the discarding player can perform actions in this phase.");
         }
-        if (!getDecision().availableActions().contains(action)) {
-            throw new IllegalArgumentException("The action is not available in this phase.");
-        }
-
-        if (!(action instanceof DiscardCard(CardType card))) {
-            throw new IllegalArgumentException("Invalid action for this phase.");
+        if (isIllegalAction(action) || !(action instanceof DiscardCard(CardType card))) {
+            throw new IllegalArgumentException("Action is not available in this phase.");
         }
 
         player.removeCard(card);
