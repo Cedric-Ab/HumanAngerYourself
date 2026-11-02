@@ -10,5 +10,5 @@ import java.util.List;
  * @param availableActions representation of the actions the player can take
  */
 public record DecisionInfo(
-        List<Action> availableActions
+        List<? extends Action> availableActions
 ) { }
