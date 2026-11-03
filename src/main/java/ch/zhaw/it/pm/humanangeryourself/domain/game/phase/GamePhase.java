@@ -85,6 +85,31 @@ public abstract class GamePhase {
     }
 
     /**
+     * Validates that the provided action is a possible action in the context of this game phase.
+     *
+     * @param action the action to be validated
+     * @throws IllegalArgumentException if the provided action is illegal in this game phase
+     */
+    protected void validateAction(@NotNull Action action) {
+        if (isIllegalAction(action)) {
+            throw new IllegalArgumentException("Action is not available in this phase.");
+        }
+    }
+
+    /**
+     * Validates that the provided player is the one associated with the current decision in this game phase.
+     *
+     * @param player the player to be validated
+     * @throws IllegalArgumentException if the provided player is not the one associated with the current decision
+     */
+    protected void validatePlayer(@NotNull Player player) {
+        if (!getDecision().player().equals(player.getColor())) {
+            throw new IllegalArgumentException(
+                    "Only the player associated with this decision can perform actions in this phase.");
+        }
+    }
+
+    /**
      * Handles the player's action and returns the next game phase.
      *
      * @param player the player making the action
@@ -101,5 +126,14 @@ public abstract class GamePhase {
      */
     protected @NotNull Game getGame() {
         return game;
+    }
+
+    /**
+     * Returns the current player whose turn it is in the game.
+     *
+     * @return the current player
+     */
+    protected @NotNull Player getCurrentPlayer() {
+        return getGame().getTurn().getPlayer();
     }
 }
