@@ -3,7 +3,6 @@ package ch.zhaw.it.pm.humanangeryourself.domain.game.phase;
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.action.DiscardCard;
-import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
 import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
@@ -11,6 +10,7 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -61,12 +61,14 @@ public class DiscardPhase extends NonFlowGamePhase {
         if (cards.size() <= gameConfig.maxHandSize()) {
             return getNextPhase();
         } else {
-            createDecisionInfo(discardingPlayer, cards);
+            createDecisionInfo();
             return this;
         }
     }
 
-    private void createDecisionInfo(Player player, List<CardType> cards) {
+    private void createDecisionInfo() {
+        List<CardType> cards = new ArrayList<>(discardingPlayer.getCards());
+
         if (notDiscardableCard != null) {
             cards.remove(notDiscardableCard);
         }
@@ -75,7 +77,7 @@ public class DiscardPhase extends NonFlowGamePhase {
                 .map(DiscardCard::new)
                 .toList();
 
-        setDecisionInfo(new DecisionInfo(player, possibleCardDiscards));
+        setDecisionInfo(discardingPlayer, possibleCardDiscards);
     }
 
     /**
@@ -86,10 +88,10 @@ public class DiscardPhase extends NonFlowGamePhase {
      */
     @Override
     public @NotNull GamePhase handle(Player player, Action action) {
-        if (discardingPlayer.equals(player)) {
-            throw new IllegalArgumentException("Only the discarding player can perform actions in this phase.");
-        }
-        if (isIllegalAction(action) || !(action instanceof DiscardCard(CardType card))) {
+        validatePlayer(player);
+        validateAction(action);
+
+        if (!(action instanceof DiscardCard(CardType card))) {
             throw new IllegalArgumentException("Action is not available in this phase.");
         }
 
