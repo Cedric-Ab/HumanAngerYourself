@@ -6,7 +6,7 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import org.jetbrains.annotations.NotNull;
 
-public class EndOfTurnPhase extends GamePhase {
+public class EndOfTurnPhase extends GamePhaseBase {
     /**
      * Creates a new instance of a game phase associated with the specified game.
      *

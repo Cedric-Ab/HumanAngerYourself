@@ -13,7 +13,7 @@ public class DiscardPhase extends NonFlowGamePhase {
      * @param game      the game instance this phase belongs to
      * @param nextPhase the next game phase to transition to after this phase is completed
      */
-    public DiscardPhase(@NotNull Game game, @NotNull GamePhase nextPhase) {
+    public DiscardPhase(@NotNull Game game, @NotNull GamePhaseBase nextPhase) {
         super(game, nextPhase);
     }
 

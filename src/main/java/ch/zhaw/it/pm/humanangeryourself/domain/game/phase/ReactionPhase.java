@@ -13,7 +13,7 @@ public class ReactionPhase extends NonFlowGamePhase {
      * @param game      the game instance this phase belongs to
      * @param nextPhase the next game phase to transition to after this phase is completed
      */
-    public ReactionPhase(@NotNull Game game, @NotNull GamePhase nextPhase) {
+    public ReactionPhase(@NotNull Game game, @NotNull GamePhaseBase nextPhase) {
         super(game, nextPhase);
     }
 
