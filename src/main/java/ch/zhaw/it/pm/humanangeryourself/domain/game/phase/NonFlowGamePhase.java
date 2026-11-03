@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class NonFlowGamePhase extends GamePhaseBase {
 
-    private final @NotNull GamePhaseBase nextPhase;
+    private final @NotNull GamePhase nextPhase;
 
     /**
      * Creates a new instance of a game phase associated with the specified game.
@@ -21,7 +21,7 @@ public abstract class NonFlowGamePhase extends GamePhaseBase {
      * @param game      the game instance this phase belongs to
      * @param nextPhase the next game phase to transition to after this phase is completed
      */
-    public NonFlowGamePhase(@NotNull Game game, @NotNull GamePhaseBase nextPhase) {
+    public NonFlowGamePhase(@NotNull Game game, @NotNull GamePhase nextPhase) {
         super(game);
         this.nextPhase = nextPhase;
     }
@@ -31,7 +31,7 @@ public abstract class NonFlowGamePhase extends GamePhaseBase {
      *
      * @return the next game phase
      */
-    public @NotNull GamePhaseBase getNextPhase() {
+    public @NotNull GamePhase getNextPhase() {
         return nextPhase;
     }
 }
