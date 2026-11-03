@@ -1,0 +1,36 @@
+@startuml
+
+participant GameService
+participant GameController
+participant DiscardPhase
+participant Player
+participant GameConfig
+participant DecisionInfo
+
+GameService -> GameController : submit(player, DiscardCard)
+
+GameController -> DiscardPhase : handle(player, action)
+
+DiscardPhase -> Player : removeCard(card)
+
+DiscardPhase -> DiscardPhase : process()
+
+DiscardPhase -> GameConfig : maxHandSize()
+DiscardPhase -> Player : cards = getCards()
+
+alt cards.size() <= maxHandSize
+    DiscardPhase --> GameController : nextPhase
+
+    GameController ->  : process()
+
+else cards.size() > maxHandSize
+
+    create DecisionInfo
+    DiscardPhase -> DecisionInfo : new(player, possibleCardDiscards)
+
+    DiscardPhase --> GameController : this
+end
+
+GameController ->> GameService : onGameChanged()
+
+@enduml
