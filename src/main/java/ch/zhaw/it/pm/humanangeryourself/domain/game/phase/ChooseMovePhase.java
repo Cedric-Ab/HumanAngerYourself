@@ -2,7 +2,6 @@ package ch.zhaw.it.pm.humanangeryourself.domain.game.phase;
 
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.action.MovePiece;
-import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
@@ -26,21 +25,18 @@ public class ChooseMovePhase extends GamePhaseBase {
     public @NotNull GamePhase process() {
         int roll = getGame().getGamblingRules().rollDie();
 
-        Player player = getGame().getTurn().getPlayer();
-
-        List<MovePiece> possibleMoves = getGame().getMovementRules().getPossibleMoves(player, roll);
-
-        setDecisionInfo(new DecisionInfo(player, possibleMoves));
+        List<MovePiece> possibleMoves = getGame().getMovementRules().getPossibleMoves(getCurrentPlayer(), roll);
+        setDecisionInfo(getCurrentPlayer(), possibleMoves);
 
         return this;
     }
 
     @Override
     public @NotNull GamePhase handle(Player player, Action action) {
-        if (getGame().getTurn().getPlayer().equals(player)) {
-            throw new IllegalArgumentException("Only the current player can perform actions in this phase.");
-        }
-        if (isIllegalAction(action) || !(action instanceof MovePiece(int startTileID, int targetTileID))) {
+        validatePlayer(player);
+        validateAction(action);
+
+        if (!(action instanceof MovePiece(int startTileID, int targetTileID))) {
             throw new IllegalArgumentException("Action is not available in this phase.");
         }
 
