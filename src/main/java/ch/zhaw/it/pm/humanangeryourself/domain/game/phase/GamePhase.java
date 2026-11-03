@@ -8,6 +8,8 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * Represents a phase in the game, which can be processed, provide decision information, and handle player actions.
  * <p>
@@ -58,6 +60,18 @@ public abstract class GamePhase {
      */
     protected void setDecisionInfo(@NotNull DecisionInfo decisionInfo) {
         this.decisionInfo = decisionInfo;
+    }
+
+    /**
+     * Sets the decision information for the current game phase using the provided player and available actions.
+     *
+     * @param player           the player for which the decision information is relevant
+     * @param availableActions the list of actions available to the player in this game phase
+     * @see DecisionInfo
+     */
+    protected void setDecisionInfo(@NotNull Player player,
+                                   @NotNull List<? extends @NotNull Action> availableActions) {
+        setDecisionInfo(new DecisionInfo(player, availableActions));
     }
 
     /**
