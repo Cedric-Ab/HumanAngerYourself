@@ -16,10 +16,12 @@ public class MovementRules {
     public Optional<Piece> pieceToSendBackHome(Piece pieceMoved, Board board, List<Player> players){return Optional.of(null);}
 
     public List<MovePiece> getPossibleMoves(Player player, int roll) {
+        // TODO: high priority method!!!
         return List.of();
     }
 
     public List<Piece> piecesToSendBackHome(Piece pieceMoved) {
+        // low priority
         return List.of();
     }
 }
