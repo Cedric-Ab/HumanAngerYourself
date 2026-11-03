@@ -11,9 +11,9 @@ import org.jetbrains.annotations.NotNull;
  * but it is provided with a reference to the next phase during construction.
  * This allows for flexible game flow management.
  */
-public abstract class NonFlowGamePhase extends GamePhase {
+public abstract class NonFlowGamePhase extends GamePhaseBase {
 
-    private final @NotNull GamePhase nextPhase;
+    private final @NotNull GamePhaseBase nextPhase;
 
     /**
      * Creates a new instance of a game phase associated with the specified game.
@@ -21,7 +21,7 @@ public abstract class NonFlowGamePhase extends GamePhase {
      * @param game      the game instance this phase belongs to
      * @param nextPhase the next game phase to transition to after this phase is completed
      */
-    public NonFlowGamePhase(@NotNull Game game, @NotNull GamePhase nextPhase) {
+    public NonFlowGamePhase(@NotNull Game game, @NotNull GamePhaseBase nextPhase) {
         super(game);
         this.nextPhase = nextPhase;
     }
@@ -31,7 +31,7 @@ public abstract class NonFlowGamePhase extends GamePhase {
      *
      * @return the next game phase
      */
-    public @NotNull GamePhase getNextPhase() {
+    public @NotNull GamePhaseBase getNextPhase() {
         return nextPhase;
     }
 }
