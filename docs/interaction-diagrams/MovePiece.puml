@@ -1,0 +1,58 @@
+@startuml
+
+participant GameService
+participant GameController
+participant ChooseMovePhase
+participant Game
+participant Board
+participant Player
+participant Piece
+participant MovementRules
+participant EndOfTurnPhase
+
+GameService -> GameController : submit(player, MovePiece)
+
+GameController -> ChooseMovePhase : handle(player, action)
+
+ChooseMovePhase -> Game : board = getBoard()
+
+ChooseMovePhase -> Board : startTile = getTileById(startTileID)
+ChooseMovePhase -> Board : endTile = getTileById(targetTileID)
+
+ChooseMovePhase -> Player : piece = getPiece(startTile)
+
+ChooseMovePhase -> Piece : moveTo(endTile)
+
+ChooseMovePhase -> Game : movementRules = getMovementRules()
+
+ChooseMovePhase -> MovementRules : piecesToSendBackHome = piecesToSendBackHome(piece)
+
+note right of MovementRules
+    The internal behavior of MovementRules.piecesToSendBackHome()
+    is intentionally omitted because it is not
+    relevant to this interaction diagram.
+end note
+
+
+loop for each pieceToSendBackHome
+    ChooseMovePhase -> Piece : sendHome()
+end
+
+create EndOfTurnPhase
+ChooseMovePhase -> EndOfTurnPhase : nextPhase = new(game)
+
+ChooseMovePhase --> GameController : nextPhase
+
+GameController -> EndOfTurnPhase : process()
+
+note left of EndOfTurnPhase
+    The internal behavior of EndOfTurnPhase.process()
+    is intentionally omitted because it is not
+    relevant to this interaction diagram.
+end note
+
+EndOfTurnPhase --> GameController : this
+
+GameController ->> GameService : onGameChanged()
+
+@enduml
