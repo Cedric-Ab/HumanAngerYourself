@@ -1,0 +1,50 @@
+@startuml
+
+participant GameService
+participant GameController
+participant StartOfTurnPhase
+participant ChooseMovePhase
+participant Game
+participant GamblingRules
+participant Turn
+participant Player
+participant MovementRules
+participant DecisionInfo
+
+GameService -> GameController : submit(player, Roll)
+
+GameController -> StartOfTurnPhase : handle(player, Roll)
+
+create ChooseMovePhase
+StartOfTurnPhase -> ChooseMovePhase : nextPhase = new(game)
+
+StartOfTurnPhase --> GameController : nextPhase
+
+GameController -> ChooseMovePhase : process()
+
+ChooseMovePhase -> Game : gamblingRules = getGamblingRules()
+
+ChooseMovePhase -> GamblingRules : roll = rollDie()
+
+ChooseMovePhase -> Game : turn = getTurn()
+
+ChooseMovePhase -> Turn : player = getPlayer()
+
+ChooseMovePhase -> Game : movementRules = getMovementRules()
+
+ChooseMovePhase -> MovementRules : possibleMoves = getPossibleMoves(player, roll)
+
+note right of MovementRules
+    The internal behavior of MovementRules.getPossibleMoves()
+    is intentionally omitted because it is not
+    relevant to this interaction diagram.
+end note
+
+create DecisionInfo
+ChooseMovePhase -> DecisionInfo : new(player, possibleMoves)
+
+ChooseMovePhase --> GameController : this
+
+GameController ->> GameService : onGameChanged()
+
+@enduml
