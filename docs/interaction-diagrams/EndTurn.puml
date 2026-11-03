@@ -1,0 +1,65 @@
+@startuml
+
+participant GameService
+participant GameController
+participant EndOfTurnPhase
+participant Game
+participant Economy
+participant AuctionPhase
+participant Turn
+participant StartOfTurnPhase
+participant DecisionInfo
+
+GameService -> GameController : submit(player, EndTurn)
+
+GameController -> EndOfTurnPhase : handle(player, EndTurn)
+
+EndOfTurnPhase -> Game : economy = getEconomy()
+
+EndOfTurnPhase -> Economy : isOverDebtLimit(player)
+
+alt Player exceeds debt limit
+
+    create AuctionPhase
+    EndOfTurnPhase -> AuctionPhase : nextPhase = new(...)
+
+    EndOfTurnPhase --> GameController : nextPhase
+
+    GameController -> AuctionPhase : process()
+
+    note right of AuctionPhase
+        The internal behavior of AuctionPhase.process()
+        is intentionally omitted because it is not
+        relevant to this interaction diagram.
+    end note
+
+    AuctionPhase --> GameController : this
+
+else Player within debt limit
+
+    EndOfTurnPhase -> Game : nextTurn()
+
+    create Turn
+    Game -> Turn : new(nextPlayer)
+
+    create StartOfTurnPhase
+    EndOfTurnPhase -> StartOfTurnPhase : nextPhase = new(game)
+
+    EndOfTurnPhase --> GameController : nextPhase
+
+    GameController -> StartOfTurnPhase : process()
+
+    StartOfTurnPhase -> Game : turn = getTurn()
+
+    StartOfTurnPhase -> Turn : currentPlayer = getPlayer()
+
+    create DecisionInfo
+    StartOfTurnPhase -> DecisionInfo : new(currentPlayer, possibleActions)
+
+    StartOfTurnPhase --> GameController : this
+
+end
+
+GameController ->> GameService : onGameChanged()
+
+@enduml
