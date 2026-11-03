@@ -18,4 +18,8 @@ public class MovementRules {
     public List<MovePiece> getPossibleMoves(Player player, int roll) {
         return List.of();
     }
+
+    public List<Piece> piecesToSendBackHome(Piece pieceMoved) {
+        return List.of();
+    }
 }
