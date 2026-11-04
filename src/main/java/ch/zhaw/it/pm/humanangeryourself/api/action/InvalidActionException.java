@@ -1,4 +1,4 @@
-package ch.zhaw.it.pm.humanangeryourself.api;
+package ch.zhaw.it.pm.humanangeryourself.api.action;
 
 /**
  * Thrown when an action is submitted that is not allowed in the current game state.

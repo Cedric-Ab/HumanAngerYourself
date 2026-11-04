@@ -1,6 +1,7 @@
 package ch.zhaw.it.pm.humanangeryourself.api;
 
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
+import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
 
 /**

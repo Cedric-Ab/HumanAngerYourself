@@ -67,11 +67,11 @@ public class GameController {
     /**
      * Submits an action for the specified player.
      *
-     * @param colour the color of the player submitting the action
+     * @param color  the color of the player submitting the action
      * @param action the action being submitted
      */
-    public void submit(@NotNull PlayerColor colour, @NotNull Action action) {
-        Player player = game.getPlayer(colour);
+    public void submit(@NotNull PlayerColor color, @NotNull Action action) {
+        Player player = game.getPlayer(color);
         GamePhase nextPhase = currentPhase.handle(player, action);
         setPhaseTo(nextPhase);
         notifyObservers();
@@ -83,7 +83,9 @@ public class GameController {
      * @return the current decision information
      */
     public @NotNull DecisionInfo getDecision() {
-        return currentPhase.getDecision();
+        // TODO implement correctly
+        return new DecisionInfo(new ArrayList<>(), PlayerColor.BLUE);
+        // return currentPhase.getDecision();
     }
 
     /**

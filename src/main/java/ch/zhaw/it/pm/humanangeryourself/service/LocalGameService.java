@@ -1,6 +1,6 @@
 package ch.zhaw.it.pm.humanangeryourself.service;
 
-import ch.zhaw.it.pm.humanangeryourself.api.InvalidActionException;
+import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.GameListener;
