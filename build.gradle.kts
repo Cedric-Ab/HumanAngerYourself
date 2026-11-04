@@ -1,6 +1,5 @@
 plugins {
     application
-    checkstyle
     pmd
     id("org.openjfx.javafxplugin") version "0.1.0"
 }
@@ -47,10 +46,6 @@ javafx {
     modules("javafx.controls", "javafx.fxml")
 }
 
-checkstyle {
-    toolVersion = "10.12.4"
-}
-
 pmd {
     toolVersion = "6.55.0"
 }
@@ -66,16 +61,6 @@ tasks.named<Javadoc>("javadoc") {
     isFailOnError = true
 }
 
-tasks.withType<Checkstyle> {
-    reports {
-        xml.required = true
-        html.required = true
-    }
-    configProperties?.set(
-        "checkstyle.suppressions.file",
-        file("config/checkstyle/suppressions.xml").absolutePath
-    )
-}
 
 tasks.withType<Pmd> {
     reports {

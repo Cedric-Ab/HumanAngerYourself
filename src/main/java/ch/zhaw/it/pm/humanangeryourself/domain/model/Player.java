@@ -2,6 +2,7 @@ package ch.zhaw.it.pm.humanangeryourself.domain.model;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
+
 import java.util.ArrayList;
 import java.util.List;
 
