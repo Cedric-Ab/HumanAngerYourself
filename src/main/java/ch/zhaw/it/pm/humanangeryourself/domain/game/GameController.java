@@ -67,7 +67,7 @@ public class GameController {
     }
 
     private void startGame() {
-        currentPhase = new StartOfTurnPhase(game);
+        setPhaseTo(new StartOfTurnPhase(game));
     }
 
     /**
