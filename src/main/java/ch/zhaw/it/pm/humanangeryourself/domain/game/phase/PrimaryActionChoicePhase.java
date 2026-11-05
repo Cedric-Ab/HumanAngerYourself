@@ -31,12 +31,10 @@ public class PrimaryActionChoicePhase extends GamePhaseBase {
         validatePlayer(player);
         validateAction(action);
 
-        if (action instanceof Roll) {
-            return new ChooseMovePhase(getGame());
-        } else if (action instanceof Gamble) {
-            return new GamblingPhase(getGame());
-        } else {
-            throw new RuntimeException("Unexpected action type: " + action.getClass().getName());
-        }
+        return switch (action) {
+            case Roll ignored -> new ChooseMovePhase(getGame());
+            case Gamble ignored -> new GamblingPhase(getGame());
+            default -> throw new RuntimeException("Unexpected action type: " + action.getClass().getName());
+        };
     }
 }
