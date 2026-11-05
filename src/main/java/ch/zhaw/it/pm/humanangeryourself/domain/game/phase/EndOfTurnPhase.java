@@ -1,7 +1,6 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game.phase;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
-import ch.zhaw.it.pm.humanangeryourself.api.PropertySize;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.action.BuyCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.BuyProperty;
@@ -26,10 +25,19 @@ public class EndOfTurnPhase extends GamePhaseBase {
 
     @Override
     public @NotNull GamePhase process() {
+        List<CardType> buyableCards = getGame().getEconomy()
+                .getBuyableCards(getCurrentPlayer());
+        List<BuyCard> buyCardList = buyableCards.stream()
+                .map(BuyCard::new)
+                .toList();
+
+        List<BuyProperty> buyPropertyList = getGame().getEconomy()
+                .getBuyableProperties(getCurrentPlayer());
+
         List<Action> actions = new ArrayList<>();
         actions.add(new EndTurn());
-        actions.addAll(List.of(new BuyCard(CardType.CHARITY), new BuyCard(CardType.ANGER_REVERSE)));
-        actions.addAll(List.of(new BuyProperty(3, PropertySize.MEDIUM)));
+        actions.addAll(buyCardList);
+        actions.addAll(buyPropertyList);
 
         setDecisionInfo(getCurrentPlayer(), actions);
         return this;
@@ -49,20 +57,20 @@ public class EndOfTurnPhase extends GamePhaseBase {
     }
 
     private GamePhase endTurn() {
-        // TODO: paying rent
-        // TODO: auction
+        // TODO: paying rent: low priority
+        // TODO: auction: lowest priority
 
         getGame().nextTurn();
         return new StartOfTurnPhase(getGame());
     }
 
     private GamePhase buyCard(Player player, BuyCard buyCard) {
-        // TODO: implement
+        // TODO: medium priority
         return process();
     }
 
     private GamePhase buyProperty(Player player, BuyProperty buyProperty) {
-        // TODO: implement
+        // TODO: low priority
         return process();
     }
 }
