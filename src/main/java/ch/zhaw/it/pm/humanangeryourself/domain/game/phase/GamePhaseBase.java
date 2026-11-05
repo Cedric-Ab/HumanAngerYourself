@@ -83,7 +83,7 @@ public abstract class GamePhaseBase implements GamePhase {
      */
     protected void setDecisionInfo(@NotNull Player player,
                                    @NotNull List<? extends @NotNull Action> availableActions) {
-        setDecisionInfo(new DecisionInfo(player, availableActions));
+        setDecisionInfo(new DecisionInfo(player.getColor(), availableActions));
     }
 
     /**
