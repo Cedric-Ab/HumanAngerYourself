@@ -11,18 +11,21 @@ import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
 public interface GameService extends GameListener {
     /**
      * Inform the game logic about an action the current viewer performed.
+     *
      * @param action performed action
      */
     void submit(Action action);
 
     /**
      * Register a listener, which will be informed about changes in game state.
+     *
      * @param listener object to be informed about changes
      */
     void addListener(GameListener listener);
 
     /**
      * Return a snapshot representing the game state.
+     *
      * @return latest snapshot
      */
     GameSnapshot getSnapshot();

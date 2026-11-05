@@ -9,7 +9,6 @@ public class Tile {
     private final Property property;
     private final Npc npc;
 
-    // CHECKSTYLE.OFF: ParameterNumber
     public Tile(int id, TileType type, int quarter, Property property, Npc npc) {
         this.id = id;
         this.type = type;
@@ -17,7 +16,6 @@ public class Tile {
         this.property = property;
         this.npc = npc;
     }
-    // CHECKSTYLE.ON: ParameterNumber
 
     public boolean isSafe() {
         // TODO

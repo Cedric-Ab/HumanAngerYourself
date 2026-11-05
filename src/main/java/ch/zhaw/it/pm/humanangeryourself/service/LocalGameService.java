@@ -21,6 +21,7 @@ public class LocalGameService {
 
     /**
      * Returns the current game state <b> as seen by the current viewer </b>.
+     *
      * @return a new snapshot of the game
      */
     public GameSnapshot getSnapshot() {
@@ -39,6 +40,7 @@ public class LocalGameService {
 
     /**
      * Registers a listener that is informed about every game change.
+     *
      * @param listener the listener to add
      */
     public void addListener(GameListener listener) {
