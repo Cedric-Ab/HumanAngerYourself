@@ -41,7 +41,6 @@ public record GameConfig(
      *
      * @return a new {@code GameConfig} with default values.
      */
-    @SuppressWarnings("checkstyle:MagicNumber")
     public static GameConfig defaults() {
         return new GameConfig(100_000, 50_000, 10, 5, GamblingConfig.defaults());
     }
