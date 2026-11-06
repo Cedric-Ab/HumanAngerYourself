@@ -60,6 +60,7 @@ public class GameConfig {
         }
 
         Objects.requireNonNull(gambling, "gambling must be present");
+        Objects.requireNonNull(propertyPrices, "propertyPrices must be present");
         if (startMoney < 0 || debtLimit < 0 || maxHandSize < 1 || maxPropertiesPerQuarter < 1) {
             throw new IllegalArgumentException("GameConfig invalid");
         }
