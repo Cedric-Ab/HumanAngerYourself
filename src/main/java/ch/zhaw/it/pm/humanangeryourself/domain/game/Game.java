@@ -1,28 +1,32 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game;
 
+import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.Economy;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.GamblingRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.MovementRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
+import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
+
+import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Represents a game of Human Anger Yourself, containing the board, players, and the current turn.
  */
 public class Game {
-    private final @NotNull MovementRules movementRules;
-    private final @NotNull GamblingRules gamblingRules;
-    private final @NotNull Economy economy;
+    private final Board board;
+    private final List<Player> players;
+    private final MovementRules movementRules;
+    private final GamblingRules gamblingRules;
+    private final Economy economy;
 
-    private final @NotNull Board board;
-    private final @NotNull List<Player> players;
-
-    private @NotNull Turn turn;
+    private Turn turn;
 
     /**
      * Creates a new game with the given movement rules, gambling rules, economy, board, and players.
@@ -33,9 +37,8 @@ public class Game {
      * @param board         the board of the game
      * @param players       the players of the game, must contain 4 players
      */
-    @SuppressWarnings("checkstyle:ParameterNumber")
-    public Game(@NotNull MovementRules movementRules, @NotNull GamblingRules gamblingRules, @NotNull Economy economy,
-                @NotNull Board board, @NotNull List<Player> players) {
+    public Game(MovementRules movementRules, GamblingRules gamblingRules, Economy economy,
+                Board board, List<Player> players) {
         // TODO: add parameter validation
         this.movementRules = movementRules;
         this.gamblingRules = gamblingRules;
@@ -52,16 +55,18 @@ public class Game {
      * @param board   the board of the game
      * @param players the players of the game, must contain 4 players
      */
-    public Game(@NotNull Board board, @NotNull List<Player> players) {
+    public Game(Board board, List<Player> players) {
         this(new MovementRules(), new GamblingRules(), new Economy(), board, players);
     }
 
-    /**
-     * Creates a new game with a default board and 4 players.
-     */
     public Game() {
-        // TODO: implement properly
-        this(new MovementRules(), new GamblingRules(), new Economy(), null, null);
+        // TODO implement properly
+        this(new MovementRules(), new GamblingRules(), new Economy(), new Board(new ArrayList<>()), new ArrayList<>(List.of(
+                new Player("Alice", PlayerColor.RED, 1000, new ArrayList<>()),
+                new Player("Bob", PlayerColor.BLUE, 1000, new ArrayList<>()),
+                new Player("Charlie", PlayerColor.GREEN, 1000, new ArrayList<>()),
+                new Player("Dave", PlayerColor.YELLOW, 1000, new ArrayList<>())
+        )));
     }
 
     /**
@@ -69,7 +74,7 @@ public class Game {
      *
      * @return the movement rules of the game
      */
-    public @NotNull MovementRules getMovementRules() {
+    public MovementRules getMovementRules() {
         return movementRules;
     }
 
@@ -78,7 +83,7 @@ public class Game {
      *
      * @return the gambling rules of the game
      */
-    public @NotNull GamblingRules getGamblingRules() {
+    public GamblingRules getGamblingRules() {
         return gamblingRules;
     }
 
@@ -87,17 +92,18 @@ public class Game {
      *
      * @return the economy of the game
      */
-    public @NotNull Economy getEconomy() {
+    public Economy getEconomy() {
         return economy;
     }
+
 
     /**
      * Returns the board of the game.
      *
      * @return the board of the game
      */
-    public @NotNull Board getBoard() {
-        return board;
+    public Board getBoard() {
+        return this.board;
     }
 
     /**
@@ -105,8 +111,20 @@ public class Game {
      *
      * @return the players of the game
      */
-    public @NotNull @Unmodifiable List<Player> getPlayers() {
-        return players;
+    public List<Player> getPlayers() {
+        // TODO implement properly
+        return new ArrayList<>(List.of(new Player("Bob", PlayerColor.RED, 1000, new ArrayList<>())));
+    }
+
+    /**
+     * Returns the player with the given color.
+     *
+     * @param color the color of the player to look up, must not be {@code null}
+     * @return the player with the given color.
+     */
+    public Player getPlayer(PlayerColor color) {
+        // TODO implement properly
+        return new Player("Bob", PlayerColor.RED, 1000, new ArrayList<>());
     }
 
     /**
@@ -114,7 +132,7 @@ public class Game {
      *
      * @return the current turn of the game
      */
-    public @NotNull Turn getTurn() {
+    public Turn getTurn() {
         return turn;
     }
 

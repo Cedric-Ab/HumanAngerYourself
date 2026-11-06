@@ -12,17 +12,15 @@ public class ChooseMovePhase extends GamePhaseBase {
      *
      * @param game the game instance this phase belongs to
      */
-    public ChooseMovePhase(@NotNull Game game) {
+    public ChooseMovePhase(Game game) {
         super(game);
     }
 
     @Override
-    public @NotNull GamePhase process() {
-        return null;
-    }
+    public GamePhase process() { return null; }
 
     @Override
-    public @NotNull GamePhase handle(Player player, Action action) {
+    public GamePhase handle(Player player, Action action) {
         return null;
     }
 }
