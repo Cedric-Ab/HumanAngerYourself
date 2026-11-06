@@ -26,9 +26,6 @@ public class Game {
     private final GamblingRules gamblingRules;
     private final Economy economy;
 
-    private final Board board;
-    private final List<Player> players;
-
     private Turn turn;
 
     /**

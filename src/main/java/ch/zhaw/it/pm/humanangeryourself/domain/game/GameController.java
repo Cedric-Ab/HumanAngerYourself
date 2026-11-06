@@ -3,7 +3,6 @@ package ch.zhaw.it.pm.humanangeryourself.domain.game;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
-import ch.zhaw.it.pm.humanangeryourself.domain.game.phase.ChooseMovePhase;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.phase.GamePhase;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.phase.StartOfTurnPhase;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
@@ -22,9 +21,9 @@ import java.util.Objects;
  */
 public class GameController {
 
-    private final @NotNull Game game;
+    private final Game game;
 
-    private @NotNull GamePhase currentPhase;
+    private GamePhase currentPhase;
 
     private final List<GameObserver> observers = new ArrayList<>();
 
@@ -33,7 +32,7 @@ public class GameController {
      *
      * @param game the game instance to be controlled by this controller
      */
-    public GameController(@NotNull Game game) {
+    public GameController(Game game) {
         this.game = game;
         startGame();
     }
@@ -71,7 +70,7 @@ public class GameController {
      * @param color  the color of the player submitting the action
      * @param action the action being submitted
      */
-    public void submit(@NotNull PlayerColor color, @NotNull Action action) {
+    public void submit(PlayerColor color, Action action) {
         Player player = game.getPlayer(color);
         GamePhase nextPhase = currentPhase.handle(player, action);
         setPhaseTo(nextPhase);
@@ -83,9 +82,9 @@ public class GameController {
      *
      * @return the current decision information
      */
-    public @NotNull DecisionInfo getDecision() {
+    public DecisionInfo getDecision() {
         // TODO implement correctly
-        return new DecisionInfo(new ArrayList<>(), PlayerColor.BLUE);
+        return new DecisionInfo(PlayerColor.BLUE, new ArrayList<>());
         // return currentPhase.getDecision();
     }
 
@@ -94,7 +93,7 @@ public class GameController {
      *
      * @return the game instance
      */
-    public @NotNull Game getGame() {
+    public Game getGame() {
         return game;
     }
 
@@ -109,7 +108,7 @@ public class GameController {
      *
      * @param phase the new phase to set as the current phase, may be the same as the current phase
      */
-    private void setPhaseTo(@NotNull GamePhase phase) {
+    private void setPhaseTo(GamePhase phase) {
         if (phase == currentPhase) {
             return;
         }

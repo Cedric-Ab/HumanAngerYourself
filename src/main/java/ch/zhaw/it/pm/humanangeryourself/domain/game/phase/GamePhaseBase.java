@@ -115,7 +115,7 @@ public abstract class GamePhaseBase implements GamePhase {
      * @throws IllegalArgumentException if the provided player is not the one associated with the current decision
      */
     protected void validatePlayer(@NotNull Player player) {
-        if (!getDecision().player().equals(player.getColor())) {
+        if (!getDecision().decider().equals(player.getColor())) {
             throw new IllegalArgumentException(
                     "Only the player associated with this decision can perform actions in this phase.");
         }
