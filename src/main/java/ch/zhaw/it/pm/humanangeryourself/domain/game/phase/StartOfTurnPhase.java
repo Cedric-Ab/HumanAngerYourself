@@ -1,13 +1,12 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game.phase;
 
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
-import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import org.jetbrains.annotations.NotNull;
 
-public class StartOfTurnPhase extends GamePhase {
+public class StartOfTurnPhase extends GamePhaseBase {
     /**
      * Creates a new instance of a game phase associated with the specified game.
      *
@@ -19,11 +18,6 @@ public class StartOfTurnPhase extends GamePhase {
 
     @Override
     public @NotNull GamePhase process() {
-        return null;
-    }
-
-    @Override
-    public @NotNull DecisionInfo getDecision() {
         return null;
     }
 

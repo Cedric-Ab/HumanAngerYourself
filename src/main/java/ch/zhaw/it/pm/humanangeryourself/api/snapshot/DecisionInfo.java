@@ -6,9 +6,12 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import java.util.List;
 
 /**
- * Information about which actions the current viewer can take.
+ * Information about which actions a player can take.
  *
- * @param decider          the player who has to decide
+ * @param player           the player for which the decision information is relevant
  * @param availableActions representation of the actions the player can take
  */
-public record DecisionInfo(PlayerColor decider, List<Action> availableActions) { }
+public record DecisionInfo(
+        PlayerColor player,
+        List<? extends Action> availableActions
+) { }

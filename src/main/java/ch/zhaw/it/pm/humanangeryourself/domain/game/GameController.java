@@ -5,6 +5,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.phase.ChooseMovePhase;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.phase.GamePhase;
+import ch.zhaw.it.pm.humanangeryourself.domain.game.phase.StartOfTurnPhase;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +35,7 @@ public class GameController {
      */
     public GameController(@NotNull Game game) {
         this.game = game;
-        this.currentPhase = new ChooseMovePhase(game); // TODO - I just added this line that the project is buildable
+        startGame();
     }
 
     /**
@@ -98,7 +99,7 @@ public class GameController {
     }
 
     private void startGame() {
-        // TODO: implement
+        setPhaseTo(new StartOfTurnPhase(game));
     }
 
     /**
