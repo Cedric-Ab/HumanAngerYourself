@@ -5,13 +5,9 @@ import ch.zhaw.it.pm.humanangeryourself.domain.logic.Economy;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.GamblingRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.MovementRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
-import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
-import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
-
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +16,12 @@ import java.util.List;
  * Represents a game of Human Anger Yourself, containing the board, players, and the current turn.
  */
 public class Game {
-    private final Board board;
-    private final List<Player> players;
     private final MovementRules movementRules;
     private final GamblingRules gamblingRules;
     private final Economy economy;
+
+    private final Board board;
+    private final List<Player> players;
 
     private Turn turn;
 
@@ -37,8 +34,8 @@ public class Game {
      * @param board         the board of the game
      * @param players       the players of the game, must contain 4 players
      */
-    public Game(MovementRules movementRules, GamblingRules gamblingRules, Economy economy,
-                Board board, List<Player> players) {
+    public Game(@NotNull MovementRules movementRules, @NotNull GamblingRules gamblingRules, @NotNull Economy economy,
+                @NotNull Board board, @NotNull List<Player> players) {
         // TODO: add parameter validation
         this.movementRules = movementRules;
         this.gamblingRules = gamblingRules;
