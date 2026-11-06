@@ -1,5 +1,7 @@
 package ch.zhaw.it.pm.humanangeryourself.ui.view;
 
+import ch.zhaw.it.pm.humanangeryourself.ui.viewmodel.GameViewModel;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -16,11 +18,10 @@ public class MainViewLoader {
     private final MainViewController controller;
     private final Scene scene;
 
-    public MainViewLoader() {
+    public MainViewLoader(GameViewModel viewModel) {
         try {
             FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(FXML_NAME)));
             Pane rootNode = loader.load();
-
             controller = loader.getController();
             scene = new Scene(rootNode);
         } catch (IOException e) {
