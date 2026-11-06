@@ -62,7 +62,7 @@ public class LocalGameService implements GameService, GameObserver {
     public void submit(Action action) {
         Objects.requireNonNull(action, "action");
         PlayerColor decider = currentDecider();
-        if (decider == null) { throw new InvalidActionException("Action requires a decider"); }
+        if (decider == null) { throw new InvalidActionException(action, "Action requires a decider"); }
 
         controller.submit(decider, action);
     }
