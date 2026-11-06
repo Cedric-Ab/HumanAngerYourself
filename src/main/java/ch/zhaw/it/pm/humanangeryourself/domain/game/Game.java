@@ -7,8 +7,6 @@ import ch.zhaw.it.pm.humanangeryourself.domain.logic.MovementRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,10 +14,6 @@ import java.util.List;
  * Represents a game of Human Anger Yourself, containing the board, players, and the current turn.
  */
 public class Game {
-    private final @NotNull MovementRules movementRules;
-    private final @NotNull GamblingRules gamblingRules;
-    private final @NotNull Economy economy;
-
     private final Board board;
     private final List<Player> players;
     private final MovementRules movementRules;
