@@ -13,12 +13,12 @@ public class Property {
         this.size = size;
     }
 
-    public long getPrice(GameConfig config) {
+    public long getPrice() {
         // TODO
         return 0;
     }
 
-    public long getRent(GameConfig config) {
+    public long getRent() {
         // TODO
         return 0;
     }
