@@ -1,5 +1,6 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.logic;
 
+import ch.zhaw.it.pm.humanangeryourself.api.action.MovePiece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
@@ -17,11 +18,13 @@ public class MovementRules {
         return false;
     }
 
-    private boolean canLeaveHome(int rollResult) {
-        return false;
+    public List<MovePiece> getPossibleMoves(Player player, int roll) {
+        // TODO: high priority method!!!
+        return List.of();
     }
 
-    public Optional<Piece> pieceToSendBackHome(Piece pieceMoved, Board board, List<Player> players) {
-        return Optional.empty();
+    public List<Piece> piecesToSendBackHome(Piece pieceMoved) {
+        // low priority
+        return List.of();
     }
 }
