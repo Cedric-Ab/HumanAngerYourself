@@ -1,13 +1,11 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game;
 
+import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
-import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.phase.GamePhase;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.phase.StartOfTurnPhase;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,12 +18,10 @@ import java.util.Objects;
  * It provides methods for submitting actions, retrieving decisions, and accessing the game instance.
  */
 public class GameController {
+    private final List<GameObserver> observers = new ArrayList<>();
 
     private final Game game;
-
     private GamePhase currentPhase;
-
-    private final List<GameObserver> observers = new ArrayList<>();
 
     /**
      * Creates a new instance of the GameController with the specified game instance.
