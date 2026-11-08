@@ -1,7 +1,7 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.logic;
 
-import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.PropertySize;
+import ch.zhaw.it.pm.humanangeryourself.api.action.BuyCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.BuyProperty;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
@@ -32,8 +32,7 @@ public class Economy {
 
     public void bankrupt(Board board, Player player) { }
 
-    // TODO: think about the returntype
-    public List<CardType> getBuyableCards(@NotNull Player player) {
+    public List<BuyCard> getBuyableCards(@NotNull Player player) {
         // TODO: medium priority
         return List.of();
     }

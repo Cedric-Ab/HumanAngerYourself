@@ -1,6 +1,5 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game.phase;
 
-import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.action.BuyCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.BuyProperty;
@@ -25,11 +24,8 @@ public class EndOfTurnPhase extends GamePhaseBase {
 
     @Override
     public @NotNull GamePhase process() {
-        List<CardType> buyableCards = getGame().getEconomy()
+        List<BuyCard> buyCardList = getGame().getEconomy()
                 .getBuyableCards(getCurrentPlayer());
-        List<BuyCard> buyCardList = buyableCards.stream()
-                .map(BuyCard::new)
-                .toList();
 
         List<BuyProperty> buyPropertyList = getGame().getEconomy()
                 .getBuyableProperties(getCurrentPlayer());
