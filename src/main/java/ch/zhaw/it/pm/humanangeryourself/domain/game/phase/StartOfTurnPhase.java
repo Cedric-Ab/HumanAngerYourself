@@ -16,10 +16,7 @@ public class StartOfTurnPhase extends GamePhaseBase {
         super(game);
     }
 
-    @Override
-    public @NotNull GamePhase process() {
-        return null;
-    }
+    public @NotNull GamePhase process() { return this; }
 
     @Override
     public @NotNull GamePhase handle(Player player, Action action) {
