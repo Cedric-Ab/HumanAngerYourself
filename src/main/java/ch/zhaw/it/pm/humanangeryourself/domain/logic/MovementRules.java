@@ -23,7 +23,7 @@ public class MovementRules {
         return List.of();
     }
 
-    public List<Piece> piecesToSendBackHome(Piece pieceMoved) {
+    public List<Piece> piecesToSendBackHome(Piece pieceMoved, Player player) {
         // low priority
         return List.of();
     }
