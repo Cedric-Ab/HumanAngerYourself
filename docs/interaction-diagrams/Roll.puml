@@ -22,15 +22,13 @@ StartOfTurnPhase --> GameController : nextPhase
 
 GameController -> ChooseMovePhase : process()
 
-ChooseMovePhase -> Game : gamblingRules = getGamblingRules()
-
-ChooseMovePhase -> GamblingRules : roll = rollDie()
-
 ChooseMovePhase -> Game : turn = getTurn()
 
 ChooseMovePhase -> Turn : player = getPlayer()
 
 ChooseMovePhase -> Game : movementRules = getMovementRules()
+
+ChooseMovePhase -> MovementRules : roll = rollDie()
 
 ChooseMovePhase -> MovementRules : possibleMoves = getPossibleMoves(player, roll)
 
