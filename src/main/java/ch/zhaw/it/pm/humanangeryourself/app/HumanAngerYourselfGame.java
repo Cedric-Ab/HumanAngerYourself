@@ -1,11 +1,14 @@
 package ch.zhaw.it.pm.humanangeryourself.app;
 
+import ch.zhaw.it.pm.humanangeryourself.domain.game.GameController;
+import ch.zhaw.it.pm.humanangeryourself.service.LocalGameService;
+import ch.zhaw.it.pm.humanangeryourself.api.GameService;
+
+import ch.zhaw.it.pm.humanangeryourself.ui.viewmodel.GameViewModel;
+import ch.zhaw.it.pm.humanangeryourself.ui.view.MainViewLoader;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-
-import ch.zhaw.it.pm.humanangeryourself.service.LocalGameService;
-import ch.zhaw.it.pm.humanangeryourself.ui.view.MainViewLoader;
 
 public class HumanAngerYourselfGame extends Application {
     private MainViewLoader mainViewLoader;
@@ -27,13 +30,13 @@ public class HumanAngerYourselfGame extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
-        // TODO composition root, add the config, game, viewmodel classes etc.
-        // TODO change type to interface later on, pass the game to localgameservice
-        // TODO padd the viewmodel to the controller
-        new LocalGameService();
+        GameController controller = new GameController();
+        GameService service = new LocalGameService(controller);
+        GameViewModel viewModel = new GameViewModel(service);
 
-        mainViewLoader = new MainViewLoader();
+        mainViewLoader = new MainViewLoader(viewModel);
         openMainWindow(primaryStage);
+
         primaryStage.setTitle("Human Anger Yourself");
     }
 
