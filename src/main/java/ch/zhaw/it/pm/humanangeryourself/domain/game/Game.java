@@ -5,7 +5,9 @@ import ch.zhaw.it.pm.humanangeryourself.domain.logic.Economy;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.GamblingRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.MovementRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
+import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
+import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,15 +39,39 @@ public class Game {
      * Creates a new game with default settings.
      */
     public Game() {
-        // TODO implement properly
-        // TODO change the constructor logic so we can give the board to the MovementRules
-        this(new MovementRules(new Board(new ArrayList<>())), new GamblingRules(), new Economy(), new Board(new ArrayList<>()), new ArrayList<>(List.of(
-                new Player("Alice", PlayerColor.RED, 1000, new ArrayList<>()),
-                new Player("Bob", PlayerColor.BLUE, 1000, new ArrayList<>()),
-                new Player("Charlie", PlayerColor.GREEN, 1000, new ArrayList<>()),
-                new Player("Dave", PlayerColor.YELLOW, 1000, new ArrayList<>())
-        )));
+        this(createDefaultSetup());
     }
+
+    private Game(DefaultSetup setup) {
+        this(new MovementRules(setup.board()), new GamblingRules(), new Economy(),
+                setup.board(), setup.players());
+    }
+
+    /**
+     * Creates the board and players used by the local, hardcoded game.
+     * Each player starts with four pieces on the four home tiles belonging to
+     * their colour.
+     */
+    private static DefaultSetup createDefaultSetup() {
+        Board board = new Board(Tile.createAll());
+        List<Player> players = List.of(
+                createPlayer("Alice", PlayerColor.RED, board, 101),
+                createPlayer("Charlie", PlayerColor.GREEN, board, 401),
+                createPlayer("Bob", PlayerColor.BLUE, board, 301),
+                createPlayer("Dave", PlayerColor.YELLOW, board, 201));
+        return new DefaultSetup(board, players);
+    }
+
+    private static Player createPlayer(String name, PlayerColor color, Board board, int firstHomeTileId) {
+        List<Piece> pieces = List.of(
+                new Piece(board.getTileById(firstHomeTileId)),
+                new Piece(board.getTileById(firstHomeTileId + 1)),
+                new Piece(board.getTileById(firstHomeTileId + 2)),
+                new Piece(board.getTileById(firstHomeTileId + 3)));
+        return new Player(name, color, 1000, pieces);
+    }
+
+    private record DefaultSetup(Board board, List<Player> players) { }
 
     /**
      * Creates a new game with the given movement rules, gambling rules, economy, board, and players.
