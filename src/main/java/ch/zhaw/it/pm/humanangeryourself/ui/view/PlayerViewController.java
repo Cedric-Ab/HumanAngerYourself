@@ -7,6 +7,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.BuyProperty;
 import ch.zhaw.it.pm.humanangeryourself.api.action.DiscardCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.EndTurn;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Gamble;
+import ch.zhaw.it.pm.humanangeryourself.api.action.MovePiece;
 import ch.zhaw.it.pm.humanangeryourself.api.action.PlayCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
 import ch.zhaw.it.pm.humanangeryourself.api.action.TargetPiece;
@@ -146,8 +147,6 @@ public class PlayerViewController {
             resultLabel.setText("Winner: " + playerName(snapshot, snapshot.winner()));
         } else if (snapshot.gamblingOutcome() != null) {
             resultLabel.setText(snapshot.gamblingOutcome().message());
-        } else if (snapshot.lastRoll() > 0) {
-            resultLabel.setText("Rolled: " + snapshot.lastRoll());
         } else if (snapshot.decision() != null) {
             resultLabel.setText("Choose an available action.");
         }
@@ -180,7 +179,8 @@ public class PlayerViewController {
         }
         snapshot.decision().availableActions().stream()
                 .filter(action -> !(action instanceof Roll || action instanceof Gamble || action instanceof EndTurn
-                        || action instanceof PlayCard || action instanceof DiscardCard || action instanceof TargetPiece))
+                        || action instanceof MovePiece || action instanceof PlayCard || action instanceof DiscardCard
+                        || action instanceof TargetPiece))
                 .sorted(Comparator.comparing(this::labelFor))
                 .forEach(action -> {
                     Button button = new Button(labelFor(action));
