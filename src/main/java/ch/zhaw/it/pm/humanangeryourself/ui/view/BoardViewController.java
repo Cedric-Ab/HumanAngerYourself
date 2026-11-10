@@ -31,7 +31,7 @@ public class BoardViewController {
     }
 
     private void initializeTiles() {
-        for (int i = 0; i < NUM_TILES; i++) {
+        for (int i = 1; i <= NUM_TILES; i++) {
             String tileId = "#tile" + i;
             Rectangle tile = (Rectangle) boardPane.lookup(tileId);
 
@@ -50,7 +50,7 @@ public class BoardViewController {
         for (int i = 0; i < NUM_COLORS; i++) {
             finishLanes.add(new ArrayList<>(LENGHT_FINISH_LANE));
             for (int j = 0; j < LENGHT_FINISH_LANE; j++) {
-                String tileId = "#finish%d_%d".formatted(i, j);
+                String tileId = "#tile%d".formatted((i + 1) * 100 + 5 + j);
                 Rectangle tile = (Rectangle) boardPane.lookup(tileId);
 
                 if (tile == null) {
