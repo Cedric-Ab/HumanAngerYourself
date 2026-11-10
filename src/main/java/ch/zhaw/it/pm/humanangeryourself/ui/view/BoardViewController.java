@@ -2,6 +2,7 @@ package ch.zhaw.it.pm.humanangeryourself.ui.view;
 
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.api.action.MovePiece;
+import ch.zhaw.it.pm.humanangeryourself.api.action.TargetPiece;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PieceInfo;
 import ch.zhaw.it.pm.humanangeryourself.ui.viewmodel.GameViewModel;
@@ -114,6 +115,11 @@ public class BoardViewController {
 
             if (move != null) {
                 enableMoveInteraction(token, move);
+            } else {
+                TargetPiece target = targetableAction(snapshot, piece);
+                if (target != null) {
+                    enableTargetInteraction(token, target);
+                }
             }
 
             piecePane.getChildren().add(token);
@@ -163,8 +169,20 @@ public class BoardViewController {
         return snapshot.decision().availableActions().stream()
                 .filter(MovePiece.class::isInstance)
                 .map(MovePiece.class::cast)
-                .filter(move -> move.startingTile() == piece.tile())
+                .filter(move -> move.startTile() == piece.tile())
                 .findFirst().orElse(null);
+    }
+
+    private TargetPiece targetableAction(GameSnapshot snapshot, PieceInfo piece) {
+        if (snapshot.decision() == null) {
+            return null;
+        }
+        return snapshot.decision().availableActions().stream()
+                .filter(TargetPiece.class::isInstance)
+                .map(TargetPiece.class::cast)
+                .filter(target -> target.targetPlayer() == piece.color() && target.targetTile() == piece.tile())
+                .findFirst()
+                .orElse(null);
     }
 
     private void enableMoveInteraction(Circle token, MovePiece move) {
@@ -173,6 +191,13 @@ public class BoardViewController {
         token.setOnMouseExited(
                 event -> token.setEffect(selectedMove != move ? null : new DropShadow(14, Color.ORANGE)));
         token.setOnMouseClicked(event -> selectOrSubmit(token, move));
+    }
+
+    private void enableTargetInteraction(Circle token, TargetPiece target) {
+        token.setCursor(Cursor.HAND);
+        token.setOnMouseEntered(event -> token.setEffect(new DropShadow(12, Color.GOLD)));
+        token.setOnMouseExited(event -> token.setEffect(null));
+        token.setOnMouseClicked(event -> viewModel.submit(target));
     }
 
     private void selectOrSubmit(Circle token, MovePiece move) {

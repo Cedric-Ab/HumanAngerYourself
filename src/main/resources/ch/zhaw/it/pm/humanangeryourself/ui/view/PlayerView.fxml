@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" prefHeight="790.0" prefWidth="420.0" spacing="55.0"
+<VBox alignment="TOP_CENTER" prefHeight="790.0" prefWidth="420.0" spacing="28.0"
       xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="ch.zhaw.it.pm.humanangeryourself.ui.view.PlayerViewController">
     <children>
@@ -31,7 +31,7 @@
                 <HBox fx:id="cardsBox" alignment="CENTER" spacing="8.0" BorderPane.alignment="CENTER" />
             </center>
         </BorderPane>
-        <VBox alignment="CENTER" spacing="35.0">
+        <VBox alignment="CENTER" spacing="20.0">
             <children>
                 <StackPane prefHeight="55.0" prefWidth="420.0" style="-fx-border-color: black; -fx-border-width: 2;">
                     <children>
@@ -51,9 +51,7 @@
                     </children>
                 </HBox>
             </children>
-            <VBox.margin>
-                <Insets top="100.0" />
-            </VBox.margin>
         </VBox>
+        <VBox fx:id="additionalActionsBox" alignment="CENTER" prefWidth="420.0" spacing="8.0" />
     </children>
 </VBox>
