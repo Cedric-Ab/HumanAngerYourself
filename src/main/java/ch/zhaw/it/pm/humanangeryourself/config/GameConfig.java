@@ -11,15 +11,37 @@ import java.util.Objects;
  * Immutable game settings that control the economy and the card limits.
  */
 public class GameConfig {
+    /** The single instance, {@code null} until the configuration is initialized. */
     private static GameConfig instance;
 
+    /** Money each player starts with. */
     private final long startMoney;
+
+    /** Maximum debt before an auction is triggered. */
     private final long debtLimit;
+
+    /** Maximum number of cards a player can hold. */
     private final int maxHandSize;
+
+    /** Maximum number of properties per board quarter. */
     private final int maxPropertiesPerQuarter;
+
+    /** Gambling settings. */
     private final GamblingConfig gambling;
+
+    /** Price and rent of each property size. */
     private final Map<PropertySize, PropertyPrice> propertyPrices;
 
+    /**
+     * Creates a configuration from already validated values.
+     *
+     * @param startMoney              money each player starts with
+     * @param debtLimit               maximum debt before an auction is triggered
+     * @param maxHandSize             maximum number of cards a player can hold
+     * @param maxPropertiesPerQuarter maximum number of properties per board quarter
+     * @param gambling                gambling settings
+     * @param propertyPrices          price and rent per property size, copied defensively
+     */
     private GameConfig(
             long startMoney,
             long debtLimit,
@@ -43,6 +65,7 @@ public class GameConfig {
      * @param maxHandSize             maximum number of cards a player can hold
      * @param maxPropertiesPerQuarter maximum number of properties per board quarter
      * @param gambling                gambling settings
+     * @param propertyPrices          price and rent per property size
      * @return the newly created instance
      * @throws IllegalStateException    if an instance has already been initialized
      * @throws IllegalArgumentException if a value is negative or a limit is below 1
@@ -70,9 +93,11 @@ public class GameConfig {
     }
 
     /**
-     * Creates a configuration with the default values.
+     * Initializes the configuration with the default values. Like {@link #initialize}, this
+     * sets the singleton instance, so it can only be called once.
      *
-     * @return a new {@code GameConfig} with default values.
+     * @return the newly created {@code GameConfig} with default values
+     * @throws IllegalStateException if an instance has already been initialized
      */
     public static GameConfig initializeDefaults() {
         Map<PropertySize, PropertyPrice> propertyDefaults = Map.of(
@@ -95,26 +120,56 @@ public class GameConfig {
         return instance;
     }
 
+    /**
+     * Returns the money each player starts with.
+     *
+     * @return the start money
+     */
     public long startMoney() {
         return startMoney;
     }
 
+    /**
+     * Returns the maximum debt a player can have before an auction is triggered.
+     *
+     * @return the debt limit
+     */
     public long debtLimit() {
         return debtLimit;
     }
 
+    /**
+     * Returns the maximum number of cards a player can hold.
+     *
+     * @return the maximum hand size
+     */
     public int maxHandSize() {
         return maxHandSize;
     }
 
+    /**
+     * Returns the maximum number of properties per board quarter.
+     *
+     * @return the maximum number of properties per quarter
+     */
     public int maxPropertiesPerQuarter() {
         return maxPropertiesPerQuarter;
     }
 
+    /**
+     * Returns the gambling settings.
+     *
+     * @return the gambling configuration
+     */
     public GamblingConfig gambling() {
         return gambling;
     }
 
+    /**
+     * Returns the price and rent of each property size.
+     *
+     * @return an unmodifiable map from property size to its price and rent
+     */
     public Map<PropertySize, PropertyPrice> propertyPrices() {
         return propertyPrices;
     }

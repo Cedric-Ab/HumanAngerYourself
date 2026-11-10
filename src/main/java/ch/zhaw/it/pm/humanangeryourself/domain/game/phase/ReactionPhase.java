@@ -6,6 +6,11 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Game phase in which players can react to a played card, for example by countering it
+ * (see {@link ch.zhaw.it.pm.humanangeryourself.api.CardType#isCounterable()}).
+ * After the reactions, the game continues with the next phase.
+ */
 public class ReactionPhase extends NonFlowGamePhase {
     /**
      * Creates a new instance of a game phase associated with the specified game.
@@ -17,11 +22,23 @@ public class ReactionPhase extends NonFlowGamePhase {
         super(game, nextPhase);
     }
 
+    /**
+     * Offers the players the possible reactions. Not implemented yet.
+     *
+     * @return the phase to continue with
+     */
     @Override
     public @NotNull GamePhase process() {
         return null;
     }
 
+    /**
+     * Handles a player's reaction. Not implemented yet.
+     *
+     * @param player the player who made the decision
+     * @param action the chosen action
+     * @return the phase to continue with
+     */
     @Override
     public @NotNull GamePhase handle(Player player, Action action) {
         return null;

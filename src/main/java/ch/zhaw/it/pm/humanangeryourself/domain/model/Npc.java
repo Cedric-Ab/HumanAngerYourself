@@ -9,7 +9,10 @@ import java.util.Objects;
  * A non-player character on the board that sells action cards.
  */
 public class Npc {
+    /** Name of the NPC. */
     private final String name;
+
+    /** Cards this NPC sells, with their prices. */
     private final List<CardOffer> offers;
 
     /**
@@ -33,6 +36,11 @@ public class Npc {
         return offers;
     }
 
+    /**
+     * Returns the name of the NPC.
+     *
+     * @return the NPC's name, never {@code null}
+     */
     public String getName() {
         return name;
     }

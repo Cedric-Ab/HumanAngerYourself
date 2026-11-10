@@ -6,7 +6,10 @@ import java.util.Objects;
  * A piece of a player. Every piece starts on its own home tile.
  */
 public class Piece {
+    /** Tile the piece starts on and returns to when it is sent home. */
     private final Tile homeTile;
+
+    /** Tile the piece currently stands on. */
     private Tile currentTile;
 
     /**
@@ -37,10 +40,20 @@ public class Piece {
         currentTile = homeTile;
     }
 
+    /**
+     * Returns the tile the piece currently stands on.
+     *
+     * @return the current tile, never {@code null}
+     */
     public Tile getCurrentTile() {
         return currentTile;
     }
 
+    /**
+     * Returns the home tile of the piece.
+     *
+     * @return the home tile, never {@code null}
+     */
     public Tile getHomeTile() {
         return homeTile;
     }

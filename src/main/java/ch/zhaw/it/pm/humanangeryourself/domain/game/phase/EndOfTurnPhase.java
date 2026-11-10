@@ -12,6 +12,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Game phase at the end of a turn. The current player can buy cards and properties
+ * and then end the turn, which starts the {@link StartOfTurnPhase} of the next player.
+ */
 public class EndOfTurnPhase extends GamePhaseBase {
     /**
      * Creates a new instance of a game phase associated with the specified game.
@@ -22,6 +26,12 @@ public class EndOfTurnPhase extends GamePhaseBase {
         super(game);
     }
 
+    /**
+     * Offers the current player to end the turn, together with all cards and properties
+     * the player can currently buy.
+     *
+     * @return this phase, as it waits for the player's decision
+     */
     @Override
     public @NotNull GamePhase process() {
         List<BuyCard> buyCardList = getGame().getEconomy()
@@ -39,6 +49,14 @@ public class EndOfTurnPhase extends GamePhaseBase {
         return this;
     }
 
+    /**
+     * Handles the player's choice: ending the turn or buying a card or property.
+     *
+     * @param player the player who made the decision
+     * @param action the chosen action: {@link EndTurn}, {@link BuyCard} or {@link BuyProperty}
+     * @return a {@link StartOfTurnPhase} after ending the turn, otherwise this phase again
+     * @throws RuntimeException if the action is of an unexpected type
+     */
     @Override
     public @NotNull GamePhase handle(Player player, Action action) {
         validatePlayer(player);
@@ -52,6 +70,11 @@ public class EndOfTurnPhase extends GamePhaseBase {
         };
     }
 
+    /**
+     * Ends the current turn and passes the turn to the next player.
+     *
+     * @return the {@link StartOfTurnPhase} of the next player
+     */
     private GamePhase endTurn() {
         // TODO: paying rent: low priority
         // TODO: auction: lowest priority
@@ -60,11 +83,25 @@ public class EndOfTurnPhase extends GamePhaseBase {
         return new StartOfTurnPhase(getGame());
     }
 
+    /**
+     * Buys a card for the player. Not implemented yet, the phase is only offered again.
+     *
+     * @param player  the player who buys the card
+     * @param buyCard the chosen purchase
+     * @return this phase with an updated decision
+     */
     private GamePhase buyCard(Player player, BuyCard buyCard) {
         // TODO: medium priority
         return process();
     }
 
+    /**
+     * Buys a property for the player. Not implemented yet, the phase is only offered again.
+     *
+     * @param player      the player who buys the property
+     * @param buyProperty the chosen purchase
+     * @return this phase with an updated decision
+     */
     private GamePhase buyProperty(Player player, BuyProperty buyProperty) {
         // TODO: low priority
         return process();

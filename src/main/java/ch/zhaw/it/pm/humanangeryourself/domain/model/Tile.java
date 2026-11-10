@@ -51,9 +51,9 @@ public class Tile {
 
     /**
      * Creates all tiles of the board, matching BoardView.fxml.
+     *
      * @return unmodifiable list of all tiles, the track in moving direction
      */
-    @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:MagicNumber"})
     public static List<Tile> createAll() {
         return List.of(
                 // Main track 1 - 60, counter-clockwise
@@ -210,22 +210,47 @@ public class Tile {
         return property != null && property.getOwner().isEmpty();
     }
 
+    /**
+     * Returns the unique id of the tile.
+     *
+     * @return the tile id
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Returns the type of the tile.
+     *
+     * @return the tile type, never {@code null}
+     */
     public TileType getType() {
         return type;
     }
 
+    /**
+     * Returns the board quarter the tile belongs to.
+     *
+     * @return the quarter (0 to 3), or -1 if the tile belongs to no quarter
+     */
     public int getQuarter() {
         return quarter;
     }
 
+    /**
+     * Returns the property on this tile.
+     *
+     * @return the property, or an empty Optional if there is none
+     */
     public Optional<Property> getProperty() {
         return Optional.ofNullable(property);
     }
 
+    /**
+     * Returns the NPC on this tile.
+     *
+     * @return the NPC, or an empty Optional if there is none
+     */
     public Optional<Npc> getNpc() {
         return Optional.ofNullable(npc);
     }

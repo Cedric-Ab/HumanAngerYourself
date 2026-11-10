@@ -10,7 +10,12 @@ import ch.zhaw.it.pm.humanangeryourself.ui.view.MainViewLoader;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+/**
+ * JavaFX application of the game "Human Anger Yourself".
+ * It wires up the game controller, the service and the view model and opens the main window.
+ */
 public class HumanAngerYourselfGame extends Application {
+    /** Loader of the main game screen, created in {@link #start(Stage)}. */
     private MainViewLoader mainViewLoader;
 
     /**
@@ -19,6 +24,11 @@ public class HumanAngerYourselfGame extends Application {
     public HumanAngerYourselfGame() {
     }
 
+    /**
+     * Entry point of the application. Launches the JavaFX application.
+     *
+     * @param args command line arguments, not used
+     */
     public static void main(String[] args) {
         Application.launch(HumanAngerYourselfGame.class);
     }
@@ -40,6 +50,11 @@ public class HumanAngerYourselfGame extends Application {
         primaryStage.setTitle("Human Anger Yourself");
     }
 
+    /**
+     * Shows the main game screen on the given stage.
+     *
+     * @param stage the stage to show the main screen on
+     */
     private void openMainWindow(Stage stage) {
         stage.setScene(mainViewLoader.getScene());
         stage.show();

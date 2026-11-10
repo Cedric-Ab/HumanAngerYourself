@@ -97,22 +97,47 @@ public class Player {
                 .findFirst();
     }
 
+    /**
+     * Returns the name of the player.
+     *
+     * @return the player's name, never {@code null}
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the color of the player.
+     *
+     * @return the player's color, never {@code null}
+     */
     public PlayerColor getColor() {
         return color;
     }
 
+    /**
+     * Returns the player's current money. The value is negative if the player is in debt.
+     *
+     * @return the current balance
+     */
     public long getMoney() {
         return money;
     }
 
+    /**
+     * Returns the action cards the player currently holds. A card type appears once per held card.
+     *
+     * @return an unmodifiable copy of the player's cards
+     */
     public List<CardType> getCards() {
         return List.copyOf(cards);
     }
 
+    /**
+     * Returns all pieces of the player.
+     *
+     * @return an unmodifiable copy of the player's pieces
+     */
     public List<Piece> getPieces() {
         return List.copyOf(pieces);
     }
