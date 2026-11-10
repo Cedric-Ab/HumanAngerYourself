@@ -2,13 +2,11 @@
 
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.shape.*?>
-<?import javafx.scene.text.Text?>
-<StackPane prefHeight="790" prefWidth="790" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+<StackPane fx:id="boardRoot" prefHeight="790" prefWidth="790" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="ch.zhaw.it.pm.humanangeryourself.ui.view.BoardViewController">
 
-  <Pane fx:id="boardPane">
+  <Pane fx:id="boardPane" prefHeight="790" prefWidth="790">
 
 
     <!-- ================================================= -->
@@ -324,6 +322,7 @@
     <!-- Shared finish in the centre, domain id 100 -->
     <Rectangle fx:id="finishArea" arcHeight="10.0" arcWidth="10.0" fill="SADDLEBROWN" height="110.0"
                stroke="SADDLEBROWN" strokeWidth="4" width="110.0" x="340.0" y="340.0"/>
+    <Pane fx:id="piecePane" mouseTransparent="false" pickOnBounds="false" prefHeight="790" prefWidth="790" />
   </Pane>
 
 </StackPane>
