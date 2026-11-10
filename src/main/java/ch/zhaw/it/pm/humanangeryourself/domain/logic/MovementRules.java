@@ -46,16 +46,6 @@ public class MovementRules {
     }
 
     /**
-     * Checks whether a move is legal according to the game rules.
-     *
-     * @return {@code true} if the move is legal, otherwise {@code false}
-     */
-    //TODO take this out?
-    public boolean legalMove() {
-        return false;
-    }
-
-    /**
      * Simulates a six-sided die roll.
      *
      * @return a random number between 1 and 6
