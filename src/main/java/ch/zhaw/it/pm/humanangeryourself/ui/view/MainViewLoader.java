@@ -33,6 +33,7 @@ public class MainViewLoader {
             FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(FXML_NAME)));
             Pane rootNode = loader.load();
             controller = loader.getController();
+            controller.setViewModel(viewModel);
             scene = new Scene(rootNode);
         } catch (IOException e) {
             throw new IllegalStateException("Unable to load the main game view.", e);
