@@ -37,6 +37,9 @@ public class ChooseMovePhase extends GamePhaseBase {
         int roll = getGame().getMovementRules().rollDie();
 
         List<MovePiece> possibleMoves = getGame().getMovementRules().getPossibleMoves(getCurrentPlayer(), roll);
+        if (possibleMoves.isEmpty()) {
+            return new EndOfTurnPhase(getGame());
+        }
         setDecisionInfo(getCurrentPlayer(), possibleMoves);
 
         return this;

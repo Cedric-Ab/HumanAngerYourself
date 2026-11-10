@@ -2,13 +2,11 @@
 
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.shape.*?>
-<?import javafx.scene.text.Text?>
-<StackPane prefHeight="790" prefWidth="790" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+<StackPane fx:id="boardRoot" prefHeight="790" prefWidth="790" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="ch.zhaw.it.pm.humanangeryourself.ui.view.BoardViewController">
 
-  <Pane fx:id="boardPane">
+  <Pane fx:id="boardPane" prefHeight="790" prefWidth="790">
 
 
     <!-- ================================================= -->
@@ -284,46 +282,39 @@
     <!-- Red: top-left, home slots ids 101 - 104 -->
     <Rectangle fx:id="home0" arcHeight="30" arcWidth="30" fill="TRANSPARENT" height="150" stroke="RED" strokeWidth="4"
                width="150" x="40" y="40"/>
-    <Text layoutX="92" layoutY="92" text="Home" />
-    <Label alignment="CENTER" layoutX="77" layoutY="135" prefHeight="30" prefWidth="76" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 12; -fx-background-radius: 12;" text="Money" />
-    <Rectangle fx:id="tile101" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="RED" strokeWidth="2" width="30" x="49" y="100"/>
-    <Rectangle fx:id="tile102" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="RED" strokeWidth="2" width="30" x="84" y="100"/>
-    <Rectangle fx:id="tile103" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="RED" strokeWidth="2" width="30" x="119" y="100"/>
-    <Rectangle fx:id="tile104" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="RED" strokeWidth="2" width="30" x="154" y="100"/>
+    <Rectangle fx:id="tile101" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="RED" strokeWidth="2" width="30" x="70" y="90"/>
+    <Rectangle fx:id="tile102" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="RED" strokeWidth="2" width="30" x="135" y="90"/>
+    <Rectangle fx:id="tile103" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="RED" strokeWidth="2" width="30" x="70" y="140"/>
+    <Rectangle fx:id="tile104" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="RED" strokeWidth="2" width="30" x="135" y="140"/>
 
     <!-- Yellow: bottom-left, home slots ids 201 - 204 -->
     <Rectangle fx:id="home1" arcHeight="30" arcWidth="30" fill="TRANSPARENT" height="150" stroke="YELLOW"
                strokeWidth="4" width="150" x="40" y="600"/>
-    <Text layoutX="92" layoutY="652" text="Home" />
-    <Label alignment="CENTER" layoutX="77" layoutY="695" prefHeight="30" prefWidth="76" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 12; -fx-background-radius: 12;" text="Money" />
-    <Rectangle fx:id="tile201" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="YELLOW" strokeWidth="2" width="30" x="49" y="660"/>
-    <Rectangle fx:id="tile202" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="YELLOW" strokeWidth="2" width="30" x="84" y="660"/>
-    <Rectangle fx:id="tile203" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="YELLOW" strokeWidth="2" width="30" x="119" y="660"/>
-    <Rectangle fx:id="tile204" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="YELLOW" strokeWidth="2" width="30" x="154" y="660"/>
+    <Rectangle fx:id="tile201" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="YELLOW" strokeWidth="2" width="30" x="70" y="650"/>
+    <Rectangle fx:id="tile202" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="YELLOW" strokeWidth="2" width="30" x="135" y="650"/>
+    <Rectangle fx:id="tile203" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="YELLOW" strokeWidth="2" width="30" x="70" y="700"/>
+    <Rectangle fx:id="tile204" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="YELLOW" strokeWidth="2" width="30" x="135" y="700"/>
 
     <!-- Green: top-right, home slots ids 401 - 404 -->
     <Rectangle fx:id="home2" arcHeight="30" arcWidth="30" fill="TRANSPARENT" height="150" stroke="LIMEGREEN"
                strokeWidth="4" width="150" x="600" y="40"/>
-    <Text layoutX="652" layoutY="92" text="Home" />
-    <Label alignment="CENTER" layoutX="637" layoutY="135" prefHeight="30" prefWidth="76" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 12; -fx-background-radius: 12;" text="Money" />
-    <Rectangle fx:id="tile401" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="LIMEGREEN" strokeWidth="2" width="30" x="609" y="100"/>
-    <Rectangle fx:id="tile402" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="LIMEGREEN" strokeWidth="2" width="30" x="644" y="100"/>
-    <Rectangle fx:id="tile403" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="LIMEGREEN" strokeWidth="2" width="30" x="679" y="100"/>
-    <Rectangle fx:id="tile404" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="LIMEGREEN" strokeWidth="2" width="30" x="714" y="100"/>
+    <Rectangle fx:id="tile401" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="LIMEGREEN" strokeWidth="2" width="30" x="630" y="90"/>
+    <Rectangle fx:id="tile402" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="LIMEGREEN" strokeWidth="2" width="30" x="695" y="90"/>
+    <Rectangle fx:id="tile403" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="LIMEGREEN" strokeWidth="2" width="30" x="630" y="140"/>
+    <Rectangle fx:id="tile404" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="LIMEGREEN" strokeWidth="2" width="30" x="695" y="140"/>
 
     <!-- Blue: bottom-right, home slots ids 301 - 304 -->
     <Rectangle fx:id="home3" arcHeight="30" arcWidth="30" fill="TRANSPARENT" height="150" stroke="DODGERBLUE"
                strokeWidth="4" width="150" x="600" y="600"/>
-    <Text layoutX="652" layoutY="652" text="Home" />
-    <Label alignment="CENTER" layoutX="637" layoutY="695" prefHeight="30" prefWidth="76" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 12; -fx-background-radius: 12;" text="Money" />
-    <Rectangle fx:id="tile301" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="DODGERBLUE" strokeWidth="2" width="30" x="609" y="660"/>
-    <Rectangle fx:id="tile302" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="DODGERBLUE" strokeWidth="2" width="30" x="644" y="660"/>
-    <Rectangle fx:id="tile303" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="DODGERBLUE" strokeWidth="2" width="30" x="679" y="660"/>
-    <Rectangle fx:id="tile304" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="DODGERBLUE" strokeWidth="2" width="30" x="714" y="660"/>
+    <Rectangle fx:id="tile301" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="DODGERBLUE" strokeWidth="2" width="30" x="630" y="650"/>
+    <Rectangle fx:id="tile302" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="DODGERBLUE" strokeWidth="2" width="30" x="695" y="650"/>
+    <Rectangle fx:id="tile303" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="DODGERBLUE" strokeWidth="2" width="30" x="630" y="700"/>
+    <Rectangle fx:id="tile304" arcHeight="10" arcWidth="10" fill="WHITE" height="30" stroke="DODGERBLUE" strokeWidth="2" width="30" x="695" y="700"/>
 
     <!-- Shared finish in the centre, domain id 100 -->
     <Rectangle fx:id="finishArea" arcHeight="10.0" arcWidth="10.0" fill="SADDLEBROWN" height="110.0"
                stroke="SADDLEBROWN" strokeWidth="4" width="110.0" x="340.0" y="340.0"/>
+    <Pane fx:id="piecePane" mouseTransparent="false" pickOnBounds="false" prefHeight="790" prefWidth="790" />
   </Pane>
 
 </StackPane>
