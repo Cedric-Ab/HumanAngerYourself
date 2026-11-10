@@ -11,7 +11,10 @@ import java.util.Optional;
  * A property that can be bought by a player. Price and rent depend on its {@link PropertySize}.
  */
 public class Property {
+    /** Size of the property, which determines its price and rent. */
     private final PropertySize size;
+
+    /** Current owner, or {@code null} if nobody owns the property. */
     private Player owner;
 
     /**
@@ -44,6 +47,14 @@ public class Property {
         return priceOf(config).rent();
     }
 
+    /**
+     * Looks up the price entry for this property's size in the given configuration.
+     *
+     * @param config game configuration that contains the prices
+     * @return the price entry for this property's size
+     * @throws NullPointerException  if {@code config} is {@code null}
+     * @throws IllegalStateException if no price is configured for this property's size
+     */
     private PropertyPrice priceOf(GameConfig config) {
         Objects.requireNonNull(config, "config must not be null");
         PropertyPrice price = config.propertyPrices().get(size);
@@ -53,10 +64,20 @@ public class Property {
         return price;
     }
 
+    /**
+     * Returns the size of this property.
+     *
+     * @return the property size, never {@code null}
+     */
     public PropertySize getSize() {
         return size;
     }
 
+    /**
+     * Returns the owner of this property.
+     *
+     * @return the owner, or an empty Optional if nobody owns the property
+     */
     public Optional<Player> getOwner() {
         return Optional.ofNullable(owner);
     }

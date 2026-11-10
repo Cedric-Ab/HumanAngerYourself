@@ -4,6 +4,8 @@ package ch.zhaw.it.pm.humanangeryourself.api.action;
  * Thrown when an action is submitted that is not allowed in the current game state.
  */
 public class InvalidActionException extends RuntimeException {
+
+    /** The action that was rejected. */
     private final Action action;
 
     /**

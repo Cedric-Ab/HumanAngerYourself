@@ -16,16 +16,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Local (hotseat) implementation of {@link GameService}.
- * <p>
  * Acts as an adapter between the UI and the domain.
- * <p>
  * <ul>
  *     <li>the UI only knows the {@link GameService} interface</li>
  *     <li>this class translates its calls to the {@link GameController}</li>
  *     <li>in the other direction it observes the controller and forwards every
  *          change as a {@link GameSnapshot} to all registered {@link GameListener}</li>
  * </ul>
- * <p>
  */
 public class LocalGameService implements GameService, GameObserver {
 

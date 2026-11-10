@@ -15,13 +15,22 @@ import java.util.Objects;
  * Represents a game of Human Anger Yourself, containing the board, players, and the current turn.
  */
 public class Game {
+    /** Rules for moving pieces. */
     private final MovementRules movementRules;
+
+    /** Rules for gambling. */
     private final GamblingRules gamblingRules;
+
+    /** Rules for buying, rent and bankruptcy. */
     private final Economy economy;
 
+    /** The board the game is played on. */
     private final Board board;
+
+    /** The players of the game, in turn order. */
     private final List<Player> players;
 
+    /** The current turn, which tells whose turn it is. */
     private Turn turn;
 
     /**
@@ -68,7 +77,6 @@ public class Game {
     public Game(Board board, List<Player> players) {
         this(new MovementRules(board), new GamblingRules(), new Economy(), board, players);
     }
-
 
     /**
      * Returns the movement rules of the game.

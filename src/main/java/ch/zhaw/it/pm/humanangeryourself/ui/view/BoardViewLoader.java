@@ -28,10 +28,19 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+/**
+ * Loads the board view from {@value #FXML_NAME} and scales it to a desired size.
+ * <p>
+ * The FXML file is designed for a fixed size. Before it is loaded, all size and position
+ * attributes in the file are multiplied by a scaling factor so that the root pane matches
+ * the requested size. After loading, the controller and the scene are available through
+ * {@link #getController()} and {@link #getScene()}.
+ */
 public class BoardViewLoader {
+    /** Name of the FXML file, located next to this class. */
     private static final String FXML_NAME = "BoardView.fxml";
 
-    // Attributes whose numeric values should be multiplied
+    /** Names of the FXML attributes whose numeric values are multiplied by the scaling factor. */
     private static final Set<String> ATTRIBUTES_TO_MULTIPLY = Set.of(
             "prefHeight",
             "prefWidth",
@@ -41,11 +50,22 @@ public class BoardViewLoader {
             "y"
     );
 
+    /** Location of the FXML file, never {@code null}. */
     private final URL fxmlResource = Objects.requireNonNull(getClass().getResource(FXML_NAME));
 
+    /** Controller created by the {@link FXMLLoader}. */
     private BoardViewController controller;
+
+    /** Scene containing the loaded board view. */
     private Scene scene;
 
+    /**
+     * Scales the board view FXML file to the desired size and loads it.
+     *
+     * @param desiredSize desired width of the board view in pixels, which is the
+     *                    {@code prefWidth} of the root pane after scaling
+     * @throws RuntimeException if the FXML file cannot be scaled or loaded
+     */
     public BoardViewLoader(int desiredSize) {
         try {
             scaleFxml(desiredSize, fxmlResourceAsPath());
@@ -56,6 +76,16 @@ public class BoardViewLoader {
         load();
     }
 
+    /**
+     * Scales all size and position attributes of the FXML file at the given path and writes the
+     * result back to the same file. The scaling factor is the desired size divided by the
+     * {@code prefWidth} of the root pane. If the factor is 1, the file is left untouched.
+     *
+     * @param desiredSize desired width of the root pane in pixels
+     * @param path        path of the FXML file to scale, which is overwritten
+     * @throws RuntimeException if the root element is not a {@code StackPane}
+     * @throws Exception        if the file cannot be read, parsed or written
+     */
     private static void scaleFxml(int desiredSize, Path path) throws Exception {
 
         DocumentBuilderFactory factory = getDocumentBuilderFactory();
@@ -92,6 +122,13 @@ public class BoardViewLoader {
         }
     }
 
+    /**
+     * Multiplies all numeric attributes listed in {@link #ATTRIBUTES_TO_MULTIPLY} by the given
+     * factor. Attributes with other names or non-numeric values are left unchanged.
+     *
+     * @param factor     factor to multiply the values with
+     * @param attributes attributes of one XML element, modified in place
+     */
     private static void scaleAttributes(double factor, NamedNodeMap attributes) {
         for (int j = 0; j < attributes.getLength(); j++) {
             Attr attribute = (Attr) attributes.item(j);
@@ -113,6 +150,13 @@ public class BoardViewLoader {
         }
     }
 
+    /**
+     * Creates an XML parser factory that is hardened against XML external entity (XXE) attacks.
+     * Document type declarations, external entities and XInclude are all disabled.
+     *
+     * @return the configured factory
+     * @throws ParserConfigurationException if the parser does not support one of the security features
+     */
     private static @NotNull DocumentBuilderFactory getDocumentBuilderFactory() throws ParserConfigurationException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
@@ -131,6 +175,12 @@ public class BoardViewLoader {
         return factory;
     }
 
+    /**
+     * Creates a transformer that writes an XML document as indented UTF-8.
+     *
+     * @return the configured transformer
+     * @throws TransformerConfigurationException if the transformer cannot be created
+     */
     private static @NotNull Transformer getTransformer() throws TransformerConfigurationException {
         Transformer transformer =
                 TransformerFactory.newInstance().newTransformer();
@@ -142,6 +192,12 @@ public class BoardViewLoader {
         return transformer;
     }
 
+    /**
+     * Converts the URL of the FXML resource to a file system path.
+     *
+     * @return the path of the FXML file
+     * @throws RuntimeException if the URL is not a valid URI
+     */
     private Path fxmlResourceAsPath() {
         try {
             return Path.of(Objects.requireNonNull(fxmlResource).toURI());
@@ -150,6 +206,11 @@ public class BoardViewLoader {
         }
     }
 
+    /**
+     * Loads the FXML file and stores the resulting controller and scene.
+     *
+     * @throws RuntimeException if the FXML file cannot be loaded
+     */
     private void load() {
         try {
             FXMLLoader loader = new FXMLLoader(fxmlResource);
@@ -162,10 +223,20 @@ public class BoardViewLoader {
         }
     }
 
+    /**
+     * Returns the controller of the loaded board view.
+     *
+     * @return the board view controller
+     */
     public BoardViewController getController() {
         return controller;
     }
 
+    /**
+     * Returns the scene containing the loaded board view.
+     *
+     * @return the scene with the scaled board view
+     */
     public Scene getScene() {
         return scene;
     }

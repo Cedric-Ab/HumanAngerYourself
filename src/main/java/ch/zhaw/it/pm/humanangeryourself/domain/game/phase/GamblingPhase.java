@@ -7,6 +7,10 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Game phase in which the current player gambles. Depending on the gambling settings, the player
+ * wins or loses money or receives a card. Not implemented yet.
+ */
 public class GamblingPhase extends GamePhaseBase {
     /**
      * Creates a new instance of a game phase associated with the specified game.
@@ -17,6 +21,11 @@ public class GamblingPhase extends GamePhaseBase {
         super(game);
     }
 
+    /**
+     * Carries out the gamble for the current player. Not implemented yet.
+     *
+     * @return the phase to continue with
+     */
     @Override
     public @NotNull GamePhase process() {
         // TODO: update when gambling can yield action cards
@@ -29,6 +38,13 @@ public class GamblingPhase extends GamePhaseBase {
         return new EndOfTurnPhase(getGame());
     }
 
+    /**
+     * Handles a decision of the player during gambling. Not implemented yet.
+     *
+     * @param player the player who made the decision
+     * @param action the chosen action
+     * @return the phase to continue with
+     */
     @Override
     public @NotNull GamePhase handle(Player player, Action action) {
         throw new IllegalCallerException("GamblingPhase cannot handle player input");
