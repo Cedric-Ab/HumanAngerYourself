@@ -47,7 +47,7 @@ public class ChooseMovePhase extends GamePhaseBase {
 
         piece.moveTo(endTile);
 
-        List<Piece> piecesToSendBackHome = getGame().getMovementRules().piecesToSendBackHome(piece, player);
+        List<Piece> piecesToSendBackHome = getGame().getMovementRules().piecesToSendBackHome(piece);
         piecesToSendBackHome.forEach(Piece::sendHome);
 
         return new EndOfTurnPhase(getGame());
