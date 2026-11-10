@@ -47,7 +47,7 @@ public final class SnapshotFactory {
         Board board = game.getBoard();
         List<Player> players = game.getPlayers();
 
-        PlayerColor currentPlayer = null; // TODO, maybe from game.getTurn().getPlayer().getColor()?
+        PlayerColor currentPlayer = game.getTurn().getPlayer().getColor();
         List<PlayerInfo> playerInfos = toPlayerInfos(players);
         List<PieceInfo> pieceInfos = toPieceInfos(players);
         List<PropertyInfo> propertyInfos = toPropertyInfos(board);
