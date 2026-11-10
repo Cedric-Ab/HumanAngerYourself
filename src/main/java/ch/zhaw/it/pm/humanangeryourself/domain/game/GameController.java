@@ -79,9 +79,7 @@ public class GameController {
      * @return the current decision information
      */
     public DecisionInfo getDecision() {
-        // TODO implement correctly
-        return new DecisionInfo(PlayerColor.BLUE, new ArrayList<>());
-        // return currentPhase.getDecision();
+        return currentPhase.getDecision();
     }
 
     /**
