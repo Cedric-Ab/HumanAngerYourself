@@ -8,27 +8,27 @@ package ch.zhaw.it.pm.humanangeryourself.api;
  */
 public enum CardType {
     /**
-     * Doubles the effect of the player's next move or roll. Can be countered.
+     * The player’s debt is doubled and passed to the next player in clockwise order. The player’s balance is set to zero.
      */
     DOUBLE_IT(false, false, true),
     /**
-     * Lets the player roll again.
+     * Gambling is guaranteed to result in an action card.
      */
     TRY_AGAIN(false, false, false),
     /**
-     * Gives the player extra money.
+     * Gambling is guaranteed to result in a payout. The payout from gambling is doubled.
      */
     MONEY_TIGER(false, false, false),
     /**
-     * Reverses the direction of an attack. Can be countered.
+     * Counters Double It, Switch or another Anger Reverse. Can be countered.
      */
     ANGER_REVERSE(false, false, true),
     /**
-     * Gives the player a movement bonus.
+     * Doubles the number rolled for the next movement.
      */
     SPEED_BOOST(false, false, false),
     /**
-     * Swaps positions with a piece of another player, who has to be chosen as target. Can be countered.
+     * Swaps the position of one of the player’s pieces with a piece of another player. Can be countered.
      */
     SWITCH(false, true, true),
     /**
@@ -36,7 +36,7 @@ public enum CardType {
      */
     JACKPOT(true, false, false),
     /**
-     * Makes the player lose money.
+     * The player pays money. Takes effect instantly when drawn.
      */
     CHARITY(false, false, false);
 
