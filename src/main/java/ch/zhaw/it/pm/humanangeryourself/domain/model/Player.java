@@ -116,8 +116,4 @@ public class Player {
     public List<Piece> getPieces() {
         return List.copyOf(pieces);
     }
-
-    public Piece getPiece(Tile tile) {
-        return null;
-    }
 }

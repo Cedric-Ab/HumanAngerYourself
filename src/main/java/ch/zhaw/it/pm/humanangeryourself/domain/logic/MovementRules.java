@@ -1,14 +1,14 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.logic;
 
 import ch.zhaw.it.pm.humanangeryourself.api.action.MovePiece;
-import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import java.util.List;
-import java.util.Optional;
 
 public class MovementRules {
+
+    public int rollDie() { return 4; }
 
     public boolean legalMove() {
         return false;

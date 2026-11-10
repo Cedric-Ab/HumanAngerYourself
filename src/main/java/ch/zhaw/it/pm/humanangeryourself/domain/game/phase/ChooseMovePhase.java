@@ -23,7 +23,7 @@ public class ChooseMovePhase extends GamePhaseBase {
 
     @Override
     public @NotNull GamePhase process() {
-        int roll = getGame().getGamblingRules().rollDie();
+        int roll = getGame().getMovementRules().rollDie();
 
         List<MovePiece> possibleMoves = getGame().getMovementRules().getPossibleMoves(getCurrentPlayer(), roll);
         setDecisionInfo(getCurrentPlayer(), possibleMoves);
@@ -43,7 +43,7 @@ public class ChooseMovePhase extends GamePhaseBase {
         Tile startTile = getGame().getBoard().getTileById(startTileID);
         Tile endTile = getGame().getBoard().getTileById(targetTileID);
 
-        Piece piece = player.getPiece(startTile);
+        Piece piece = player.getPiece(startTile).orElseThrow();
 
         piece.moveTo(endTile);
 
