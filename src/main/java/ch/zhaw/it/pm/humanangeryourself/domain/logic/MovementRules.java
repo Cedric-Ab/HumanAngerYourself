@@ -4,7 +4,6 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.MovePiece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
-import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.TileType;
 
 import java.util.ArrayList;
@@ -20,21 +19,21 @@ import java.util.Random;
  * be sent back home.
  */
 public class MovementRules {
-    private static final int START_RED_TILE_ID = 13;
-    private static final int START_GREEN_TILE_ID = 58;
-    private static final int START_BLUE_TILE_ID = 43;
-    private static final int START_YELLOW_TILE_ID = 28;
+    private static final int START_RED_TILE_ID = 1;
+    private static final int START_GREEN_TILE_ID = 46;
+    private static final int START_BLUE_TILE_ID = 31;
+    private static final int START_YELLOW_TILE_ID = 16;
 
-    private static final int END_RED_TILE_ID = 59;
-    private static final int END_GREEN_TILE_ID = 44;
-    private static final int END_BLUE_TILE_ID = 29;
-    private static final int END_YELLOW_TILE_ID = 14;
+    private static final int END_RED_TILE_ID = 60;
+    private static final int END_GREEN_TILE_ID = 45;
+    private static final int END_BLUE_TILE_ID = 30;
+    private static final int END_YELLOW_TILE_ID = 15;
 
     private static final int FINISH_AREA_ID = 100;
 
+
     private static final Random RANDOM = new Random();
     private final Board board;
-    private Tile tile;
 
     /**
      * Creates a new instance of the movement rules.
@@ -57,8 +56,10 @@ public class MovementRules {
     /**
      * Determines which pieces must be sent back home when the given piece
      * lands on its destination tile.
+     *
      * <p>
-     * Pieces on safe tiles cannot be sent back home.
+     * Pieces on safe tiles cannot be sent back home. The identification of
+     * opponent pieces on the destination tile is not yet implemented.
      *
      * @param pieceMoved the piece that has just moved
      * @return a list of pieces that must be sent back home
@@ -69,15 +70,21 @@ public class MovementRules {
             return Collections.emptyList();
         } else {
             // TODO: Find all opponent pieces occupying the destination tile.
-            }
+        }
         return piecesToSendBackHome;
     }
 
     /**
      * Calculates all possible moves for the given player based on the die roll.
      *
+     * <p>
+     * Pieces in their home area can only enter the board when rolling a 5 or 6.
+     * Pieces on the main track can move to their colour-specific staircase
+     * when passing its endpoint. Pieces already in the staircase move towards
+     * the finish area, with excess steps causing them to move backwards.
+     *
      * @param player the player whose possible moves are calculated
-     * @param roll the result of the die roll
+     * @param roll   the result of the die roll
      * @return a list of possible move actions
      */
     public List<MovePiece> getPossibleMoves(Player player, int roll) {
@@ -90,19 +97,38 @@ public class MovementRules {
                 if (roll == 5 || roll == 6) {
                     possibleActions.add(new MovePiece(currentTile, getStartTileId(player)));
                 }
-            } else if (piece.getCurrentTile().getType() == TileType.TRACK || piece.getCurrentTile().getType() == TileType.SAFE) {
+            } else if (piece.getCurrentTile().getType() == TileType.TRACK
+                    || piece.getCurrentTile().getType() == TileType.SAFE) {
+
                 int dest = calculateDestinationTile(currentTile, roll);
-                if (wouldEnterStaircase(currentTile, dest, player)) {
-                    // TODO: Determine the first staircase tile ID for the player.
-                    // Add a move from the current tile to that staircase tile.
+
+                if (wouldEnterStaircase(currentTile, roll, player)) {
+                    int endTile = getEndTileId(player);
+                    int firstStaircaseTile = getFirstStaircaseTileId(player);
+
+                    int stepsToEnd = (endTile - currentTile + 60) % 60;
+                    int remainingRoll = roll - stepsToEnd;
+
+                    int staircaseDestination = firstStaircaseTile + remainingRoll - 1;
+
+                    possibleActions.add(new MovePiece(currentTile, staircaseDestination));
                 } else {
                     possibleActions.add(new MovePiece(currentTile, dest));
                 }
 
             } else if (piece.getCurrentTile().getType() == TileType.STAIRCASE) {
-                // TODO: Determine the staircase's final tile ID.
-                // TODO: Check whether the piece reaches the finish area exactly.
-                // TODO: Implement bounce-back movement if the roll exceeds the remaining staircase distance.
+                int lastTile = getLastStaircaseTileId(player);
+                int remainingSteps = lastTile - currentTile + 1;
+
+                if (roll == remainingSteps) {
+                    possibleActions.add(new MovePiece(currentTile, FINISH_AREA_ID));
+                } else if (roll < remainingSteps) {
+                    possibleActions.add(new MovePiece(currentTile, currentTile + roll));
+
+                } else {
+                    int destination = lastTile - (roll - remainingSteps);
+                    possibleActions.add(new MovePiece(currentTile, destination));
+                }
             }
         }
         return possibleActions;
@@ -112,49 +138,33 @@ public class MovementRules {
      * Calculates the destination tile after moving a given number of steps
      * along the main game track.
      *
+     * <p>
+     * The calculation accounts for the circular layout of the track,
+     * where the tile after the last track tile is the first track tile.
+     *
      * @param currentTile the current tile ID
-     * @param roll the number of steps to move
+     * @param roll        the number of steps to move
      * @return the calculated destination tile ID
      */
     private int calculateDestinationTile(int currentTile, int roll) {
-        return (currentTile + roll) % 60;
+        return (currentTile - 1 + roll) % 60 + 1;
     }
 
     /**
-     * Checks whether a move crosses the endpoint of the player's main track
+     * Checks whether a move passes the endpoint of the player's main track
      * and therefore enters their colour-specific staircase.
      *
      * @param currentTile the piece's current tile ID
-     * @param destinationTile the calculated destination tile ID
-     * @param player the player whose staircase is being checked
-     * @return {@code true} if the move enters the player's staircase,
-     * otherwise {@code false}
+     * @param roll        the number of steps to move
+     * @param player      the player whose staircase is being checked
+     * @return {@code true} if the move passes the track endpoint,
+     *         otherwise {@code false}
      */
-    private boolean wouldEnterStaircase(int currentTile, int destinationTile, Player player) {
-        boolean result = false;
-        switch (player.getColor()) {
-            case RED -> {
-                if (currentTile <= END_RED_TILE_ID && destinationTile > END_RED_TILE_ID) {
-                    result = true;
-                }
-            }
-            case BLUE -> {
-                if (currentTile <= END_BLUE_TILE_ID && destinationTile > END_BLUE_TILE_ID) {
-                    result = true;
-                }
-            }
-            case GREEN -> {
-                if (currentTile <= END_GREEN_TILE_ID && destinationTile > END_GREEN_TILE_ID) {
-                    result = true;
-                }
-            }
-            case YELLOW -> {
-                if (currentTile <= END_YELLOW_TILE_ID && destinationTile > END_YELLOW_TILE_ID) {
-                    result = true;
-                }
-            }
-        }
-        return result;
+    private boolean wouldEnterStaircase(int currentTile, int roll, Player player) {
+        int endTile = getEndTileId(player);
+        int stepsToEnd = (endTile - currentTile + 60) % 60;
+
+        return roll > stepsToEnd;
     }
 
     /**
@@ -169,6 +179,51 @@ public class MovementRules {
             case BLUE -> START_BLUE_TILE_ID;
             case GREEN -> START_GREEN_TILE_ID;
             case YELLOW -> START_YELLOW_TILE_ID;
+        };
+    }
+
+    /**
+     * Returns the endpoint tile ID of the main track for the given player's colour.
+     *
+     * @param player the player whose track endpoint is required
+     * @return the ID of the player's track endpoint
+     */
+    private int getEndTileId(Player player) {
+        return switch (player.getColor()) {
+            case RED -> END_RED_TILE_ID;
+            case YELLOW -> END_YELLOW_TILE_ID;
+            case BLUE -> END_BLUE_TILE_ID;
+            case GREEN -> END_GREEN_TILE_ID;
+        };
+    }
+
+    /**
+     * Returns the first tile ID of the staircase corresponding to the given player's colour.
+     *
+     * @param player the player whose staircase is required
+     * @return the ID of the first staircase tile
+     */
+    private int getFirstStaircaseTileId(Player player) {
+        return switch (player.getColor()) {
+            case RED -> 105;
+            case YELLOW -> 205;
+            case BLUE -> 305;
+            case GREEN -> 405;
+        };
+    }
+
+    /**
+     * Returns the last tile ID of the staircase corresponding to the given player's colour.
+     *
+     * @param player the player whose staircase is required
+     * @return the ID of the last staircase tile
+     */
+    private int getLastStaircaseTileId(Player player) {
+        return switch (player.getColor()) {
+            case RED -> 114;
+            case YELLOW -> 214;
+            case BLUE -> 314;
+            case GREEN -> 414;
         };
     }
 }
