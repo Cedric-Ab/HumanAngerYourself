@@ -6,7 +6,6 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
 
-import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -53,7 +52,35 @@ public class GameViewModel implements GameListener {
         this.snapshot.set(snapshot);
     }
 
-    public void roll() {
-        service.submit(new Roll());
+    /**
+     * Sends an action to the service and exposes validation errors to the UI.
+     *
+     * @param action action selected by the player
+     */
+    public void submit(Action action) {
+        try {
+            service.submit(Objects.requireNonNull(action, "action"));
+            message.set("");
+        } catch (InvalidActionException exception) {
+            message.set(exception.getMessage());
+        }
+    }
+
+    /**
+     * Returns the latest game state as a read-only property.
+     *
+     * @return property holding the current snapshot
+     */
+    public ReadOnlyObjectProperty<GameSnapshot> snapshotProperty() {
+        return snapshot;
+    }
+
+    /**
+     * Returns the latest action-validation message as a read-only property.
+     *
+     * @return property holding the current message
+     */
+    public ReadOnlyObjectProperty<String> messageProperty() {
+        return message;
     }
 }
