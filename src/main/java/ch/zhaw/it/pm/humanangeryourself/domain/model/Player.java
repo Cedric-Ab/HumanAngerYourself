@@ -5,7 +5,12 @@ import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
+/**
+ * A player with money, action cards and pieces.
+ */
 public class Player {
     private final String name;
     private final PlayerColor color;
@@ -13,33 +18,83 @@ public class Player {
     private final List<Piece> pieces;
     private long money;
 
+    /**
+     * Creates a new player without any cards.
+     *
+     * @param name   name of the player
+     * @param color  color of the player
+     * @param money  starting money
+     * @param pieces pieces of the player
+     * @throws NullPointerException if an argument is {@code null}
+     */
     public Player(String name, PlayerColor color, long money, List<Piece> pieces) {
-        this.name = name;
-        this.color = color;
+        this.name = Objects.requireNonNull(name, "name must not be null");
+        this.color = Objects.requireNonNull(color, "color must not be null");
         this.money = money;
-        this.pieces = new ArrayList<>(pieces);
+        this.pieces = new ArrayList<>(Objects.requireNonNull(pieces, "pieces must not be null"));
     }
 
+    /**
+     * Returns whether the player has a negative balance.
+     *
+     * @return {@code true} if the player's money is below zero
+     */
     public boolean isInDebt() {
-        // TODO
-        return false;
+        return money < 0;
     }
 
+    /**
+     * Changes the player's money by the given amount. A negative amount removes money,
+     * the balance is allowed to become negative (debt).
+     *
+     * @param amount amount to add, may be negative
+     */
     public void addMoney(long amount) {
-        // TODO
+        money = Math.addExact(money, amount);
     }
 
+    /**
+     * Gives the player a card. The hand limit is not checked here, it is handled in the discard phase.
+     *
+     * @param card card to add
+     * @throws NullPointerException if {@code card} is {@code null}
+     */
     public void addCard(CardType card) {
-        // TODO
+        cards.add(Objects.requireNonNull(card, "card must not be null"));
     }
 
+    /**
+     * Removes one card of the given type from the player's hand.
+     *
+     * @param card card to remove
+     * @throws IllegalStateException if the player does not hold such a card
+     */
     public void removeCard(CardType card) {
-        // TODO
+        if (!cards.remove(card)) {
+            throw new IllegalStateException(name + " does not have card " + card);
+        }
     }
 
+    /**
+     * Returns whether the player holds at least one card of the given type.
+     *
+     * @param card card to look for
+     * @return {@code true} if the player has the card
+     */
     public boolean hasCard(CardType card) {
-        // TODO
-        return false;
+        return cards.contains(card);
+    }
+
+    /**
+     * Returns the player's piece that stands on the given tile.
+     *
+     * @param tile tile to look at
+     * @return the piece on the tile, or an empty Optional if none of the player's pieces is there
+     */
+    public Optional<Piece> getPiece(Tile tile) {
+        return pieces.stream()
+                .filter(piece -> piece.getCurrentTile().equals(tile))
+                .findFirst();
     }
 
     public String getName() {

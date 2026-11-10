@@ -4,8 +4,6 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
-import org.jetbrains.annotations.NotNull;
-
 public class ChooseMovePhase extends GamePhaseBase {
     /**
      * Creates a new instance of a game phase associated with the specified game.
