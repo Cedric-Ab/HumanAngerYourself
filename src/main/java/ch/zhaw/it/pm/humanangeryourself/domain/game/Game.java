@@ -9,6 +9,7 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a game of Human Anger Yourself, containing the board, players, and the current turn.
@@ -31,6 +32,20 @@ public class Game {
 
     /** The current turn, which tells whose turn it is. */
     private Turn turn;
+
+    /**
+     * Creates a new game with default settings.
+     */
+    public Game() {
+        // TODO implement properly
+        // TODO change the constructor logic so we can give the board to the MovementRules
+        this(new MovementRules(new Board(new ArrayList<>())), new GamblingRules(), new Economy(), new Board(new ArrayList<>()), new ArrayList<>(List.of(
+                new Player("Alice", PlayerColor.RED, 1000, new ArrayList<>()),
+                new Player("Bob", PlayerColor.BLUE, 1000, new ArrayList<>()),
+                new Player("Charlie", PlayerColor.GREEN, 1000, new ArrayList<>()),
+                new Player("Dave", PlayerColor.YELLOW, 1000, new ArrayList<>())
+        )));
+    }
 
     /**
      * Creates a new game with the given movement rules, gambling rules, economy, board, and players.
@@ -61,22 +76,6 @@ public class Game {
      */
     public Game(Board board, List<Player> players) {
         this(new MovementRules(board), new GamblingRules(), new Economy(), board, players);
-    }
-
-    /**
-     * Creates a game with placeholder data: an empty board and four players
-     * (Alice, Bob, Charlie and Dave) with 1000 money each. Only meant for development
-     * until the game setup is implemented.
-     */
-    public Game() {
-        // TODO implement properly
-        // TODO change the constructor logic so we can give the board to the MovementRules
-        this(new MovementRules(new Board(new ArrayList<>())), new GamblingRules(), new Economy(), new Board(new ArrayList<>()), new ArrayList<>(List.of(
-                new Player("Alice", PlayerColor.RED, 1000, new ArrayList<>()),
-                new Player("Bob", PlayerColor.BLUE, 1000, new ArrayList<>()),
-                new Player("Charlie", PlayerColor.GREEN, 1000, new ArrayList<>()),
-                new Player("Dave", PlayerColor.YELLOW, 1000, new ArrayList<>())
-        )));
     }
 
     /**
@@ -122,8 +121,7 @@ public class Game {
      * @return the players of the game
      */
     public List<Player> getPlayers() {
-        // TODO implement properly
-        return new ArrayList<>(List.of(new Player("Bob", PlayerColor.RED, 1000, new ArrayList<>())));
+        return players;
     }
 
     /**
@@ -133,8 +131,11 @@ public class Game {
      * @return the player with the given color.
      */
     public Player getPlayer(PlayerColor color) {
-        // TODO implement properly
-        return new Player("Bob", PlayerColor.RED, 1000, new ArrayList<>());
+        Objects.requireNonNull(color, "color");
+        return players.stream()
+                .filter(p -> p.getColor() == color)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No player with color " + color));
     }
 
     /**

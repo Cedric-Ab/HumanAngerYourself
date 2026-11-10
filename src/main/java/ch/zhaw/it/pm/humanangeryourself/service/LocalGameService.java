@@ -95,7 +95,6 @@ public class LocalGameService implements GameService, GameObserver {
      * <p>
      * Usually this is the player whose turn it is, but it may be different during a reaction
      * (the affected player) or an auction (the bidding player)
-     * reaction (the affected player) or an auction (the bidding player).
      *
      * @return the deciding player
      */

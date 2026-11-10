@@ -1,6 +1,7 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game.phase;
 
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GamblingOutcome;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
@@ -27,7 +28,14 @@ public class GamblingPhase extends GamePhaseBase {
      */
     @Override
     public @NotNull GamePhase process() {
-        return null;
+        // TODO: update when gambling can yield action cards
+        int result = getGame().getGamblingRules().spin();
+        getCurrentPlayer().addMoney(result);
+
+        GamblingOutcome outcome = new GamblingOutcome(false, String.format("You won %,d$", result));
+        getGame().getTurn().setGamblingOutcome(outcome);
+
+        return new EndOfTurnPhase(getGame());
     }
 
     /**
@@ -39,6 +47,6 @@ public class GamblingPhase extends GamePhaseBase {
      */
     @Override
     public @NotNull GamePhase handle(Player player, Action action) {
-        return null;
+        throw new IllegalCallerException("GamblingPhase cannot handle player input");
     }
 }

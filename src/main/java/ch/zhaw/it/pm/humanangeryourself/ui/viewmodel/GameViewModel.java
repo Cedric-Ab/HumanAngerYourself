@@ -2,10 +2,12 @@ package ch.zhaw.it.pm.humanangeryourself.ui.viewmodel;
 
 import ch.zhaw.it.pm.humanangeryourself.api.GameListener;
 import ch.zhaw.it.pm.humanangeryourself.api.GameService;
+import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
 
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
 import java.util.Objects;
@@ -47,4 +49,16 @@ public class GameViewModel implements GameListener {
      * Submits a {@link Roll} action to the game service.
      */
     public void roll() { service.submit(new Roll()); }
+
+    /**
+     * Returns the latest game state as read only property.
+     * <p>
+     * The UI can bind to this property but cannot change it.
+     * </p>
+     *
+     * @return the property holding the current snapshot
+     */
+    public ReadOnlyObjectProperty<GameSnapshot> snapshotProperty() {
+        return snapshot;
+    }
 }
