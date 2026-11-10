@@ -1,9 +1,15 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.logic;
 
 import ch.zhaw.it.pm.humanangeryourself.api.PropertySize;
+import ch.zhaw.it.pm.humanangeryourself.api.action.BuyCard;
+import ch.zhaw.it.pm.humanangeryourself.api.action.BuyProperty;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class Economy {
 
@@ -25,4 +31,14 @@ public class Economy {
     }
 
     public void bankrupt(Board board, Player player) { }
+
+    public List<BuyCard> getBuyableCards(@NotNull Player player) {
+        // TODO: medium priority
+        return List.of();
+    }
+
+    public List<BuyProperty> getBuyableProperties(@NotNull Player player) {
+        // TODO: low priority
+        return List.of();
+    }
 }
