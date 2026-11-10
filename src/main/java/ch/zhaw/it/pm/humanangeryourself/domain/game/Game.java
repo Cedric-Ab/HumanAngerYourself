@@ -14,11 +14,12 @@ import java.util.List;
  * Represents a game of Human Anger Yourself, containing the board, players, and the current turn.
  */
 public class Game {
-    private final Board board;
-    private final List<Player> players;
     private final MovementRules movementRules;
     private final GamblingRules gamblingRules;
     private final Economy economy;
+
+    private final Board board;
+    private final List<Player> players;
 
     private Turn turn;
 
@@ -50,12 +51,13 @@ public class Game {
      * @param players the players of the game, must contain 4 players
      */
     public Game(Board board, List<Player> players) {
-        this(new MovementRules(), new GamblingRules(), new Economy(), board, players);
+        this(new MovementRules(board), new GamblingRules(), new Economy(), board, players);
     }
 
     public Game() {
         // TODO implement properly
-        this(new MovementRules(), new GamblingRules(), new Economy(), new Board(new ArrayList<>()), new ArrayList<>(List.of(
+        // TODO change the constructor logic so we can give the board to the MovementRules
+        this(new MovementRules(new Board(new ArrayList<>())), new GamblingRules(), new Economy(), new Board(new ArrayList<>()), new ArrayList<>(List.of(
                 new Player("Alice", PlayerColor.RED, 1000, new ArrayList<>()),
                 new Player("Bob", PlayerColor.BLUE, 1000, new ArrayList<>()),
                 new Player("Charlie", PlayerColor.GREEN, 1000, new ArrayList<>()),
