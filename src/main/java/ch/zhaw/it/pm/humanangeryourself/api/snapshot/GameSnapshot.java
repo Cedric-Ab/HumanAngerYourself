@@ -29,5 +29,6 @@ public record GameSnapshot(
         List<CardType> viewerCards,
         int lastRoll,
         DecisionInfo decision,
+        GamblingOutcome gamblingOutcome,
         PlayerColor winner
 ) { }
