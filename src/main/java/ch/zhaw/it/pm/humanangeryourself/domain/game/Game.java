@@ -14,11 +14,12 @@ import java.util.List;
  * Represents a game of Human Anger Yourself, containing the board, players, and the current turn.
  */
 public class Game {
-    private final Board board;
-    private final List<Player> players;
     private final MovementRules movementRules;
     private final GamblingRules gamblingRules;
     private final Economy economy;
+
+    private final Board board;
+    private final List<Player> players;
 
     private Turn turn;
 
