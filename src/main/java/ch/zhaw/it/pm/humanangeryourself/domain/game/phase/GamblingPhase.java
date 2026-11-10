@@ -18,11 +18,15 @@ public class GamblingPhase extends GamePhaseBase {
 
     @Override
     public @NotNull GamePhase process() {
-        return null;
+        // TODO: update when gambling can yield action cards
+        int result = getGame().getGamblingRules().spin();
+        getCurrentPlayer().addMoney(result);
+
+        return new EndOfTurnPhase(getGame());
     }
 
     @Override
     public @NotNull GamePhase handle(Player player, Action action) {
-        return null;
+        throw new IllegalCallerException("GamblingPhase cannot handle player input");
     }
 }
