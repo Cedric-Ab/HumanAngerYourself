@@ -1,10 +1,13 @@
 package integration;
 
+import ch.zhaw.it.pm.humanangeryourself.api.action.EndTurn;
+
 import org.junit.jupiter.api.BeforeEach;
 
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Gamble;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.GameBuilder;
@@ -41,14 +44,24 @@ abstract class BaseIntegrationTest {
         return SnapshotFactory.create(controller, PlayerColor.RED);
     }
 
+    protected DecisionInfo getDecision() {
+        return controller.getDecision();
+    }
+
     protected PlayerColor decider() {
-        return controller.getDecision().decider();
+        return getDecision().decider();
     }
 
     protected List<? extends Action> availableActions() {
-        return controller.getDecision().availableActions();
+        return getDecision().availableActions();
     }
 
+    /**
+     * Sets the result of the die roll to a specific value for testing purposes.
+     *
+     * @param result the desired result of the die roll,
+     *               should be between 1 and 6 inclusive according to {@link MovementRules#rollDie()}
+     */
     protected void setRollDieResult(int result) {
         doReturn(result)
                 .when(movementRules)
@@ -78,7 +91,7 @@ abstract class BaseIntegrationTest {
     }
 
     /**
-     * Rushes through a turn by setting the gamble result to 0 and submitting a Gamble action.
+     * Rushes through a turn by setting the gamble result to 0 and submitting a Gamble and EndTurn action.
      * <p>
      * This method is used to quickly progress through a turn in the game for testing purposes.
      * Use this method when you want to skip the details of a turn and move on to the next player's turn.
@@ -86,5 +99,6 @@ abstract class BaseIntegrationTest {
     protected void rushThroughTurn() {
         setGambleResult(0);
         submitValid(new Gamble());
+        submitValid(new EndTurn());
     }
 }

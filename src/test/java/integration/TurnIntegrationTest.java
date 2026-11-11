@@ -43,7 +43,6 @@ class TurnIntegrationTest extends BaseIntegrationTest {
         PlayerColor originalPlayer = getSnapshot().currentPlayer();
 
         rushThroughTurn();
-        submitValid(new EndTurn());
 
         PlayerColor nextPlayer = getSnapshot().currentPlayer();
 
@@ -57,7 +56,6 @@ class TurnIntegrationTest extends BaseIntegrationTest {
 
         for (int i = 1; i <= 20; i++) {
             rushThroughTurn();
-            submitValid(new EndTurn());
 
             PlayerColor expectedPlayer = expectedOrder.get(i % expectedOrder.size());
             assertEquals(expectedPlayer, getSnapshot().currentPlayer(),
