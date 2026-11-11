@@ -38,8 +38,6 @@ public class MovementRules {
 
     /**
      * Creates a new instance of the movement rules.
-     *
-     * @param board the game board used to determine piece positions and movement
      */
     public MovementRules() {
     }
