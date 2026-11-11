@@ -1,6 +1,7 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.logic;
 
 import ch.zhaw.it.pm.humanangeryourself.api.action.MovePiece;
+import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
@@ -34,12 +35,22 @@ public class MovementRules {
 
     private static final Random RANDOM = new Random();
 
+    private GameConfig config;
     private Board board;
 
     /**
      * Creates a new instance of the movement rules.
      */
     public MovementRules() {
+    }
+
+    /**
+     *
+     *
+     * @param config
+     */
+    public void inject(GameConfig config) {
+        this.config = config;
     }
 
     /**
