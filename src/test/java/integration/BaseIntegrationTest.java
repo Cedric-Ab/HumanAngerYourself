@@ -2,6 +2,8 @@ package integration;
 
 import ch.zhaw.it.pm.humanangeryourself.api.action.EndTurn;
 
+import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
+
 import org.junit.jupiter.api.BeforeEach;
 
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
@@ -100,5 +102,10 @@ abstract class BaseIntegrationTest {
         setGambleResult(0);
         submitValid(new Gamble());
         submitValid(new EndTurn());
+    }
+
+    protected void rollNumber(int result) {
+        setRollDieResult(result);
+        submitValid(new Roll());
     }
 }

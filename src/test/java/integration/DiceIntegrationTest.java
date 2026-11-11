@@ -17,13 +17,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("Dice Integration Tests")
 class DiceIntegrationTest extends BaseIntegrationTest {
 
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6})
+    @DisplayName("Roll result appears in snapshot")
+    void rollResultAppearsInSnapshot(int roll) {
+        rollNumber(roll);
+        assertEquals(roll, getSnapshot().lastRoll(), "The roll result should be " + roll);
+    }
+
     @Test
     @DisplayName("Rolling changes the current decision")
     void rollingChangesCurrentDecision() {
         DecisionInfo before = getDecision();
 
-        setRollDieResult(6); // assumes that the player can move a piece after rolling a 6
-        submitValid(new Roll());
+        rollNumber(6); // assumes that the player can move a piece after rolling a 6
 
         assertNotEquals(before, getDecision(),
                 "Expected rolling the die to change the current decision");
@@ -44,9 +51,7 @@ class DiceIntegrationTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Rolling six grants another roll")
     void rollingSixGrantsAnotherRoll() {
-        setRollDieResult(6);
-
-        submitValid(new Roll());
+        rollNumber(6);
 
         assertTrue(availableActions().contains(new Roll()),
                 "Expected another roll to be available after rolling six");
