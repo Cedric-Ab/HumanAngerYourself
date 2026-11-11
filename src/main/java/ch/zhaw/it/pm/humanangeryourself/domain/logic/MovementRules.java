@@ -33,14 +33,23 @@ public class MovementRules {
 
 
     private static final Random RANDOM = new Random();
-    private final Board board;
+
+    private Board board;
 
     /**
      * Creates a new instance of the movement rules.
      *
      * @param board the game board used to determine piece positions and movement
      */
-    public MovementRules(Board board) {
+    public MovementRules() {
+    }
+
+    /**
+     * Injects the game board into the movement rules, allowing it to access
+     *
+     * @param board the game board to be used for movement calculations
+     */
+    public void inject(Board board) {
         this.board = board;
     }
 
