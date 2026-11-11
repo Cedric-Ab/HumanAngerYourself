@@ -1,57 +1,36 @@
 package integration;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
+import ch.zhaw.it.pm.humanangeryourself.api.action.EndTurn;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Gamble;
+import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
-import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
-import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
-import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
-import ch.zhaw.it.pm.humanangeryourself.domain.game.GameController;
-import ch.zhaw.it.pm.humanangeryourself.service.SnapshotFactory;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("Turn Integration Tests")
-class TurnIntegrationTest {
-    private static PlayerColor STARTING_PLAYER = PlayerColor.RED;
-
-    private GameController controller;
-    private Game game;
-
-    @BeforeEach
-    void setUp() {
-        // Arrange
-        game = new Game();
-        controller = new GameController(game);
-    }
-
-    private GameSnapshot getSnapshot() {
-        return SnapshotFactory.create(controller, PlayerColor.RED);
-    }
+class TurnIntegrationTest extends BaseIntegrationTest {
+    private static final PlayerColor STARTING_PLAYER = PlayerColor.RED;
 
     // -------------------------------------------------------------------------
     // Initial State
     // -------------------------------------------------------------------------
 
     @Test
-    @DisplayName("New game starts with the first player")
-    void newGameStartsWithFirstPlayer() {
+    @DisplayName("New game starts with a roll or gamble decision for the first player")
+    void newGameStartsWithInitialDecision() {
         assertEquals(STARTING_PLAYER, getSnapshot().currentPlayer());
-    }
 
-    @Test
-    @DisplayName("New game starts with a valid decision")
-    void newGameStartsWithValidDecision() {
-        DecisionInfo decision = controller.getDecision();
-
-        assertEquals(STARTING_PLAYER, getSnapshot().currentPlayer());
-        assertTrue(decision.availableActions().contains(new Roll()));
-        assertTrue(decision.availableActions().contains(new Gamble()));
+        assertTrue(availableActions().contains(new Roll()));
+        assertTrue(availableActions().contains(new Gamble()));
     }
 
     // -------------------------------------------------------------------------
@@ -61,58 +40,29 @@ class TurnIntegrationTest {
     @Test
     @DisplayName("Ending a turn advances to the next player")
     void endingTurnAdvancesToNextPlayer() {
+        PlayerColor originalPlayer = getSnapshot().currentPlayer();
+
+        rushThroughTurn();
+        submitValid(new EndTurn());
+
+        PlayerColor nextPlayer = getSnapshot().currentPlayer();
+
+        assertNotEquals(nextPlayer, originalPlayer, "Expected the next player to be different from the original player");
     }
 
     @Test
-    @DisplayName("Turn order cycles through all players")
+    @DisplayName("Turn order cycles through all players in the correct sequence")
     void turnOrderCyclesThroughAllPlayers() {
-    }
+        List<PlayerColor> expectedOrder = List.of(PlayerColor.RED, PlayerColor.GREEN, PlayerColor.BLUE, PlayerColor.YELLOW);
 
-    // -------------------------------------------------------------------------
-    // Turn Ownership
-    // -------------------------------------------------------------------------
+        for (int i = 1; i <= 20; i++) {
+            rushThroughTurn();
+            submitValid(new EndTurn());
 
-    @Test
-    @DisplayName("Only the active player may submit actions")
-    void onlyActivePlayerMaySubmitActions() {
-    }
-
-    @Test
-    @DisplayName("Player cannot act during another player's turn")
-    void playerCannotActDuringAnotherPlayersTurn() {
-    }
-
-    // -------------------------------------------------------------------------
-    // Decision Enforcement
-    // -------------------------------------------------------------------------
-
-    @Test
-    @DisplayName("Player may only perform actions offered by the current decision")
-    void playerMayOnlyPerformAvailableActions() {
-    }
-
-    @Test
-    @DisplayName("Unavailable actions are rejected")
-    void unavailableActionsAreRejected() {
-    }
-
-    // -------------------------------------------------------------------------
-    // Consistency
-    // -------------------------------------------------------------------------
-
-    @Test
-    @DisplayName("Rejected action does not change the current player")
-    void rejectedActionDoesNotChangeCurrentPlayer() {
-    }
-
-    @Test
-    @DisplayName("Rejected action does not change the current decision")
-    void rejectedActionDoesNotChangeCurrentDecision() {
-    }
-
-    @Test
-    @DisplayName("Rejected action does not modify game state")
-    void rejectedActionDoesNotModifyGameState() {
+            PlayerColor expectedPlayer = expectedOrder.get(i % expectedOrder.size());
+            assertEquals(expectedPlayer, getSnapshot().currentPlayer(),
+                    "Expected the current player to be " + expectedPlayer);
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -122,18 +72,7 @@ class TurnIntegrationTest {
     @Test
     @DisplayName("Turn cannot end before mandatory actions are completed")
     void turnCannotEndBeforeMandatoryActionsAreCompleted() {
-    }
-
-    @Test
-    @DisplayName("Turn can end after all mandatory actions are completed")
-    void turnCanEndAfterMandatoryActionsAreCompleted() {
-    }
-
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
-
-    private Controller createController() {
-        throw new UnsupportedOperationException("test setup");
+        assertThrows(InvalidActionException.class, () -> controller.submit(decider(), new EndTurn()),
+                "Expected an exception when trying to end the turn before mandatory actions are completed");
     }
 }
