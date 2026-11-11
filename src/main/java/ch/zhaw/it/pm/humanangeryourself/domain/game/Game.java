@@ -5,9 +5,7 @@ import ch.zhaw.it.pm.humanangeryourself.domain.logic.Economy;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.GamblingRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.MovementRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
-import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
-import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
 
 import java.util.List;
 import java.util.Objects;
@@ -29,18 +27,6 @@ public class Game {
     private Turn turn;
 
     /**
-     * Creates a new game with default settings.
-     */
-    public Game() {
-        this(createDefaultSetup());
-    }
-
-    private Game(DefaultSetup setup) {
-        this(new MovementRules(setup.board()), new GamblingRules(), new Economy(),
-                setup.board(), setup.players());
-    }
-
-    /**
      * Creates a new game with the given movement rules, gambling rules, economy, board, and players.
      *
      * @param movementRules the movement rules of the game
@@ -59,40 +45,6 @@ public class Game {
         this.players = List.copyOf(players);
 
         turn = new Turn(players.getFirst());
-    }
-
-    /**
-     * Creates a new game with the given board and players.
-     *
-     * @param board   the board of the game
-     * @param players the players of the game, must contain 4 players
-     */
-    public Game(Board board, List<Player> players) {
-        this(new MovementRules(board), new GamblingRules(), new Economy(), board, players);
-    }
-
-    /**
-     * Creates the board and players used by the local, hardcoded game.
-     * Each player starts with four pieces on the four home tiles belonging to
-     * their colour.
-     */
-    private static DefaultSetup createDefaultSetup() {
-        Board board = new Board(Tile.createAll());
-        List<Player> players = List.of(
-                createPlayer("Alice", PlayerColor.RED, board, 101),
-                createPlayer("Charlie", PlayerColor.GREEN, board, 401),
-                createPlayer("Bob", PlayerColor.BLUE, board, 301),
-                createPlayer("Dave", PlayerColor.YELLOW, board, 201));
-        return new DefaultSetup(board, players);
-    }
-
-    private static Player createPlayer(String name, PlayerColor color, Board board, int firstHomeTileId) {
-        List<Piece> pieces = List.of(
-                new Piece(board.getTileById(firstHomeTileId)),
-                new Piece(board.getTileById(firstHomeTileId + 1)),
-                new Piece(board.getTileById(firstHomeTileId + 2)),
-                new Piece(board.getTileById(firstHomeTileId + 3)));
-        return new Player(name, color, 1000, pieces);
     }
 
     /**
@@ -180,6 +132,4 @@ public class Game {
 
         turn = new Turn(getPlayers().get(nextIndex));
     }
-
-    private record DefaultSetup(Board board, List<Player> players) { }
 }
