@@ -122,8 +122,8 @@ public class PlayerViewController {
 
         String name = currentPlayer == null
                 ? snapshot.decision() == null
-                        ? "Waiting"
-                        : String.valueOf(snapshot.decision().decider())
+                ? "Waiting"
+                : String.valueOf(snapshot.decision().decider())
                 : currentPlayer.name();
 
         playerNameLabel.setText("Turn: " + name);
@@ -143,13 +143,7 @@ public class PlayerViewController {
         renderCards(snapshot);
         renderAdditionalActions(snapshot);
 
-        if (snapshot.winner() != null) {
-            resultLabel.setText("Winner: " + playerName(snapshot, snapshot.winner()));
-        } else if (snapshot.gamblingOutcome() != null) {
-            resultLabel.setText(snapshot.gamblingOutcome().message());
-        } else if (snapshot.decision() != null) {
-            resultLabel.setText("Choose an available action.");
-        }
+        resultLabel.setText(snapshot.message());
     }
 
     private void renderCards(GameSnapshot snapshot) {

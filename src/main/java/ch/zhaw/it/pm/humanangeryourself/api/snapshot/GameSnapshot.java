@@ -15,9 +15,11 @@ import java.util.List;
  * @param properties    general information about all properties on the board
  * @param npcs          general information about all NPCs on the board
  * @param viewerCards   cards the viewer is currently holding
- * @param lastRoll      last dice roll of the game (not necessarily the viewer's last roll)
+ * @param dieResult     result of rolling the die (may be 0, if the player did not roll)
+ * @param obtainedCard  type of card obtained from gambling (may be null, if player did not gamble)
  * @param decision      actions the player may take
  * @param winner        player who won the game
+ * @param message       message for the UI to display (results, winner, ...)
  */
 public record GameSnapshot(
         PlayerColor viewer,
@@ -27,8 +29,9 @@ public record GameSnapshot(
         List<PropertyInfo> properties,
         List<NpcInfo> npcs,
         List<CardType> viewerCards,
-        int lastRoll,
+        int dieResult,
+        CardType obtainedCard,
         DecisionInfo decision,
-        GamblingOutcome gamblingOutcome,
-        PlayerColor winner
+        PlayerColor winner,
+        String message
 ) { }
