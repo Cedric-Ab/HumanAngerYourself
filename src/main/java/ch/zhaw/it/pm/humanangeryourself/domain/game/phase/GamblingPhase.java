@@ -1,7 +1,6 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game.phase;
 
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
-import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GamblingOutcome;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
@@ -22,7 +21,7 @@ public class GamblingPhase extends GamePhaseBase {
     }
 
     /**
-     * Carries out the gamble for the current player. Not implemented yet.
+     * Performs the gambling.
      *
      * @return the phase to continue with
      */
@@ -32,8 +31,13 @@ public class GamblingPhase extends GamePhaseBase {
         int result = getGame().getGamblingRules().spin();
         getCurrentPlayer().addMoney(result);
 
-        GamblingOutcome outcome = new GamblingOutcome(false, String.format("You won %,d$", result));
-        getGame().getTurn().setGamblingOutcome(outcome);
+        String message;
+        if (result < 0) {
+            message = String.format("Damn, you lost %,d", -result);
+        } else {
+            message = String.format("Hurray, you won %,d", result);
+        }
+        getGame().getTurn().setResultMessage(message);
 
         return new EndOfTurnPhase(getGame());
     }
