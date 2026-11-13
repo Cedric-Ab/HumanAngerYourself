@@ -1,10 +1,9 @@
 package ch.zhaw.it.pm.humanangeryourself.config;
 
-import org.jetbrains.annotations.NotNull;
+import ch.zhaw.it.pm.humanangeryourself.api.PropertySize;
 
+import java.util.Map;
 import java.util.Objects;
-
-// TODO: convert into singleton
 
 /**
  * Immutable game settings that control the economy and the card limits.
@@ -12,16 +11,17 @@ import java.util.Objects;
  * @param startMoney              money each player starts with
  * @param debtLimit               maximum debt before an auction is triggered
  * @param maxHandSize             maximum number of cards a player can hold
- * @param maxPropertiesPerQuarter maximum number of oprierties per board quarter
+ * @param maxPropertiesPerQuarter maximum number of properties per board quarter
  * @param gambling                gambling settings
+ * @param propertyPrices          purchase price and rent for each size of property
  */
 public record GameConfig(
         long startMoney,
         long debtLimit,
         int maxHandSize,
         int maxPropertiesPerQuarter,
-        GamblingConfig gambling
-        // Map<PropertySize, PropertyPrice> propertyPrices
+        GamblingConfig gambling,
+        Map<PropertySize, PropertyPrice> propertyPrices
 ) {
     /**
      * Validates the configuration values.
@@ -30,7 +30,7 @@ public record GameConfig(
      */
     public GameConfig {
         Objects.requireNonNull(gambling, "gambling must be present");
-        // propertyPrices = Map.copyof(propertyPrices);
+        propertyPrices = Map.copyOf(propertyPrices);
         if (startMoney < 0 || debtLimit < 0 || maxHandSize < 1 || maxPropertiesPerQuarter < 1) {
             throw new IllegalArgumentException("GameConfig invalid");
         }
@@ -42,10 +42,12 @@ public record GameConfig(
      * @return a new {@code GameConfig} with default values.
      */
     public static GameConfig defaults() {
-        return new GameConfig(100_000, 50_000, 10, 5, GamblingConfig.defaults());
-    }
+        Map<PropertySize, PropertyPrice> propertyPrices = Map.of(
+                PropertySize.SMALL, new PropertyPrice(100_000, 3_000),
+                PropertySize.MEDIUM, new PropertyPrice(200_000, 7_000),
+                PropertySize.LARGE, new PropertyPrice(500_000, 20_000));
 
-    public static @NotNull GameConfig getInstance() {
-        return null;
+        return new GameConfig(100_000, 50_000, 10, 5,
+                GamblingConfig.defaults(), propertyPrices);
     }
 }
