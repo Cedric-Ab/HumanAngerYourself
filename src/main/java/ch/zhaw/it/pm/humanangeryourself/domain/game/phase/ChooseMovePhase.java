@@ -36,6 +36,9 @@ public class ChooseMovePhase extends GamePhaseBase {
     public @NotNull GamePhase process() {
         int roll = getGame().getMovementRules().rollDie();
 
+        getGame().getTurn().setDieResult(roll);
+        getGame().getTurn().setResultMessage("You rolled a " + roll);
+
         List<MovePiece> possibleMoves = getGame().getMovementRules().getPossibleMoves(getCurrentPlayer(), roll);
         if (possibleMoves.isEmpty()) {
             return new EndOfTurnPhase(getGame());
@@ -52,7 +55,7 @@ public class ChooseMovePhase extends GamePhaseBase {
      * @param player the player who made the decision
      * @param action the chosen action, must be a {@link MovePiece}
      * @return the {@link EndOfTurnPhase} that follows after the move
-     * @throws IllegalArgumentException if the action is not a {@link MovePiece}
+     * @throws IllegalArgumentException         if the action is not a {@link MovePiece}
      * @throws java.util.NoSuchElementException if the player has no piece on the start tile
      */
     @Override
