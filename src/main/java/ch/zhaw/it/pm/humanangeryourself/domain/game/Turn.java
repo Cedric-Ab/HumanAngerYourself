@@ -1,6 +1,6 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game;
 
-import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GamblingOutcome;
+import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import org.jetbrains.annotations.NotNull;
@@ -11,9 +11,13 @@ import org.jetbrains.annotations.Nullable;
  */
 public class Turn {
 
-    /** The player whose turn it is. */
+    /**
+     * The player whose turn it is.
+     */
     private final @NotNull Player player;
-    private @Nullable GamblingOutcome gamblingOutcome;
+    private int dieResult;
+    private @Nullable CardType obtainedCard;
+    private @Nullable String resultMessage;
 
     /**
      * Creates a new turn for the given player.
@@ -33,12 +37,28 @@ public class Turn {
         return player;
     }
 
-    public @Nullable GamblingOutcome getGamblingOutcome() {
-        return gamblingOutcome;
+    public int getDieResult() {
+        return dieResult;
     }
 
-    public void setGamblingOutcome(@NotNull GamblingOutcome gamblingOutcome) {
-        this.gamblingOutcome = gamblingOutcome;
+    public void setDieResult(int dieResult) {
+        this.dieResult = dieResult;
+    }
+
+    public @Nullable CardType getObtainedCard() {
+        return obtainedCard;
+    }
+
+    public void setObtainedCard(@Nullable CardType obtainedCard) {
+        this.obtainedCard = obtainedCard;
+    }
+
+    public @Nullable String getResultMessage() {
+        return resultMessage;
+    }
+
+    public void setResultMessage(@Nullable String resultMessage) {
+        this.resultMessage = resultMessage;
     }
 
     // TODO: add effect stuff
