@@ -7,11 +7,11 @@ This Project is part of the PM3 course at the ZHAW.
 ## Teammembers
 
 - [Abächerli Cédric](https://github.com/Cedric-Ab)
-- [Siegenthaler Léonard](https://github.com/LeoZHAW)
 - [Böhnlein Marlene](https://github.com/5ia16maboehnlein)
 - [Eugster Marco](https://github.com/whatsitch)
+- [Kyburz Etienne](https://github.com/kybureti)
 - [Okle Roy](https://github.com/royokle)
-- [Etienne Kyburz](https://github.com/kybureti)
+- [Siegenthaler Léonard](https://github.com/LeoZHAW)
 
 ## Start application
 
