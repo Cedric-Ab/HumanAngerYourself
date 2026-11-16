@@ -1,61 +1,25 @@
 package integration;
 
-import ch.zhaw.it.pm.humanangeryourself.api.action.EndTurn;
-
-import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
-
-import org.junit.jupiter.api.BeforeEach;
-
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
+import ch.zhaw.it.pm.humanangeryourself.api.action.EndTurn;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Gamble;
+import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
-import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
-import ch.zhaw.it.pm.humanangeryourself.domain.game.GameBuilder;
-import ch.zhaw.it.pm.humanangeryourself.domain.game.GameController;
-import ch.zhaw.it.pm.humanangeryourself.domain.logic.GamblingRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.MovementRules;
-import ch.zhaw.it.pm.humanangeryourself.service.SnapshotFactory;
 
 import java.util.List;
 
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
-
 public abstract class BaseIntegrationTest {
-
-    private GameController controller;
-    private MovementRules movementRules;
-    private GamblingRules gamblingRules;
-
-    @BeforeEach
-    void setUp() {
-        movementRules = spy(MovementRules.class);
-        gamblingRules = spy(GamblingRules.class);
-
-        Game game = new GameBuilder()
-                .setMovementRules(movementRules)
-                .setGamblingRules(gamblingRules)
-                .createGame();
-
-        controller = new GameController(game);
-    }
+    private final RiggedController controller = new RiggedController();
 
     protected GameSnapshot getSnapshot() {
-        return SnapshotFactory.create(controller, PlayerColor.RED);
+        return controller.getSnapshot();
     }
 
     protected DecisionInfo getDecision() {
         return controller.getDecision();
-    }
-
-    protected PlayerColor decider() {
-        return getDecision().decider();
-    }
-
-    protected List<? extends Action> availableActions() {
-        return getDecision().availableActions();
     }
 
     /**
@@ -65,15 +29,20 @@ public abstract class BaseIntegrationTest {
      *               should be between 1 and 6 inclusive according to {@link MovementRules#rollDie()}
      */
     protected void setRollDieResult(int result) {
-        doReturn(result)
-                .when(movementRules)
-                .rollDie();
+        controller.setRollDieResult(result);
     }
 
     protected void setGambleResult(int result) {
-        doReturn(result)
-                .when(gamblingRules)
-                .spin();
+        controller.setGambleResult(result);
+    }
+
+
+    protected PlayerColor decider() {
+        return getDecision().decider();
+    }
+
+    protected List<? extends Action> availableActions() {
+        return getDecision().availableActions();
     }
 
     /**
