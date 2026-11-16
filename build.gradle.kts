@@ -27,6 +27,12 @@ dependencies {
     testImplementation("org.mockito:mockito-core")
     // (1) Add mockito-core to mockitoAgent configuration
     mockitoAgent("org.mockito:mockito-core:${mockitoVersion}") { isTransitive = false }
+    // Jackson dependencies
+    testImplementation("com.fasterxml.jackson.core:jackson-databind:2.18.2")
+    testImplementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.2")
+
+    testImplementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.18.2")
+    testImplementation("com.fasterxml.jackson.module:jackson-module-parameter-names:2.18.2")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
