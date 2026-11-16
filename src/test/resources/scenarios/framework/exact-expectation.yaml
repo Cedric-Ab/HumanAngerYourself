@@ -1,0 +1,13 @@
+name: Exact Expectation
+
+steps:
+  - input:
+      submittedBy: RED
+      rollDieResult: 6
+      action:
+        type: Roll
+
+    expect:
+      viewerCards:
+        mode: EXACT
+        values: []

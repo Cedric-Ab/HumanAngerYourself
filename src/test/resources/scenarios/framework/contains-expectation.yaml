@@ -1,0 +1,15 @@
+name: Contains Expectation
+
+steps:
+  - input:
+      submittedBy: RED
+      rollDieResult: 6
+      action:
+        type: Roll
+
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 101
