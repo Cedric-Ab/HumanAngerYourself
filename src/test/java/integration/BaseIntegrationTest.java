@@ -25,7 +25,7 @@ import static org.mockito.Mockito.spy;
 
 public abstract class BaseIntegrationTest {
 
-    protected GameController controller;
+    private GameController controller;
     private MovementRules movementRules;
     private GamblingRules gamblingRules;
 
