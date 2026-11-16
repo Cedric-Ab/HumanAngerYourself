@@ -23,7 +23,7 @@ import java.util.List;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
-abstract class BaseIntegrationTest {
+public abstract class BaseIntegrationTest {
 
     protected GameController controller;
     private MovementRules movementRules;
