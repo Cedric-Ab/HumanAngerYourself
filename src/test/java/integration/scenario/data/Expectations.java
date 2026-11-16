@@ -76,7 +76,7 @@ public record Expectations(
                 case CONTAINS -> values.forEach(expected ->
                         assertTrue(
                                 actual.contains(expected),
-                                attributeName + " should contain " + expected
+                                attributeName + " should contain " + expected + ". Is: " + actual
                         ));
 
                 case DOES_NOT_CONTAIN -> values.forEach(forbidden ->
