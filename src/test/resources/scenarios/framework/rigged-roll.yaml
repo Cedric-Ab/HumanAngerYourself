@@ -1,0 +1,11 @@
+name: Rigged Roll
+
+steps:
+  - input:
+      rollDieResult: 3
+      submittedBy: RED
+      action:
+        type: Roll
+
+    expect:
+      lastRoll: 3

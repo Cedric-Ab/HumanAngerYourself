@@ -1,0 +1,13 @@
+name: Rigged Gamble
+
+steps:
+  - input:
+      gambleResult: 0
+      submittedBy: RED
+      action:
+        type: Gamble
+
+    expect:
+      gamblingOutcome:
+        isCard: false
+        message: "You won 0$"
