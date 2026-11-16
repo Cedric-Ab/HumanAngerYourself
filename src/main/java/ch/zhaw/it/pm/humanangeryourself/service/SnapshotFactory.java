@@ -2,6 +2,7 @@ package ch.zhaw.it.pm.humanangeryourself.service;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GamblingOutcome;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.NpcInfo;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
@@ -46,7 +47,7 @@ public final class SnapshotFactory {
         Board board = game.getBoard();
         List<Player> players = game.getPlayers();
 
-        PlayerColor currentPlayer = null; // TODO, maybe from game.getTurn().getPlayer().getColor()?
+        PlayerColor currentPlayer = game.getTurn().getPlayer().getColor();
         List<PlayerInfo> playerInfos = toPlayerInfos(players);
         List<PieceInfo> pieceInfos = toPieceInfos(players);
         List<PropertyInfo> propertyInfos = toPropertyInfos(board);
@@ -54,12 +55,14 @@ public final class SnapshotFactory {
         List<CardType> viewerCards = getViewerCards(game, viewer);
         int lastRoll = 0; // TODO; maybe game.getTurn().getLastRoll();
         DecisionInfo decisionInfo = controller.getDecision();
+        GamblingOutcome gamblingOutcome = game.getTurn().getGamblingOutcome();
 
         return new GameSnapshot(
                 viewer, currentPlayer,
                 playerInfos, pieceInfos,
                 propertyInfos, npcInfos, viewerCards,
-                lastRoll, decisionInfo, getWinnerColor(game));
+                lastRoll, decisionInfo, gamblingOutcome,
+                getWinnerColor(game));
     }
 
     private static List<PlayerInfo> toPlayerInfos(List<Player> players) {

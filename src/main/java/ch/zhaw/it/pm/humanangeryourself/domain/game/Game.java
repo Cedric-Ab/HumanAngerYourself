@@ -7,26 +7,71 @@ import ch.zhaw.it.pm.humanangeryourself.domain.logic.MovementRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
-
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a game of Human Anger Yourself, containing the board, players, and the current turn.
  */
 public class Game {
-    private final Board board;
-    private final List<Player> players;
+    /** Rules for moving pieces. */
     private final MovementRules movementRules;
+
+    /** Rules for gambling. */
     private final GamblingRules gamblingRules;
+
+    /** Rules for buying, rent and bankruptcy. */
     private final Economy economy;
 
+    /** The board the game is played on. */
+    private final Board board;
+
+    /** The players of the game, in turn order. */
+    private final List<Player> players;
+
+    /** The current turn, which tells whose turn it is. */
     private Turn turn;
+
+    /**
+     * Creates a new game with default settings.
+     */
+    public Game() {
+        this(createDefaultSetup());
+    }
+
+    private Game(DefaultSetup setup) {
+        this(new MovementRules(setup.board()), new GamblingRules(), new Economy(),
+                setup.board(), setup.players());
+    }
+
+    /**
+     * Creates the board and players used by the local, hardcoded game.
+     * Each player starts with four pieces on the four home tiles belonging to
+     * their colour.
+     */
+    private static DefaultSetup createDefaultSetup() {
+        Board board = new Board(Tile.createAll());
+        List<Player> players = List.of(
+                createPlayer("Alice", PlayerColor.RED, board, 101),
+                createPlayer("Charlie", PlayerColor.GREEN, board, 401),
+                createPlayer("Bob", PlayerColor.BLUE, board, 301),
+                createPlayer("Dave", PlayerColor.YELLOW, board, 201));
+        return new DefaultSetup(board, players);
+    }
+
+    private static Player createPlayer(String name, PlayerColor color, Board board, int firstHomeTileId) {
+        List<Piece> pieces = List.of(
+                new Piece(board.getTileById(firstHomeTileId)),
+                new Piece(board.getTileById(firstHomeTileId + 1)),
+                new Piece(board.getTileById(firstHomeTileId + 2)),
+                new Piece(board.getTileById(firstHomeTileId + 3)));
+        return new Player(name, color, 1000, pieces);
+    }
+
+    private record DefaultSetup(Board board, List<Player> players) { }
 
     /**
      * Creates a new game with the given movement rules, gambling rules, economy, board, and players.
@@ -56,17 +101,7 @@ public class Game {
      * @param players the players of the game, must contain 4 players
      */
     public Game(Board board, List<Player> players) {
-        this(new MovementRules(), new GamblingRules(), new Economy(), board, players);
-    }
-
-    public Game() {
-        // TODO implement properly
-        this(new MovementRules(), new GamblingRules(), new Economy(), new Board(new ArrayList<>()), new ArrayList<>(List.of(
-                new Player("Alice", PlayerColor.RED, 1000, new ArrayList<>()),
-                new Player("Bob", PlayerColor.BLUE, 1000, new ArrayList<>()),
-                new Player("Charlie", PlayerColor.GREEN, 1000, new ArrayList<>()),
-                new Player("Dave", PlayerColor.YELLOW, 1000, new ArrayList<>())
-        )));
+        this(new MovementRules(board), new GamblingRules(), new Economy(), board, players);
     }
 
     /**
@@ -112,8 +147,7 @@ public class Game {
      * @return the players of the game
      */
     public List<Player> getPlayers() {
-        // TODO implement properly
-        return new ArrayList<>(List.of(new Player("Bob", PlayerColor.RED, 1000, new ArrayList<>())));
+        return players;
     }
 
     /**
@@ -123,8 +157,11 @@ public class Game {
      * @return the player with the given color.
      */
     public Player getPlayer(PlayerColor color) {
-        // TODO implement properly
-        return new Player("Bob", PlayerColor.RED, 1000, new ArrayList<>());
+        Objects.requireNonNull(color, "color");
+        return players.stream()
+                .filter(p -> p.getColor() == color)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No player with color " + color));
     }
 
     /**
