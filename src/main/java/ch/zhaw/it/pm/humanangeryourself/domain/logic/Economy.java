@@ -3,13 +3,16 @@ package ch.zhaw.it.pm.humanangeryourself.domain.logic;
 import ch.zhaw.it.pm.humanangeryourself.api.PropertySize;
 import ch.zhaw.it.pm.humanangeryourself.api.action.BuyCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.BuyProperty;
+import ch.zhaw.it.pm.humanangeryourself.config.PropertyPrice;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
+import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Game logic for everything related to money: buying properties and cards,
@@ -74,11 +77,24 @@ public class Economy {
      * Returns all card purchases the given player can currently make.
      *
      * @param player the player who wants to buy cards, must not be {@code null}
+     * @param board  the board, must not be {@code null}
      * @return the possible {@link BuyCard} actions, empty if none are available
      */
-    public List<BuyCard> getBuyableCards(@NotNull Player player) {
-        // TODO: medium priority
-        return List.of();
+    public List<BuyCard> getBuyableCards(Player player, Board board) {
+        // TODO: needs to be tested
+        long budget = player.getMoney();
+
+        if (budget <= 0) {
+            return List.of();
+        }
+
+        return findPlayersPositions(player)
+                .map(Tile::getNpc)
+                .flatMap(Optional::stream)
+                .flatMap(npc -> npc.getOffers().stream())
+                .filter(offer -> offer.price() <= budget)
+                .map(offer -> new BuyCard(offer.cardType()))
+                .toList();
     }
 
     /**
@@ -87,8 +103,34 @@ public class Economy {
      * @param player the player who wants to buy properties, must not be {@code null}
      * @return the possible {@link BuyProperty} actions, empty if none are available
      */
-    public List<BuyProperty> getBuyableProperties(@NotNull Player player) {
-        // TODO: low priority
-        return List.of();
+    public List<BuyProperty> getBuyableProperties(Player player, Board board) {
+        // TODO: needs to be tested
+        long budget = player.getMoney();
+        Map<PropertySize, PropertyPrice> propertyPrices = config.propertyPrices();
+
+        if (budget < propertyPrices.get(PropertySize.SMALL).price()) {
+            return List.of();
+        }
+
+        List<Tile> availableTiles = findPlayersPositions(player)
+                .filter(tile -> isBuyable(tile, board))
+                .toList();
+
+        return propertyPrices.entrySet().stream()
+                .filter(entry -> entry.getValue().price() <= budget)
+                .flatMap(entry -> availableTiles.stream()
+                        .map(tile -> new BuyProperty(tile.getId(), entry.getKey())))
+                .toList();
+    }
+
+    // TODO: Tile::isBuyable currently makes no sense. This function needs to be adapted after Tile::isBuyable is corrected
+    public boolean isBuyable(Tile tile, Board board) {
+        return tile.isBuyable() && board.getTilesByQuarter(tile.getQuarter());
+    }
+
+    private Stream<Tile> findPlayersPositions(Player player) {
+        return player.getPieces()
+                .stream()
+                .map(Piece::getCurrentTile);
     }
 }

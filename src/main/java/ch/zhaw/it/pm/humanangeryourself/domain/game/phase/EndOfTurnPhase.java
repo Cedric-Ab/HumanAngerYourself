@@ -35,10 +35,10 @@ public class EndOfTurnPhase extends GamePhaseBase {
     @Override
     public @NotNull GamePhase process() {
         List<BuyCard> buyCardList = getGame().getEconomy()
-                .getBuyableCards(getCurrentPlayer());
+                .getBuyableCards(getCurrentPlayer(), getGame().getBoard());
 
         List<BuyProperty> buyPropertyList = getGame().getEconomy()
-                .getBuyableProperties(getCurrentPlayer());
+                .getBuyableProperties(getCurrentPlayer(), getGame().getBoard());
 
         List<Action> actions = new ArrayList<>();
         actions.add(new EndTurn());
