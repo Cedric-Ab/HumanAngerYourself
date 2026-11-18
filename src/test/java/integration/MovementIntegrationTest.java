@@ -223,11 +223,88 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
                     "Expected a move option for the second piece"
             );
         }
+
+        @Test
+        @DisplayName("Move action references the correct piece")
+        void moveActionReferencesCorrectPiece() {
+            Piece firstPiece = getPieces().get(0);
+            Piece secondPiece = getPieces().get(1);
+
+            setPieceOntoTile(firstPiece, 10);
+            setPieceOntoTile(secondPiece, 20);
+
+            rollNumber(3);
+
+            List<MovePiece> actions = getMoveActions();
+
+            assertTrue(actions.contains(new MovePiece(10, 13)),
+                    "Expected a move action for the first piece from tile 10 to tile 13");
+            assertTrue(actions.contains(new MovePiece(20, 23)),
+                    "Expected a move action for the second piece from tile 20 to tile 23");
+        }
     }
 
     @Nested
     @DisplayName("Staircase and Finish Area")
     class StaircaseAndFinishArea {
+        private static final int TILE_ID_FINISH_AREA = 100;
+        private static final int TILE_ID_LAST_TRACK_TILE_RED = 60;
+        private static final int TILE_ID_STAIRCASE_BOTTOM_RED = 105;
+        private static final int TILE_ID_STAIRCASE_TOP_RED = 114;
+
+        @Test
+        @DisplayName("Piece can enter the staircase")
+        void pieceCanEnterStaircase() {
+            assertEquals(TILE_ID_STAIRCASE_BOTTOM_RED, getTargetTile(TILE_ID_LAST_TRACK_TILE_RED, 1),
+                    "Expected a piece on the last track tile to enter the staircase with a roll of 1");
+        }
+
+        @Test
+        @DisplayName("Piece can move within the staircase")
+        void pieceCanMoveWithinStaircase() {
+            assertEquals(TILE_ID_STAIRCASE_BOTTOM_RED + 3, getTargetTile(TILE_ID_STAIRCASE_BOTTOM_RED, 3),
+                    "Expected movement within the staircase to advance by the rolled amount");
+        }
+
+        @Test
+        @DisplayName("Piece bounces back at top of staircase")
+        void pieceBouncesBackAtTopOfStaircase() {
+            assertEquals(TILE_ID_STAIRCASE_TOP_RED - 2, getTargetTile(TILE_ID_STAIRCASE_TOP_RED, 2),
+                    "Expected movement beyond the top of the staircase to bounce back");
+        }
+
+        @Test
+        @DisplayName("Piece bounces back at bottom of staircase")
+        void pieceBouncesBackAtBottomOfStaircase() {
+            int roll = TILE_ID_STAIRCASE_TOP_RED - TILE_ID_STAIRCASE_BOTTOM_RED + 2;
+            assertEquals(TILE_ID_STAIRCASE_BOTTOM_RED + 2, getTargetTile(TILE_ID_STAIRCASE_TOP_RED, roll),
+                    "Expected a piece to bounce back towards the bottom of the staircase after overshooting the finish area");
+        }
+
+        @Test
+        @DisplayName("Piece can enter finish area")
+        void pieceCanEnterFinishArea() {
+            assertEquals(TILE_ID_FINISH_AREA, getTargetTile(TILE_ID_STAIRCASE_TOP_RED - 1, 2),
+                    "Expected a piece at the top of the staircase to enter the finish area with a exact roll");
+        }
+
+        @Test
+        @DisplayName("Piece cannot enter finish area with depth")
+        void pieceCannotEnterFinishAreaWithDepth() {
+            getGame().getPlayer(decider()).addMoney(-1);
+
+            assertEquals(TILE_ID_STAIRCASE_TOP_RED - 1, getTargetTile(TILE_ID_STAIRCASE_TOP_RED - 1, 2),
+                    "Expected a player in debt to bounce back instead of entering the finish area");
+        }
+
+        @Test
+        @DisplayName("Finished pieces cannot be moved")
+        void finishedPiecesCannotBeMoved() {
+            placeCurrentPlayerPieceAndRoll(TILE_ID_FINISH_AREA, 1);
+
+            assertTrue(getMoveActions().isEmpty(),
+                    "Expected no move actions to be available for a finished piece");
+        }
     }
 
     @Nested
