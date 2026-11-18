@@ -1,5 +1,7 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.logic;
 
+import ch.zhaw.it.pm.humanangeryourself.config.GamblingConfig;
+
 import java.util.Random;
 
 /**
@@ -10,14 +12,30 @@ import java.util.Random;
 public class GamblingRules {
     private static final Random RANDOM = new Random();
 
+    private final GamblingConfig config;
+
+    /**
+     * Creates a new instance of the gambling rules with the default configuration.
+     */
+    public GamblingRules() {
+        this(GamblingConfig.defaults());
+    }
+
+    /**
+     * Creates a new instance of the gambling rules with a custom configuration.
+     *
+     * @param config the custom configuration to use
+     */
+    public GamblingRules(GamblingConfig config) { this.config = config; }
+
     /**
      * Simulates a gambling round and determines the outcome.
      *
      * @return a positive amount between 1,000 and 100,000 if the player wins,
-     * or a negative amount between -1,000 and -100,000 if the player loses
+     *         or a negative amount between -1,000 and -100,000 if the player loses
      */
-    //TODO refactor to use percentage config from GamblingConfig class
-    public int spin(){
+    // TODO refactor to use percentage config from GamblingConfig class
+    public int spin() {
         int chance = RANDOM.nextInt(100);
 
         if (chance < 60) {
@@ -27,5 +45,5 @@ public class GamblingRules {
         return -RANDOM.nextInt(1_000, 100_001);
     }
 
-    //TODO implement spin method to receive Action Cards
+    // TODO implement spin method to receive Action Cards
 }
