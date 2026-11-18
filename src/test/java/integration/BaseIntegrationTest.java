@@ -7,6 +7,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.Gamble;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
+import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.MovementRules;
 
 import java.util.List;
@@ -34,6 +35,10 @@ public abstract class BaseIntegrationTest {
 
     protected void setGambleResult(int result) {
         controller.setGambleResult(result);
+    }
+
+    protected Game getGame() {
+        return controller.getGame();
     }
 
 
