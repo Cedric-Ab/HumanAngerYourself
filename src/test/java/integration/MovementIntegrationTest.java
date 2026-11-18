@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.action.MovePiece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
@@ -14,14 +13,65 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("Movement Integration Tests")
 public class MovementIntegrationTest extends BaseIntegrationTest {
+    private List<Piece> getPieces() {
+        return getGame()
+                .getPlayer(decider())
+                .getPieces();
+    }
+
+    private Piece getFirstPiece() {
+        return getPieces()
+                .getFirst();
+    }
+
     private void setPieceOntoTile(Piece piece, int tileID) {
         Tile tile = getGame().getBoard().getTileById(tileID);
         piece.moveTo(tile);
+    }
+
+    private void placeCurrentPlayerPiece(int tileId) {
+        setPieceOntoTile(
+                getFirstPiece(),
+                tileId
+        );
+    }
+
+    private void placeCurrentPlayerPieceAndRoll(int tileId, int roll) {
+        placeCurrentPlayerPiece(tileId);
+        rollNumber(roll);
+    }
+
+    private List<MovePiece> getMoveActions() {
+        return availableActions().stream()
+                .filter(MovePiece.class::isInstance)
+                .map(MovePiece.class::cast)
+                .toList();
+    }
+
+    private MovePiece getFirstMoveAction() {
+        return getMoveActions().stream()
+                .findFirst()
+                .orElseThrow();
+    }
+
+    private MovePiece getMoveAction(int startTile) {
+        return getMoveActions().stream()
+                .filter(move -> move.startTile() == startTile)
+                .findFirst()
+                .orElseThrow();
+    }
+
+    private int getTargetTile(int startTile, int roll) {
+        placeCurrentPlayerPiece(startTile);
+        rollNumber(roll);
+
+        MovePiece move = getMoveAction(startTile);
+        return move.targetTile();
     }
 
     @Nested
@@ -34,13 +84,8 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         @ValueSource(ints = {5, 6})
         @DisplayName("Piece can leave home with a roll of five or six")
         void pieceCanLeaveHome(int roll) {
-            rollNumber(roll);
-
-            assertTrue(availableActions().stream().anyMatch(obj ->
-                    obj instanceof MovePiece(int startTile, int targetTile)
-                            && TILE_ID_HOME_RED_1 == startTile
-                            && startTile != targetTile
-            ), "Expected a move action to be available that moves a piece from home to the start field");
+            assertNotEquals(TILE_ID_HOME_RED_1, getTargetTile(TILE_ID_HOME_RED_1, roll),
+                    "Expected a piece to be able to leave home with a roll of " + roll);
         }
 
         @ParameterizedTest
@@ -49,12 +94,8 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         void pieceCannotLeaveHome(int roll) {
             rollNumber(roll);
 
-            assertFalse(
-                    availableActions().stream().anyMatch(obj ->
-                            obj instanceof MovePiece(int startTile, int targetTile)
-                                    && TILE_ID_HOME_RED_1 == startTile
-                                    && startTile != targetTile
-                    ), "Expected a move action to be available that moves a piece from home to the start field");
+            assertTrue(getMoveActions().isEmpty(),
+                    "Expected no move actions to be available for a piece at home with a roll of " + roll);
         }
 
         @Test
@@ -62,13 +103,8 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         void leavingHomePlacesPieceOnStartField() {
             rollNumber(5);
 
-            Action action = availableActions().getFirst();
-
-            if (!(action instanceof MovePiece)) {
-                throw new AssertionError("Expected a MovePiece action to be available");
-            }
-
-            submitChecked(action);
+            MovePiece movePiece = getFirstMoveAction();
+            submitChecked(movePiece);
 
             assertTrue(getSnapshot().pieces().stream()
                             .anyMatch(p -> p.color() == decider() && p.tile() == TILE_ID_START_RED),
@@ -80,7 +116,7 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         void leavingHomeMovesExactlyOnePiece() {
             rollNumber(5);
 
-            submitChecked(availableActions().getFirst());
+            submitChecked(getFirstMoveAction());
 
             long piecesOutsideHome = getSnapshot()
                     .pieces()
@@ -96,29 +132,12 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
     @Nested
     @DisplayName("Piece Movement")
     class PieceMovement {
+        private static final int TILE_ID_LAST_TRACK_TILE = 60;
+
         @Test
         @DisplayName("Target tile is calculated correctly without wrap around")
         void targetTileIsCalculatedCorrectlyWithoutWrapAround() {
-            // Arrange
-            Piece piece = getGame()
-                    .getPlayer(decider())
-                    .getPieces()
-                    .getFirst();
-
-            setPieceOntoTile(piece, 10);
-
-            // Act
-            rollNumber(3);
-
-            MovePiece move = availableActions().stream()
-                    .filter(MovePiece.class::isInstance)
-                    .map(MovePiece.class::cast)
-                    .findFirst()
-                    .orElseThrow();
-
-            // Assert
-            assertEquals(10, move.startTile());
-            assertEquals(13, move.targetTile());
+            assertEquals(13, getTargetTile(10, 3));
         }
 
         @Test
@@ -126,53 +145,19 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         void targetTileIsCalculatedCorrectlyWithWrapAround() {
             rushThroughTurn(); // skip turn as RED doesn't have to wrap around
 
-            // Arrange
-            Piece piece = getGame()
-                    .getPlayer(decider())
-                    .getPieces()
-                    .getFirst();
-
-            int lastTrackTile = 60;
-
-            setPieceOntoTile(piece, lastTrackTile - 1);
-
-            // Act
-            rollNumber(3);
-
-            MovePiece move = availableActions().stream()
-                    .filter(MovePiece.class::isInstance)
-                    .map(MovePiece.class::cast)
-                    .findFirst()
-                    .orElseThrow();
-
-            // Assert
-            assertEquals(lastTrackTile - 1, move.startTile());
-            assertEquals(2, move.targetTile());
+            assertEquals(2, getTargetTile(TILE_ID_LAST_TRACK_TILE - 1, 3));
         }
 
         @Test
         @DisplayName("Selected piece is moved to the target tile")
         void selectedPieceIsMovedToTargetTile() {
-            Piece piece = getGame()
-                    .getPlayer(decider())
-                    .getPieces()
-                    .getFirst();
+            placeCurrentPlayerPieceAndRoll(10, 3);
 
-            setPieceOntoTile(piece, 10);
-
-            rollNumber(3);
-
-            MovePiece move = availableActions().stream()
-                    .filter(MovePiece.class::isInstance)
-                    .map(MovePiece.class::cast)
-                    .findFirst()
-                    .orElseThrow();
+            MovePiece move = getFirstMoveAction();
 
             submitChecked(move);
 
-            assertEquals(
-                    move.targetTile(),
-                    piece.getCurrentTile().getId(),
+            assertEquals(move.targetTile(), getFirstPiece().getCurrentTile().getId(),
                     "Expected the piece to be moved to the target tile advertised by the action"
             );
         }
@@ -181,15 +166,8 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         @DisplayName("Only the selected piece is moved")
         void onlySelectedPieceIsMoved() {
             // Arrange
-            Piece firstPiece = getGame()
-                    .getPlayer(decider())
-                    .getPieces()
-                    .get(0);
-
-            Piece secondPiece = getGame()
-                    .getPlayer(decider())
-                    .getPieces()
-                    .get(1);
+            Piece firstPiece = getPieces().get(0);
+            Piece secondPiece = getPieces().get(1);
 
             setPieceOntoTile(firstPiece, 10);
             setPieceOntoTile(secondPiece, 20);
@@ -209,15 +187,10 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
             submitChecked(move);
 
             // Assert
-            assertEquals(
-                    move.targetTile(),
-                    firstPiece.getCurrentTile().getId(),
+            assertEquals(move.targetTile(), firstPiece.getCurrentTile().getId(),
                     "Expected the selected piece to move to the target tile"
             );
-
-            assertEquals(
-                    secondPieceTileBefore,
-                    secondPiece.getCurrentTile().getId(),
+            assertEquals(secondPieceTileBefore, secondPiece.getCurrentTile().getId(),
                     "Expected all non-selected pieces to remain unchanged"
             );
         }
@@ -226,15 +199,8 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         @DisplayName("Multiple movable pieces create multiple move options")
         void multipleMovablePiecesCreateMultipleMoveOptions() {
             // Arrange
-            Piece firstPiece = getGame()
-                    .getPlayer(decider())
-                    .getPieces()
-                    .get(0);
-
-            Piece secondPiece = getGame()
-                    .getPlayer(decider())
-                    .getPieces()
-                    .get(1);
+            Piece firstPiece = getPieces().get(0);
+            Piece secondPiece = getPieces().get(1);
 
             setPieceOntoTile(firstPiece, 10);
             setPieceOntoTile(secondPiece, 20);
@@ -242,25 +208,18 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
             rollNumber(3);
 
             // Act
-            List<MovePiece> moveActions = availableActions().stream()
-                    .filter(MovePiece.class::isInstance)
-                    .map(MovePiece.class::cast)
-                    .toList();
+            List<MovePiece> moveActions = getMoveActions();
 
             // Assert
-            assertEquals(
-                    2,
-                    moveActions.size(),
+            assertEquals(2, moveActions.size(),
                     "Expected one move action for each movable piece"
             );
 
-            assertTrue(
-                    moveActions.stream().anyMatch(action -> action.startTile() == 10),
+            assertTrue(moveActions.stream().anyMatch(action -> action.startTile() == 10),
                     "Expected a move option for the first piece"
             );
 
-            assertTrue(
-                    moveActions.stream().anyMatch(action -> action.startTile() == 20),
+            assertTrue(moveActions.stream().anyMatch(action -> action.startTile() == 20),
                     "Expected a move option for the second piece"
             );
         }
