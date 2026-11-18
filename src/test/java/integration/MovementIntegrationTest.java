@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("Movement Integration Tests")
 public class MovementIntegrationTest extends BaseIntegrationTest {
     private void setPieceOntoTile(Piece piece, int tileID) {
-        Tile tile = controller.getGame().getBoard().getTileById(tileID);
+        Tile tile = getGame().getBoard().getTileById(tileID);
         piece.moveTo(tile);
     }
 
@@ -103,7 +103,7 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         @DisplayName("Target tile is calculated correctly without wrap around")
         void targetTileIsCalculatedCorrectlyWithoutWrapAround() {
             // Arrange
-            Piece piece = controller.getGame()
+            Piece piece = getGame()
                     .getPlayer(decider())
                     .getPieces()
                     .getFirst();
@@ -130,7 +130,7 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
             rushThroughTurn(); // skip turn as RED doesn't have to wrap around
 
             // Arrange
-            Piece piece = controller.getGame()
+            Piece piece = getGame()
                     .getPlayer(decider())
                     .getPieces()
                     .getFirst();
@@ -156,7 +156,7 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         @Test
         @DisplayName("Selected piece is moved to the target tile")
         void selectedPieceIsMovedToTargetTile() {
-            Piece piece = controller.getGame()
+            Piece piece = getGame()
                     .getPlayer(decider())
                     .getPieces()
                     .getFirst();
@@ -184,12 +184,12 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         @DisplayName("Only the selected piece is moved")
         void onlySelectedPieceIsMoved() {
             // Arrange
-            Piece firstPiece = controller.getGame()
+            Piece firstPiece = getGame()
                     .getPlayer(decider())
                     .getPieces()
                     .get(0);
 
-            Piece secondPiece = controller.getGame()
+            Piece secondPiece = getGame()
                     .getPlayer(decider())
                     .getPieces()
                     .get(1);
@@ -229,12 +229,12 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         @DisplayName("Multiple movable pieces create multiple move options")
         void multipleMovablePiecesCreateMultipleMoveOptions() {
             // Arrange
-            Piece firstPiece = controller.getGame()
+            Piece firstPiece = getGame()
                     .getPlayer(decider())
                     .getPieces()
                     .get(0);
 
-            Piece secondPiece = controller.getGame()
+            Piece secondPiece = getGame()
                     .getPlayer(decider())
                     .getPieces()
                     .get(1);

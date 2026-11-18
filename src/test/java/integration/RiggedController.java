@@ -51,9 +51,18 @@ public class RiggedController extends GameController {
         return controller.getDecision();
     }
 
+    /**
+     * Returns the game instance managed by this controller.
+     * <p>
+     * Should only be used to arrange the game state for testing purposes.
+     * Do not use to inspect the game state, use {@link #getSnapshot()} instead,
+     * as else we're no longer testing the public interface of the game controller.
+     *
+     * @return the game instance managed by this controller
+     */
     @Override
     public Game getGame() {
-        throw new UnsupportedOperationException("Accessing the game is not supported. Use getSnapshot() instead.");
+        return controller.getGame();
     }
 
     public GameSnapshot getSnapshot() {
