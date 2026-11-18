@@ -43,7 +43,7 @@ class DiceIntegrationTest extends BaseIntegrationTest {
         setRollDieResult(roll);
 
         assertDoesNotThrow(
-                () -> submitValid(new Roll()),
+                () -> submitChecked(new Roll()),
                 "Expected dice value " + roll + " to be handled correctly"
         );
     }

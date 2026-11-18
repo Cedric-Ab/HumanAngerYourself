@@ -51,14 +51,23 @@ public abstract class BaseIntegrationTest {
     }
 
     /**
-     * Submits an action to the game controller if it is valid in the current decision context.
-     * <p>
-     * Use when the given action is expected to be valid.
-     * If the action is not valid, an IllegalStateException, stating that the test is outdated, will be thrown.
+     * Submits an action to the game controller.
      *
      * @param action the action to submit
      */
-    protected void submitValid(Action action) {
+    protected void submitUnchecked(Action action) {
+        controller.submit(decider(), action);
+    }
+
+    /**
+     * Submits an action to the game controller and checks if the action is valid.
+     * <p>
+     * Use when the given action is expected to be valid.
+     *
+     * @param action the action to submit
+     * @throws IllegalStateException if the action is not valid for the current decision
+     */
+    protected void submitChecked(Action action) {
         if (!availableActions().contains(action)) {
             throw new IllegalStateException("Test is outdated. Current decision does not allow action: " + action);
         }
@@ -74,12 +83,12 @@ public abstract class BaseIntegrationTest {
      */
     protected void rushThroughTurn() {
         setGambleResult(0);
-        submitValid(new Gamble());
-        submitValid(new EndTurn());
+        submitChecked(new Gamble());
+        submitChecked(new EndTurn());
     }
 
     protected void rollNumber(int result) {
         setRollDieResult(result);
-        submitValid(new Roll());
+        submitChecked(new Roll());
     }
 }

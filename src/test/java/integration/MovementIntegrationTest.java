@@ -71,7 +71,7 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
                 throw new AssertionError("Expected a MovePiece action to be available");
             }
 
-            submitValid(action);
+            submitChecked(action);
 
             assertTrue(getSnapshot().pieces().stream()
                             .anyMatch(p -> p.color() == decider() && p.tile() == START_FIELD_ID_RED),
@@ -83,7 +83,7 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         void leavingHomeMovesExactlyOnePiece() {
             rollNumber(5);
 
-            submitValid(availableActions().getFirst());
+            submitChecked(availableActions().getFirst());
 
             long piecesOutsideHome = getSnapshot()
                     .pieces()
@@ -171,7 +171,7 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
                     .findFirst()
                     .orElseThrow();
 
-            submitValid(move);
+            submitChecked(move);
 
             assertEquals(
                     move.targetTile(),
@@ -209,7 +209,7 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
             int secondPieceTileBefore = secondPiece.getCurrentTile().getId();
 
             // Act
-            submitValid(move);
+            submitChecked(move);
 
             // Assert
             assertEquals(

@@ -70,7 +70,7 @@ class TurnIntegrationTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Turn cannot end before mandatory actions are completed")
     void turnCannotEndBeforeMandatoryActionsAreCompleted() {
-        assertThrows(InvalidActionException.class, () -> controller.submit(decider(), new EndTurn()),
+        assertThrows(InvalidActionException.class, () -> submitUnchecked(new EndTurn()),
                 "Expected an exception when trying to end the turn before mandatory actions are completed");
     }
 }
