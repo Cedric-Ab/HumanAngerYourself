@@ -6,6 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
+import ch.zhaw.it.pm.humanangeryourself.api.action.EndTurn;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
 
@@ -52,6 +53,9 @@ class DiceIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Rolling six grants another roll")
     void rollingSixGrantsAnotherRoll() {
         rollNumber(6);
+
+        submitChecked(availableActions().getFirst());
+        submitChecked(new EndTurn());
 
         assertTrue(availableActions().contains(new Roll()),
                 "Expected another roll to be available after rolling six");

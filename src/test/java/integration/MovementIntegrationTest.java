@@ -27,7 +27,8 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
     @Nested
     @DisplayName("Leaving Home")
     class LeavingHome {
-        private static final int START_FIELD_ID_RED = 1;
+        private static final int TILE_ID_HOME_RED_1 = 101;
+        private static final int TILE_ID_START_RED = 1;
 
         @ParameterizedTest
         @ValueSource(ints = {5, 6})
@@ -35,11 +36,9 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         void pieceCanLeaveHome(int roll) {
             rollNumber(roll);
 
-            int homeTileID = controller.getGame().getPlayer(decider()).getPieces().getFirst().getHomeTile().getId();
-
             assertTrue(availableActions().stream().anyMatch(obj ->
                     obj instanceof MovePiece(int startTile, int targetTile)
-                            && homeTileID == startTile
+                            && TILE_ID_HOME_RED_1 == startTile
                             && startTile != targetTile
             ), "Expected a move action to be available that moves a piece from home to the start field");
         }
@@ -50,12 +49,10 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         void pieceCannotLeaveHome(int roll) {
             rollNumber(roll);
 
-            int homeTileID = controller.getGame().getPlayer(decider()).getPieces().getFirst().getHomeTile().getId();
-
             assertFalse(
                     availableActions().stream().anyMatch(obj ->
                             obj instanceof MovePiece(int startTile, int targetTile)
-                                    && homeTileID == startTile
+                                    && TILE_ID_HOME_RED_1 == startTile
                                     && startTile != targetTile
                     ), "Expected a move action to be available that moves a piece from home to the start field");
         }
@@ -74,7 +71,7 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
             submitChecked(action);
 
             assertTrue(getSnapshot().pieces().stream()
-                            .anyMatch(p -> p.color() == decider() && p.tile() == START_FIELD_ID_RED),
+                            .anyMatch(p -> p.color() == decider() && p.tile() == TILE_ID_START_RED),
                     "Expected a piece of the current player to be on the start field after leaving home");
         }
 
