@@ -310,5 +310,84 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
     @Nested
     @DisplayName("Capturing")
     class Capturing {
+        private static final int TILE_ID_NORMAL_1 = 6;
+        private static final int TILE_ID_NORMAL_2 = 9;
+        private static final int TILE_ID_SAFE_SPACE = 10;
+
+        private CaptureSetup setupCaptureSituation(
+                CaptureSetup pieces, int attackerStartTile, int defenderTile
+        ) {
+            setPieceOntoTile(pieces.capturingPiece(), attackerStartTile);
+            setPieceOntoTile(pieces.capturedPiece(), defenderTile);
+
+            rollNumber(defenderTile - attackerStartTile);
+
+            submitChecked(new MovePiece(attackerStartTile, defenderTile));
+
+            return pieces;
+        }
+
+        private CaptureSetup getPiecesOfDifferentPlayer() {
+            Piece defendingPiece = getPieces().getFirst();
+
+            rushThroughTurn();
+
+            Piece attackingPiece = getPieces().getFirst();
+
+            return new CaptureSetup(attackingPiece, defendingPiece);
+        }
+
+        private CaptureSetup getPiecesOfSamePlayer() {
+            Piece attackingPiece = getPieces().get(0);
+            Piece defendingPiece = getPieces().get(1);
+
+            return new CaptureSetup(attackingPiece, defendingPiece);
+        }
+
+        @Test
+        @DisplayName("Capturing piece remains on target tile")
+        void capturingPieceRemainsOnTargetTile() {
+            CaptureSetup pieces = setupCaptureSituation(getPiecesOfDifferentPlayer(),
+                    TILE_ID_NORMAL_1, TILE_ID_NORMAL_2);
+
+            assertEquals(TILE_ID_NORMAL_2, pieces.capturingPiece().getCurrentTile().getId(),
+                    "Expected the capturing piece to remain on the captured tile");
+        }
+
+        @Test
+        @DisplayName("Captured piece returns home")
+        void capturedPieceReturnsHome() {
+            CaptureSetup pieces = setupCaptureSituation(getPiecesOfDifferentPlayer(),
+                    TILE_ID_NORMAL_1, TILE_ID_NORMAL_2);
+
+            assertEquals(pieces.capturedPiece().getHomeTile(), pieces.capturedPiece().getCurrentTile(),
+                    "Expected the captured piece to return to its home tile");
+        }
+
+        @Test
+        @DisplayName("Own pieces are not captured")
+        void ownPiecesAreNotCaptured() {
+            CaptureSetup pieces = setupCaptureSituation(getPiecesOfSamePlayer(),
+                    TILE_ID_NORMAL_1, TILE_ID_NORMAL_2);
+
+            assertEquals(TILE_ID_NORMAL_2, pieces.capturedPiece().getCurrentTile().getId(),
+                    "Expected the stationary piece to remain on its tile");
+        }
+
+        @Test
+        @DisplayName("Pieces on safe spaces are not captured")
+        void piecesOnSafeSpacesAreNotCaptured() {
+            CaptureSetup pieces = setupCaptureSituation(getPiecesOfDifferentPlayer(),
+                    TILE_ID_NORMAL_1, TILE_ID_SAFE_SPACE);
+
+            assertEquals(TILE_ID_SAFE_SPACE, pieces.capturedPiece().getCurrentTile().getId(),
+                    "Expected a piece on a safe space to not be captured");
+        }
+
+        private record CaptureSetup(
+                Piece capturingPiece,
+                Piece capturedPiece
+        ) {
+        }
     }
 }
