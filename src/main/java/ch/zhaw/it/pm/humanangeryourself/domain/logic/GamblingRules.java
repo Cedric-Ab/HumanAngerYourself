@@ -12,21 +12,22 @@ import java.util.Random;
 public class GamblingRules {
     private static final Random RANDOM = new Random();
 
-    private final GamblingConfig config;
+    private GamblingConfig config;
 
     /**
-     * Creates a new instance of the gambling rules with the default configuration.
+     * Creates a new instance of the gambling rules.
      */
     public GamblingRules() {
-        this(GamblingConfig.defaults());
     }
 
     /**
-     * Creates a new instance of the gambling rules with a custom configuration.
+     * Injects the gambling configuration into the gambling rules, allowing it to access
      *
-     * @param config the custom configuration to use
+     * @param config the gambling configuration to be used for gambling calculations
      */
-    public GamblingRules(GamblingConfig config) { this.config = config; }
+    public void inject(GamblingConfig config) {
+        this.config = config;
+    }
 
     /**
      * Simulates a gambling round and determines the outcome.

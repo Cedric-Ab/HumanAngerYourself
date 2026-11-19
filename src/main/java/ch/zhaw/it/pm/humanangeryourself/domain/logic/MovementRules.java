@@ -35,27 +35,31 @@ public class MovementRules {
 
     private static final Random RANDOM = new Random();
 
-    private final GameConfig config;
-    private final Board board;
+    private GameConfig config;
+    private Board board;
 
     /**
-     * Creates a new instance of the movement rules with the default configuration.
-     *
-     * @param board the game board used to determine piece positions and movement
+     * Creates a new instance of the movement rules.
      */
-    public MovementRules(Board board) {
-        this(GameConfig.defaults(), board);
+    public MovementRules() {
     }
 
     /**
-     * Creates a new instance of the movement rules with a custom configuration.
+     * Injects the game configuration into the movement rules, allowing it to access
      *
-     * @param config the custom configuration to use
-     * @param board  the game board used to determine piece positions and movement
+     * @param config the game configuration to be used for movement calculations
      */
-    public MovementRules(GameConfig config, Board board) {
-        this.board = board;
+    public void inject(GameConfig config) {
         this.config = config;
+    }
+
+    /**
+     * Injects the game board into the movement rules, allowing it to access
+     *
+     * @param board the game board to be used for movement calculations
+     */
+    public void inject(Board board) {
+        this.board = board;
     }
 
     /**
