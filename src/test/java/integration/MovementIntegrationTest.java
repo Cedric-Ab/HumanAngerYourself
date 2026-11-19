@@ -8,7 +8,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import ch.zhaw.it.pm.humanangeryourself.api.action.MovePiece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
-import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
 
 import java.util.List;
 
@@ -18,27 +17,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("Movement Integration Tests")
 public class MovementIntegrationTest extends BaseIntegrationTest {
-    private List<Piece> getPieces() {
-        return getGame()
-                .getPlayer(decider())
-                .getPieces();
-    }
-
-    private Piece getFirstPiece() {
-        return getPieces()
-                .getFirst();
-    }
-
-    private void setPieceOntoTile(Piece piece, int tileID) {
-        Tile tile = getGame().getBoard().getTileById(tileID);
-        piece.moveTo(tile);
-    }
 
     private void placeCurrentPlayerPiece(int tileId) {
-        setPieceOntoTile(
-                getFirstPiece(),
-                tileId
-        );
+        setPieceOntoTile(getFirstPiece(), tileId);
     }
 
     private void placeCurrentPlayerPieceAndRoll(int tileId, int roll) {
@@ -46,22 +27,8 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         rollNumber(roll);
     }
 
-    private List<MovePiece> getMoveActions() {
-        return availableActions().stream()
-                .filter(MovePiece.class::isInstance)
-                .map(MovePiece.class::cast)
-                .toList();
-    }
-
     private MovePiece getFirstMoveAction() {
         return getMoveActions().stream()
-                .findFirst()
-                .orElseThrow();
-    }
-
-    private MovePiece getMoveAction(int startTile) {
-        return getMoveActions().stream()
-                .filter(move -> move.startTile() == startTile)
                 .findFirst()
                 .orElseThrow();
     }
@@ -328,11 +295,11 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         }
 
         private CaptureSetup getPiecesOfDifferentPlayer() {
-            Piece defendingPiece = getPieces().getFirst();
+            Piece defendingPiece = getFirstPiece();
 
             rushThroughTurn();
 
-            Piece attackingPiece = getPieces().getFirst();
+            Piece attackingPiece = getFirstPiece();
 
             return new CaptureSetup(attackingPiece, defendingPiece);
         }

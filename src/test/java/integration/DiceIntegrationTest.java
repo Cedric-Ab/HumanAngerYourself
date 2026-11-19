@@ -52,15 +52,16 @@ class DiceIntegrationTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Rolling six grants another roll")
     void rollingSixGrantsAnotherRoll() {
-        rollNumber(6);
+        PlayerColor orginalPlayer = getSnapshot().currentPlayer();
 
-        submitChecked(availableActions().getFirst());
+        rollNumber(6);
+        submitChecked(getMoveActions().getFirst());
         submitChecked(new EndTurn());
 
         assertTrue(availableActions().contains(new Roll()),
                 "Expected another roll to be available after rolling six");
 
-        assertEquals(PlayerColor.RED, getSnapshot().currentPlayer(),
+        assertEquals(orginalPlayer, getSnapshot().currentPlayer(),
                 "Expected the same player to keep the turn after rolling six");
     }
 }
