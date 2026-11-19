@@ -45,9 +45,9 @@ public class MovementRules {
     }
 
     /**
+     * Injects the game configuration into the movement rules, allowing it to access
      *
-     *
-     * @param config
+     * @param config the game configuration to be used for movement calculations
      */
     public void inject(GameConfig config) {
         this.config = config;

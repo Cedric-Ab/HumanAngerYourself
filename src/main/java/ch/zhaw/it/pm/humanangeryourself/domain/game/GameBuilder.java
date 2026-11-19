@@ -1,6 +1,7 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game;
 
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
+import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.Economy;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.GamblingRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.MovementRules;
@@ -14,6 +15,7 @@ import java.util.List;
  * Builder class for creating a Game instance with customizable rules, board, and players.
  */
 public class GameBuilder {
+    private GameConfig gameConfig = GameConfig.defaults();
     private MovementRules movementRules = new MovementRules();
     private GamblingRules gamblingRules = new GamblingRules();
     private Economy economy = new Economy();
@@ -45,6 +47,15 @@ public class GameBuilder {
                 new Piece(board.getTileById(firstHomeTileId + 2)),
                 new Piece(board.getTileById(firstHomeTileId + 3)));
         return new Player(name, color, 1000, pieces);
+    }
+
+    /**
+     * Sets the game configuration for the game being built.
+     *
+     * @param gameConfig the game configuration to set
+     */
+    public void setGameConfig(GameConfig gameConfig) {
+        this.gameConfig = gameConfig;
     }
 
     /**
@@ -132,5 +143,10 @@ public class GameBuilder {
 
     private void injectDependencies() {
         movementRules.inject(board);
+        movementRules.inject(gameConfig);
+
+        gamblingRules.inject(gameConfig.gambling());
+
+        economy.inject(gameConfig);
     }
 }
