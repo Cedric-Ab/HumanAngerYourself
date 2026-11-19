@@ -4,12 +4,16 @@ import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.action.EndTurn;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Gamble;
+import ch.zhaw.it.pm.humanangeryourself.api.action.MovePiece;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.MovementRules;
+import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
+import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BaseIntegrationTest {
@@ -87,8 +91,46 @@ public abstract class BaseIntegrationTest {
         submitChecked(new EndTurn());
     }
 
-    protected void rollNumber(int result) {
-        setRollDieResult(result);
+    protected void rollNumber(int roll) {
+        setRollDieResult(roll);
         submitChecked(new Roll());
+    }
+
+    protected List<Piece> getPieces() {
+        return new ArrayList<>(
+                getGame()
+                        .getPlayer(decider())
+                        .getPieces()
+        );
+    }
+
+    protected Piece getFirstPiece() {
+        return getPieces()
+                .getFirst();
+    }
+
+    protected void setPieceOntoTile(Piece piece, int tileID) {
+        Tile tile = getGame().getBoard().getTileById(tileID);
+        piece.moveTo(tile);
+    }
+
+    protected List<MovePiece> getMoveActions() {
+        return availableActions().stream()
+                .filter(MovePiece.class::isInstance)
+                .map(MovePiece.class::cast)
+                .toList();
+    }
+
+    protected MovePiece getMoveAction(int startTile) {
+        return getMoveActions().stream()
+                .filter(move -> move.startTile() == startTile)
+                .findFirst()
+                .orElseThrow();
+    }
+
+    protected void rollAndMoveFromTile(int startTile, int roll) {
+        setPieceOntoTile(getFirstPiece(), startTile);
+        rollNumber(roll);
+        submitChecked(getMoveAction(startTile));
     }
 }
