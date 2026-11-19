@@ -80,14 +80,21 @@ public abstract class BaseIntegrationTest {
     }
 
     /**
+     * Rushes through a primary action by setting the gamble result to 0 and submitting a Gamble action.
+     */
+    protected void rushThroughPrimaryAction() {
+        setGambleResult(0);
+        submitChecked(new Gamble());
+    }
+
+    /**
      * Rushes through a turn by setting the gamble result to 0 and submitting a Gamble and EndTurn action.
      * <p>
      * This method is used to quickly progress through a turn in the game for testing purposes.
      * Use this method when you want to skip the details of a turn and move on to the next player's turn.
      */
     protected void rushThroughTurn() {
-        setGambleResult(0);
-        submitChecked(new Gamble());
+        rushThroughPrimaryAction();
         submitChecked(new EndTurn());
     }
 
