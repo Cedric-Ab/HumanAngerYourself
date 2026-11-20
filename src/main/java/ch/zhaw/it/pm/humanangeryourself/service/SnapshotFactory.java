@@ -52,17 +52,14 @@ public final class SnapshotFactory {
         List<PropertyInfo> propertyInfos = toPropertyInfos(board);
         List<NpcInfo> npcInfos = toNpcInfos(board);
         List<CardType> viewerCards = getViewerCards(game, viewer);
-        int dieResult = game.getTurn().getDieResult();
-        CardType obtainedCard = game.getTurn().getObtainedCard();
         DecisionInfo decisionInfo = controller.getDecision();
-        String message = Objects.requireNonNullElse(game.getTurn().getResultMessage(), "Choose an action");
 
         return new GameSnapshot(
                 viewer, currentPlayer,
                 playerInfos, pieceInfos,
                 propertyInfos, npcInfos, viewerCards,
-                dieResult, obtainedCard, decisionInfo,
-                getWinnerColor(game), message);
+                game.getTurn().getPrimaryActionResult(), decisionInfo,
+                getWinnerColor(game));
     }
 
     private static List<PlayerInfo> toPlayerInfos(List<Player> players) {
