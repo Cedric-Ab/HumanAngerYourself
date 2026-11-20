@@ -1,5 +1,8 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.model;
 
+import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
+import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -8,28 +11,46 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * The game board, made up of all tiles.
+ * The game board.
+ * <p>
+ * Tile ids of the board (same numbers as the fx:ids "tile&lt;id&gt;" in BoardView.fxml):
+ * </p>
+ * <ul>
+ *     <li>{@code 1 - 60}: main track, counter-clockwise, every 5th tile is a safe space</li>
+ *     <li>{@code 100}: shared finish in the centre</li>
+ *     <li>{@code X01 - X04}: home slots of color X</li>
+ *     <li>{@code X05 - X14}: staircase of color X, X05 is next to the track, X14 next to the finish</li>
+ * </ul>
+ * <p>
+ * Color X: 1 = red, 2 = yellow, 3 = blue, 4 = green (counter-clockwise, X - 1 is also the quarter).
+ * </p>
  */
 public class Board {
-    private final List<Tile> tiles;
+    private static final int QUARTER_COUNT = 4;
+    private static final int TILES_PER_QUARTER = 15;
+    private static final int SAFE_INTERVAL = 5;
+    private static final int FINISH_TILE_ID = 100;
+    private static final int COLOR_ID_BLOCK = 100;
+    private static final int HOME_SLOT_COUNT = 4;
+    private static final int STAIRCASE_LENGTH = 10;
+    private static final int NO_QUARTER = -1;
+
+    private final GameConfig config;
+    private final List<Tile> tiles = new ArrayList<>();
 
     /**
-     * Creates a new board.
-     *
-     * @param tiles all tiles of the board
-     * @throws NullPointerException     if {@code tiles} or one of its elements is {@code null}
-     * @throws IllegalArgumentException if two tiles have the same id
+     * Creates the board.
      */
-    public Board(List<Tile> tiles) {
-        Objects.requireNonNull(tiles, "tiles must not be null");
-        Set<Integer> ids = new HashSet<>();
-        for (Tile tile : tiles) {
-            Objects.requireNonNull(tile, "tiles must not contain null");
-            if (!ids.add(tile.getId())) {
-                throw new IllegalArgumentException("Duplicate tile id: " + tile.getId());
-            }
+    public Board(GameConfig gameConfig) {
+        config = gameConfig;
+        for (int quarter = 0; quarter < QUARTER_COUNT; quarter++) {
+            addTrackTiles(quarter);
         }
-        this.tiles = new ArrayList<>(tiles);
+        tiles.add(new Tile(FINISH_TILE_ID, TileType.FINISH_AREA, NO_QUARTER, null, null));
+        for (int quarter = 0; quarter < QUARTER_COUNT; quarter++) {
+            addHomeAndStaircaseTiles(quarter);
+        }
+        requireUniqueIds();
     }
 
     /**
@@ -57,6 +78,35 @@ public class Board {
     }
 
     /**
+     * Returns the quarter of the board that belongs to the given color.
+     *
+     * @param color color of a player
+     * @return quarter of the color, from 0 to 3 in moving direction
+     */
+    public int getQuarterOf(PlayerColor color) {
+        return switch (color) {
+            case RED -> 0;
+            case YELLOW -> 1;
+            case BLUE -> 2;
+            case GREEN -> 3;
+        };
+    }
+
+    /**
+     * Returns the home tiles of the given color, where its pieces start.
+     *
+     * @param color color of a player
+     * @return the home tiles of the color, ordered by id
+     */
+    public List<Tile> getHomeTiles(PlayerColor color) {
+        int quarter = getQuarterOf(color);
+        return tiles.stream()
+                .filter(tile -> tile.getType() == TileType.HOME && tile.getQuarter() == quarter)
+                .toList();
+    }
+
+
+    /**
      * Returns the tile with the given id.
      *
      * @param tileId id of the tile
@@ -77,5 +127,54 @@ public class Board {
      */
     public List<Tile> getTiles() {
         return List.copyOf(tiles);
+    }
+
+
+    /**
+     * Checks that no two tiles of this board have the same id.
+     *
+     * @throws IllegalArgumentException if an id is used more than once
+     */
+    private void requireUniqueIds() {
+        Set<Integer> ids = new HashSet<>();
+        for (Tile tile : tiles) {
+            if (!ids.add(tile.getId())) {
+                throw new IllegalArgumentException("Duplicate tile id: " + tile.getId());
+            }
+        }
+    }
+
+    /**
+     * Adds the track tiles of one quarter, in moving direction.
+     * Every 5th tile is a safe space.
+     *
+     * @param quarter quarter to add the tiles for, from 0 to 3
+     */
+    private void addTrackTiles(int quarter) {
+        List<Tile> track = new ArrayList<>();
+        for (int i = 1; i <= TILES_PER_QUARTER; i++) {
+            int id = quarter * TILES_PER_QUARTER + i;
+            TileType type = id % SAFE_INTERVAL == 0 ? TileType.SAFE : TileType.TRACK;
+            track.add(new Tile(id, type, quarter, null, null));
+        }
+        tiles.addAll(track);
+    }
+
+    /**
+     * Adds the home slots and the staircase of the color that belongs to the given quarter.
+     *
+     * @param quarter quarter of the color, from 0 to 3
+     */
+    private void addHomeAndStaircaseTiles(int quarter) {
+        int firstId = (quarter + 1) * COLOR_ID_BLOCK;
+        List<Tile> homeStaircaseTiles = new ArrayList<>();
+        for (int i = 1; i <= HOME_SLOT_COUNT; i++) {
+            homeStaircaseTiles.add(new Tile(firstId + i, TileType.HOME, quarter, null, null));
+        }
+        for (int i = 1; i <= STAIRCASE_LENGTH; i++) {
+            homeStaircaseTiles.add(new Tile(firstId + HOME_SLOT_COUNT + i, TileType.STAIRCASE, quarter, null, null));
+        }
+        tiles.addAll(homeStaircaseTiles);
+
     }
 }
