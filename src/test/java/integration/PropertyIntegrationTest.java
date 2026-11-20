@@ -14,6 +14,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PropertyInfo;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisplayName("Property Integration Test")
 public class PropertyIntegrationTest extends BaseIntegrationTest {
 
     private Action getFirstBuyProperty() {

@@ -3,7 +3,9 @@ package integration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 
+@DisplayName("Gambling Integration Test")
 public class GamblingIntegrationTest {
+    // TODO
 
     @Nested
     @DisplayName("Monetary Reward")
