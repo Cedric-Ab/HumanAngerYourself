@@ -1,0 +1,816 @@
+name: Minimal Full Game Showcase
+
+steps:
+  # Piece 1
+  # home -> start -> five tiles before staircase -> staircase -> finish
+  # all staircase transitions demonstrated
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 5
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 101
+          targetTile: 1
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 1
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 54
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 1
+          targetTile: 55
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 55
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 1
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 55
+          targetTile: 56
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 56
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 1
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 56
+          targetTile: 57
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 57
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 1
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 57
+          targetTile: 58
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 58
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 1
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 58
+          targetTile: 59
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 59
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 1
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 59
+          targetTile: 60
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 60
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 1
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 60
+          targetTile: 105
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 105
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 1
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 105
+          targetTile: 106
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 106
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 1
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 106
+          targetTile: 107
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 107
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 1
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 107
+          targetTile: 108
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 108
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 1
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 108
+          targetTile: 109
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 109
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 1
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 109
+          targetTile: 110
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 110
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 1
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 110
+          targetTile: 111
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 111
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 1
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 111
+          targetTile: 112
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 112
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 1
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 112
+          targetTile: 113
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 113
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 1
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 113
+          targetTile: 114
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 114
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 1
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 114
+          targetTile: 100
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 100
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  # Piece 2
+  # home -> start -> normal tile -> finish
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 5
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 102
+          targetTile: 1
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 1
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 1
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 1
+          targetTile: 2
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 2
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 69
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 2
+          targetTile: 100
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 100
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  # Piece 3
+  # home -> start -> staircase -> finish
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 5
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 103
+          targetTile: 1
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 1
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 60
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 1
+          targetTile: 105
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 105
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 10
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 105
+          targetTile: 100
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 100
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  # Piece 4
+  # home -> start -> finish
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 5
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 104
+          targetTile: 1
+    expect:
+      pieces:
+        mode: CONTAINS
+        values:
+          - color: RED
+            tile: 1
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      submittedBy: RED
+      action:
+        type: AdvanceToTurn
+
+  - input:
+      submittedBy: RED
+      rollDieResult: 70
+      action:
+        type: Roll
+
+  - input:
+      submittedBy: RED
+      action:
+        type: MovePiece
+        parameters:
+          startTile: 1
+          targetTile: 100
+    expect:
+      winner: RED
+      pieces:
+        mode: EXACT
+        values:
+          - color: RED
+            tile: 100
+          - color: RED
+            tile: 100
+          - color: RED
+            tile: 100
+          - color: RED
+            tile: 100
+          - color: GREEN
+            tile: 401
+          - color: GREEN
+            tile: 402
+          - color: GREEN
+            tile: 403
+          - color: GREEN
+            tile: 404
+          - color: BLUE
+            tile: 301
+          - color: BLUE
+            tile: 302
+          - color: BLUE
+            tile: 303
+          - color: BLUE
+            tile: 304
+          - color: YELLOW
+            tile: 201
+          - color: YELLOW
+            tile: 202
+          - color: YELLOW
+            tile: 203
+          - color: YELLOW
+            tile: 204
