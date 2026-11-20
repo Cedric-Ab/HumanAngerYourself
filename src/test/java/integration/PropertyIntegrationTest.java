@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.api.PropertySize;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.action.BuyProperty;
@@ -32,19 +33,13 @@ public class PropertyIntegrationTest extends BaseIntegrationTest {
         submitChecked(getFirstBuyProperty());
         submitChecked(new EndTurn());
 
-        long moneyBefore = getSnapshot().players().stream()
-                .filter(playerInfo -> playerInfo.color() == decider())
-                .findFirst()
-                .orElseThrow()
-                .money();
+        PlayerColor payingPlayer = decider();
+
+        long moneyBefore = getPlayerInfo(payingPlayer).money();
 
         rushThroughTurn();
 
-        long moneyAfter = getSnapshot().players().stream()
-                .filter(playerInfo -> playerInfo.color() == decider())
-                .findFirst()
-                .orElseThrow()
-                .money();
+        long moneyAfter = getPlayerInfo(payingPlayer).money();
 
         assertTrue(moneyAfter < moneyBefore);
     }

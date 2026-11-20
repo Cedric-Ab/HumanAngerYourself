@@ -65,8 +65,12 @@ public class RiggedController extends GameController {
         return controller.getGame();
     }
 
+    public GameSnapshot getSnapshot(PlayerColor viewer) {
+        return SnapshotFactory.create(controller, viewer);
+    }
+
     public GameSnapshot getSnapshot() {
-        return SnapshotFactory.create(controller, PlayerColor.RED);
+        return getSnapshot(PlayerColor.RED);
     }
 
     /**

@@ -8,6 +8,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.MovePiece;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PlayerInfo;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.MovementRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
@@ -18,6 +19,10 @@ import java.util.List;
 
 public abstract class BaseIntegrationTest {
     private final RiggedController controller = new RiggedController();
+
+    protected GameSnapshot getSnapshot(PlayerColor viewer) {
+        return controller.getSnapshot(viewer);
+    }
 
     protected GameSnapshot getSnapshot() {
         return controller.getSnapshot();
@@ -52,6 +57,17 @@ public abstract class BaseIntegrationTest {
 
     protected List<? extends Action> availableActions() {
         return getDecision().availableActions();
+    }
+
+    protected PlayerInfo getPlayerInfo(PlayerColor color) {
+        return getSnapshot().players().stream()
+                .filter(playerInfo -> playerInfo.color() == color)
+                .findFirst()
+                .orElseThrow();
+    }
+
+    protected PlayerInfo getDeciderInfo() {
+        return getPlayerInfo(decider());
     }
 
     /**
