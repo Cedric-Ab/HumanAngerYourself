@@ -1,6 +1,7 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.logic;
 
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.GambleResult;
+import ch.zhaw.it.pm.humanangeryourself.config.GamblingConfig;
 
 import java.util.Random;
 
@@ -11,6 +12,22 @@ import java.util.Random;
  */
 public class GamblingRules {
     private static final Random RANDOM = new Random();
+
+    private final GamblingConfig config;
+
+    /**
+     * Creates a new instance of the gambling rules with the default configuration.
+     */
+    public GamblingRules() {
+        this(GamblingConfig.defaults());
+    }
+
+    /**
+     * Creates a new instance of the gambling rules with a custom configuration.
+     *
+     * @param config the custom configuration to use
+     */
+    public GamblingRules(GamblingConfig config) { this.config = config; }
 
     /**
      * Simulates a gambling round and determines the outcome.

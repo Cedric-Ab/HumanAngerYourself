@@ -1,6 +1,7 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game;
 
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
+import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.Economy;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.GamblingRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.MovementRules;
@@ -43,8 +44,7 @@ public class Game {
     }
 
     private Game(DefaultSetup setup) {
-        this(new MovementRules(setup.board()), new GamblingRules(), new Economy(),
-                setup.board(), setup.players());
+        this(new MovementRules(setup.board()), new GamblingRules(), new Economy(), setup.board(), setup.players());
     }
 
     /**
@@ -95,13 +95,14 @@ public class Game {
     }
 
     /**
-     * Creates a new game with the given board and players.
+     * Creates a new game with the given board and players and rules based on the given configuration.
      *
+     * @param config  the configuration of the game
      * @param board   the board of the game
      * @param players the players of the game, must contain 4 players
      */
-    public Game(Board board, List<Player> players) {
-        this(new MovementRules(board), new GamblingRules(), new Economy(), board, players);
+    public Game(GameConfig config, Board board, List<Player> players) {
+        this(new MovementRules(config, board), new GamblingRules(config.gambling()), new Economy(config), board, players);
     }
 
     /**
