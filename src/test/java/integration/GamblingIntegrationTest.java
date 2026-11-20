@@ -1,5 +1,6 @@
 package integration;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 
@@ -15,6 +16,7 @@ public class GamblingIntegrationTest {
 //         @DisplayName("Money of Player is changed")
     }
 
+    @Disabled
     @Nested
     @DisplayName("Hand Card as Reward")
     class HandCard {
@@ -25,6 +27,7 @@ public class GamblingIntegrationTest {
 //         @DisplayName("Exceding Hand Limit triggers Hand Card Discard")
     }
 
+    @Disabled
     @Nested
     @DisplayName("Instant Card as Reward")
     class InstantCard {

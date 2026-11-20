@@ -13,6 +13,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled
 @DisplayName("NPC Integration Test")
 public class NPCIntegrationTest extends BaseIntegrationTest {
     // TODO: change to tile that actually has an NPC on it

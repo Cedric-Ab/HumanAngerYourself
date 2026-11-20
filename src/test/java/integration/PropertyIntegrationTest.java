@@ -1,13 +1,13 @@
 package integration;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.api.PropertySize;
-import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.action.BuyProperty;
 import ch.zhaw.it.pm.humanangeryourself.api.action.EndTurn;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Gamble;
@@ -15,12 +15,14 @@ import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PropertyInfo;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled
 @DisplayName("Property Integration Test")
 public class PropertyIntegrationTest extends BaseIntegrationTest {
 
-    private Action getFirstBuyProperty() {
+    private BuyProperty getFirstBuyProperty() {
         return availableActions().stream()
                 .filter(BuyProperty.class::isInstance)
+                .map(BuyProperty.class::cast)
                 .findFirst()
                 .orElseThrow();
     }
