@@ -14,6 +14,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.TargetPiece;
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PlayerInfo;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult;
 import ch.zhaw.it.pm.humanangeryourself.ui.viewmodel.GameViewModel;
 
 import javafx.fxml.FXML;
@@ -143,7 +144,40 @@ public class PlayerViewController {
         renderCards(snapshot);
         renderAdditionalActions(snapshot);
 
-        resultLabel.setText(snapshot.message());
+        displayResultMessage(snapshot);
+    }
+
+    /**
+     * Displays an appropriate message in the result label.
+     *
+     * @param snapshot the game snapshot (may not be null)
+     */
+    private void displayResultMessage(GameSnapshot snapshot) {
+        if (snapshot.winner() != null) {
+            resultLabel.setText("Winner: " + playerName(snapshot, snapshot.winner()));
+        } else if (snapshot.primaryActionResult() != null) {
+            resultLabel.setText(toPrimaryActionResult(snapshot));
+        } else if (snapshot.decision() != null) {
+            resultLabel.setText("Choose an available action.");
+        }
+    }
+
+    /**
+     * Returns a string representation of the given primary action result.
+     *
+     * @param snapshot the game snapshot (may not be null)
+     * @return a string representation of the given primary action result
+     */
+    private String toPrimaryActionResult(GameSnapshot snapshot) {
+        return switch (snapshot.primaryActionResult()) {
+            case PrimaryActionResult.RollResult r -> String.format("You rolled a %d\n%s", r.dieRoll(),
+                    findAction(snapshot, MovePiece.class).isEmpty()
+                            ? "That's no good to you" : "Choose a piece to move");
+            case PrimaryActionResult.GambleResult.MoneyResult m -> m.amount() > 0
+                    ? String.format("Hurray, you won %,d$", m.amount())
+                    : String.format("Oh no, you lost %,d$", -m.amount());
+            case PrimaryActionResult.GambleResult.CardResult c -> "You received " + c.cardType().toString();
+        };
     }
 
     private void renderCards(GameSnapshot snapshot) {
