@@ -64,10 +64,10 @@ public class Game {
 
     private static Player createPlayer(String name, PlayerColor color, Board board, int firstHomeTileId) {
         List<Piece> pieces = List.of(
-                new Piece(board.getTileById(firstHomeTileId)),
-                new Piece(board.getTileById(firstHomeTileId + 1)),
-                new Piece(board.getTileById(firstHomeTileId + 2)),
-                new Piece(board.getTileById(firstHomeTileId + 3)));
+                new Piece(board.getTileById(firstHomeTileId), 1),
+                new Piece(board.getTileById(firstHomeTileId + 1), 2),
+                new Piece(board.getTileById(firstHomeTileId + 2), 3),
+                new Piece(board.getTileById(firstHomeTileId + 3), 4));
         return new Player(name, color, 1000, pieces);
     }
 
