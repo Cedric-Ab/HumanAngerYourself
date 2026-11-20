@@ -70,12 +70,16 @@ public record Expectations(
                         attributeName + " should be exactly as provided"
                 );
 
-                case CONTAINS -> values.forEach(expected ->
-                        assertTrue(
-                                actual.contains(expected),
-                                attributeName + " should contain " + expected + ". Is: " + actual
-                        ));
+                case CONTAINS -> {
+                    List<T> remaining = new java.util.ArrayList<>(actual);
 
+                    for (T expected : values) {
+                        assertTrue(
+                                remaining.remove(expected),
+                                attributeName + " should contain " + expected + ". Is: " + actual
+                        );
+                    }
+                }
                 case DOES_NOT_CONTAIN -> values.forEach(forbidden ->
                         assertFalse(
                                 actual.contains(forbidden),
