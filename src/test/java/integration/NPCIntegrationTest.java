@@ -13,6 +13,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+// TODO: enable this test once the NPC is implemented and can be interacted with
 @Disabled
 @DisplayName("NPC Integration Test")
 public class NPCIntegrationTest extends BaseIntegrationTest {

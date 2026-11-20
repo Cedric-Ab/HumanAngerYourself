@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Nested;
 
 @DisplayName("Gambling Integration Test")
 public class GamblingIntegrationTest {
-    // TODO
+    // TODO: implement once api interface & interactions are defined
 
     @Nested
     @DisplayName("Monetary Reward")
