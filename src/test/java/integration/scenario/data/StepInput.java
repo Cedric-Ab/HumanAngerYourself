@@ -58,6 +58,9 @@ public record StepInput(
         }
 
         private int intParam(String name) {
+            if (parameters.get(name) == null)
+                throw new IllegalArgumentException("Missing parameter '%s'".formatted(name));
+
             if (!(parameters.get(name) instanceof Number number))
                 throw new IllegalArgumentException("Parameter '%s' must be a number".formatted(name));
 
