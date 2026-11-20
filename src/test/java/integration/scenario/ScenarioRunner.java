@@ -6,6 +6,8 @@ import integration.scenario.data.ScenarioStep;
 import integration.scenario.data.StepInput;
 
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
+import ch.zhaw.it.pm.humanangeryourself.api.action.EndTurn;
+import ch.zhaw.it.pm.humanangeryourself.api.action.Gamble;
 
 public class ScenarioRunner {
 
@@ -37,6 +39,16 @@ public class ScenarioRunner {
                     "Scenario is invalid. Expected decider: " + input.submittedBy() +
                             ", but actual decider is: " + controller.getDecision().decider());
         }
+
+        if (action instanceof StepInput.SkipAction(boolean onlyPrimary)) {
+            controller.setGambleResult(0);
+            controller.submit(input.submittedBy(), new Gamble());
+            if (!onlyPrimary) {
+                controller.submit(input.submittedBy(), new EndTurn());
+            }
+            return;
+        }
+
         if (!controller.getDecision().availableActions().contains(action)) {
             throw new IllegalStateException(
                     "Scenario is invalid. Action not available: " + action);
