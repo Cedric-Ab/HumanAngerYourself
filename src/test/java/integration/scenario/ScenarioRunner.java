@@ -81,7 +81,6 @@ public class ScenarioRunner {
     private void validateAction(Action action) {
         if (!controller.getDecision().availableActions().contains(action)) {
             String availableActions = controller.getDecision().availableActions().stream()
-                    .sorted()
                     .map(Action::toString)
                     .reduce((a, b) -> a + ", " + b)
                     .orElse("none");
