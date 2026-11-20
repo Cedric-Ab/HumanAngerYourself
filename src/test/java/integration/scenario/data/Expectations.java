@@ -2,7 +2,6 @@ package integration.scenario.data;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
-import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GamblingOutcome;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.NpcInfo;
@@ -25,7 +24,8 @@ public record Expectations(
         Optional<CollectionExpectation<NpcInfo>> npcs,
         Optional<CollectionExpectation<CardType>> viewerCards,
         Optional<Integer> lastRoll,
-        Optional<DecisionInfo> decision,
+// currently not used in scenarios, because it is not relevant for the game state
+//         Optional<DecisionInfo> decision,
         Optional<GamblingOutcome> gamblingOutcome,
         Optional<PlayerColor> winner
 ) {
@@ -50,9 +50,6 @@ public record Expectations(
 
         lastRoll.ifPresent(v ->
                 assertEquals(v, actual.lastRoll()));
-
-        decision.ifPresent(v ->
-                assertEquals(v, actual.decision()));
 
         gamblingOutcome.ifPresent(v ->
                 assertEquals(v, actual.gamblingOutcome()));

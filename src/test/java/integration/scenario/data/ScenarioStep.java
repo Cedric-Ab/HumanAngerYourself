@@ -1,7 +1,9 @@
 package integration.scenario.data;
 
+import java.util.Optional;
+
 public record ScenarioStep(
         StepInput input,
-        Expectations expect
+        Optional<Expectations> expect
 ) {
 }

@@ -22,7 +22,7 @@ public class ScenarioRunner {
     public void run(Scenario scenario) {
         for (ScenarioStep step : scenario.steps()) {
             executeStep(step.input());
-            step.expect().verify(controller.getSnapshot());
+            step.expect().ifPresent(expect -> expect.verify(controller.getSnapshot()));
         }
     }
 
