@@ -1,6 +1,7 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game.phase;
 
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.GambleResult;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
@@ -27,17 +28,22 @@ public class GamblingPhase extends GamePhaseBase {
      */
     @Override
     public @NotNull GamePhase process() {
-        // TODO: update when gambling can yield action cards
-        int result = getGame().getGamblingRules().spin();
-        getCurrentPlayer().addMoney(result);
+        GambleResult result = getGame().getGamblingRules().spin();
 
-        String message;
-        if (result < 0) {
-            message = String.format("Damn, you lost %,d", -result);
-        } else {
-            message = String.format("Hurray, you won %,d", result);
+        getGame().getTurn().setPrimaryActionResult(result);
+
+        switch (result) {
+            case GambleResult.MoneyResult m:
+                getCurrentPlayer().addMoney(m.amount());
+                break;
+            case GambleResult.CardResult c:
+                if (c.cardType().isInstant()) {
+                    // TODO: trigger card effect
+                } else {
+                    getCurrentPlayer().addCard(c.cardType());
+                }
+                break;
         }
-        getGame().getTurn().setResultMessage(message);
 
         return new EndOfTurnPhase(getGame());
     }
