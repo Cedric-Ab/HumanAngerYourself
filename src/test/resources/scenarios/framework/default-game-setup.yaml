@@ -1,0 +1,112 @@
+name: Default Game Setup
+
+steps:
+  - input:
+      submittedBy: RED
+      action:
+        type: SkipPrimary
+
+    expect:
+      currentPlayer: RED
+
+      players:
+        mode: EXACT
+        values:
+          - name: Alice
+            color: RED
+            money: 1000
+            cardCount: 0
+
+          - name: Bob
+            color: GREEN
+            money: 1000
+            cardCount: 0
+
+          - name: Charlie
+            color: BLUE
+            money: 1000
+            cardCount: 0
+
+          - name: Dave
+            color: YELLOW
+            money: 1000
+            cardCount: 0
+
+      pieces:
+        mode: EXACT
+        values:
+          - color: RED
+            tile: 101
+          - color: RED
+            tile: 102
+          - color: RED
+            tile: 103
+          - color: RED
+            tile: 104
+
+          - color: GREEN
+            tile: 401
+          - color: GREEN
+            tile: 402
+          - color: GREEN
+            tile: 403
+          - color: GREEN
+            tile: 404
+
+          - color: BLUE
+            tile: 301
+          - color: BLUE
+            tile: 302
+          - color: BLUE
+            tile: 303
+          - color: BLUE
+            tile: 304
+
+          - color: YELLOW
+            tile: 201
+          - color: YELLOW
+            tile: 202
+          - color: YELLOW
+            tile: 203
+          - color: YELLOW
+            tile: 204
+
+      properties:
+        mode: EXACT
+        values: [ ]
+
+      viewerCards:
+        mode: EXACT
+        values: [ ]
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+    expect:
+      currentPlayer: GREEN
+
+  - input:
+      submittedBy: GREEN
+      action:
+        type: SkipTurn
+
+    expect:
+      currentPlayer: BLUE
+
+  - input:
+      submittedBy: BLUE
+      action:
+        type: SkipTurn
+
+    expect:
+      currentPlayer: YELLOW
+
+  - input:
+      submittedBy: YELLOW
+      action:
+        type: SkipTurn
+
+    expect:
+      currentPlayer: RED
