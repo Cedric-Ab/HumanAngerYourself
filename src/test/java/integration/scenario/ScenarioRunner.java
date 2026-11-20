@@ -41,9 +41,8 @@ public class ScenarioRunner {
 
         Action action = input.action().toAction();
 
-        validateDecider(input, getDecider());
-        if (!controller.getDecision().availableActions().contains(action))
-            throw new IllegalStateException("Scenario is invalid. Action not available: " + action);
+        validateDecider(input);
+        validateAction(action);
 
         controller.submit(input.submittedBy(), action);
     }
@@ -53,7 +52,7 @@ public class ScenarioRunner {
 
         switch (action) {
             case StepInput.SkipAction(boolean onlyPrimary) -> {
-                validateDecider(input, getDecider());
+                validateDecider(input);
 
                 if (onlyPrimary) {
                     skipPrimaryAction(input.submittedBy());
@@ -71,11 +70,23 @@ public class ScenarioRunner {
         return true;
     }
 
-    private void validateDecider(StepInput input, PlayerColor expected) {
-        if (input.submittedBy() != expected) {
+    private void validateDecider(StepInput input) {
+        if (input.submittedBy() != getDecider()) {
             throw new IllegalStateException(
-                    "Scenario is invalid. Expected decider: " + expected +
+                    "Scenario is invalid. Expected decider: " + getDecider() +
                             ", but actual decider is: " + input.submittedBy());
+        }
+    }
+
+    private void validateAction(Action action) {
+        if (!controller.getDecision().availableActions().contains(action)) {
+            String availableActions = controller.getDecision().availableActions().stream()
+                    .sorted()
+                    .map(Action::toString)
+                    .reduce((a, b) -> a + ", " + b)
+                    .orElse("none");
+            throw new IllegalStateException("Scenario is invalid. Action not available: " + action +
+                    ". Available actions: " + availableActions);
         }
     }
 
