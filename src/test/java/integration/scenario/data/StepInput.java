@@ -41,6 +41,8 @@ public record StepInput(
             return switch (type()) {
                 case "SkipPrimary" -> new SkipAction(true);
                 case "SkipTurn" -> new SkipAction(false);
+                case "AdvanceToTurn" -> new AdvanceToTurn();
+
                 case "Roll" -> new Roll();
                 case "Gamble" -> new Gamble();
                 case "EndTurn" -> new EndTurn();
@@ -85,4 +87,6 @@ public record StepInput(
     }
 
     public record SkipAction(boolean onlyPrimary) implements Action { }
+
+    public record AdvanceToTurn() implements Action { }
 }
