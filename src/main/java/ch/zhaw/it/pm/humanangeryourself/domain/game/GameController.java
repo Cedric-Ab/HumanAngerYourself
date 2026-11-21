@@ -34,13 +34,6 @@ public class GameController {
     }
 
     /**
-     * Creates a new instance of the GameController with a new Game instance.
-     */
-    public GameController() {
-        this(new Game());
-    }
-
-    /**
      * Registers an observer that is notified after every state change.
      *
      * @param observer the observer to register
