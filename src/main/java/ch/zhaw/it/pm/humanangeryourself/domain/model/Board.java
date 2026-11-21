@@ -1,19 +1,25 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.model;
 
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
-import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
 /**
- * The game board.
+ * The game board with all its tiles.
  * <p>
- * Tile ids of the board (same numbers as the fx:ids "tile&lt;id&gt;" in BoardView.fxml):
+ * Responsibilities:
+ * </p>
+ * <ul>
+ *     <li>builds the standard board when it is created</li>
+ *     <li>knows which quarter and which home tiles belong to each color</li>
+ *     <li>finds tiles by id and answers questions about them, for example which properties a player owns</li>
+ * </ul>
+ * <p>
+ * Tile ids (same numbers as the fx:ids "tile&lt;id&gt;" in BoardView.fxml):
  * </p>
  * <ul>
  *     <li>{@code 1 - 60}: main track, counter-clockwise, every 5th tile is a safe space</li>
@@ -35,14 +41,12 @@ public class Board {
     private static final int STAIRCASE_LENGTH = 10;
     private static final int NO_QUARTER = -1;
 
-    private final GameConfig config;
     private final List<Tile> tiles = new ArrayList<>();
 
     /**
      * Creates the board.
      */
-    public Board(GameConfig gameConfig) {
-        config = gameConfig;
+    public Board() {
         for (int quarter = 0; quarter < QUARTER_COUNT; quarter++) {
             addTrackTiles(quarter);
         }
@@ -105,7 +109,6 @@ public class Board {
                 .toList();
     }
 
-
     /**
      * Returns the tile with the given id.
      *
@@ -129,7 +132,6 @@ public class Board {
         return List.copyOf(tiles);
     }
 
-
     /**
      * Checks that no two tiles of this board have the same id.
      *
@@ -151,13 +153,11 @@ public class Board {
      * @param quarter quarter to add the tiles for, from 0 to 3
      */
     private void addTrackTiles(int quarter) {
-        List<Tile> track = new ArrayList<>();
         for (int i = 1; i <= TILES_PER_QUARTER; i++) {
             int id = quarter * TILES_PER_QUARTER + i;
             TileType type = id % SAFE_INTERVAL == 0 ? TileType.SAFE : TileType.TRACK;
-            track.add(new Tile(id, type, quarter, null, null));
+            tiles.add(new Tile(id, type, quarter, null, null));
         }
-        tiles.addAll(track);
     }
 
     /**
@@ -167,14 +167,12 @@ public class Board {
      */
     private void addHomeAndStaircaseTiles(int quarter) {
         int firstId = (quarter + 1) * COLOR_ID_BLOCK;
-        List<Tile> homeStaircaseTiles = new ArrayList<>();
         for (int i = 1; i <= HOME_SLOT_COUNT; i++) {
-            homeStaircaseTiles.add(new Tile(firstId + i, TileType.HOME, quarter, null, null));
+            tiles.add(new Tile(firstId + i, TileType.HOME, quarter, null, null));
         }
         for (int i = 1; i <= STAIRCASE_LENGTH; i++) {
-            homeStaircaseTiles.add(new Tile(firstId + HOME_SLOT_COUNT + i, TileType.STAIRCASE, quarter, null, null));
+            tiles.add(new Tile(firstId + HOME_SLOT_COUNT + i, TileType.STAIRCASE, quarter, null, null));
         }
-        tiles.addAll(homeStaircaseTiles);
 
     }
 }
