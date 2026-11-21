@@ -34,16 +34,16 @@ public class GamblingRules {
      * @return a positive amount between 1,000 and 100,000 if the player wins,
      *         or a negative amount between -1,000 and -100,000 if the player loses
      */
-    // TODO refactor to use percentage config from GamblingConfig class
-    public int spin() {
+    public long spin() {
         int chance = RANDOM.nextInt(100);
 
         if (chance < 60) {
-            return RANDOM.nextInt(1_000, 100_001);
+            return RANDOM.nextLong(config.amountLowerBound(), config.amountUpperBound());
         }
 
-        return -RANDOM.nextInt(1_000, 100_001);
+        return -RANDOM.nextLong(config.amountLowerBound(), config.amountUpperBound());
     }
+
 
     // TODO implement spin method to receive Action Cards
 }

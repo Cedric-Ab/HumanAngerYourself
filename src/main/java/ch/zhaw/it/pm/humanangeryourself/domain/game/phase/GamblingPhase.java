@@ -29,7 +29,7 @@ public class GamblingPhase extends GamePhaseBase {
     @Override
     public @NotNull GamePhase process() {
         // TODO: update when gambling can yield action cards
-        int result = getGame().getGamblingRules().spin();
+        long result = getGame().getGamblingRules().spin();
         getCurrentPlayer().changeBalanceBy(result);
 
         GamblingOutcome outcome = new GamblingOutcome(false, String.format("You won %,d$", result));
