@@ -10,7 +10,6 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -64,10 +63,10 @@ public class Game {
 
     private static Player createPlayer(String name, PlayerColor color, Board board, int firstHomeTileId) {
         List<Piece> pieces = List.of(
-                new Piece(board.getTileById(firstHomeTileId), 1),
-                new Piece(board.getTileById(firstHomeTileId + 1), 2),
-                new Piece(board.getTileById(firstHomeTileId + 2), 3),
-                new Piece(board.getTileById(firstHomeTileId + 3), 4));
+                new Piece(1, board.getTileById(firstHomeTileId)),
+                new Piece(2, board.getTileById(firstHomeTileId + 1)),
+                new Piece(3, board.getTileById(firstHomeTileId + 2)),
+                new Piece(4, board.getTileById(firstHomeTileId + 3)));
         return new Player(name, color, 1000, pieces);
     }
 

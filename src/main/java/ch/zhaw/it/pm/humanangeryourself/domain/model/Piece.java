@@ -27,7 +27,7 @@ public class Piece {
      * @param homeTile home tile of the piece
      * @throws NullPointerException if {@code homeTile} is {@code null}
      */
-    public Piece(Tile homeTile, int id) {
+    public Piece(int id, Tile homeTile) {
         this.homeTile = Objects.requireNonNull(homeTile, "homeTile must not be null");
         this.currentTile = homeTile;
         this.id = id;
