@@ -34,8 +34,6 @@ public record GamblingConfig(
      * Returns the default gambling configuration: a 48% chance to win money, a 32% chance to
      * lose money and a 20% chance to receive a card.
      * <p>
-     * The values are placeholders and are still to be adjusted.
-     *
      * @return the default configuration
      */
     public static GamblingConfig defaults() {
