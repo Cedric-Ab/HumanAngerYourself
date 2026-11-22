@@ -1,7 +1,9 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.logic;
 
+import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.config.GamblingConfig;
 
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -33,17 +35,27 @@ public class GamblingRules {
      *
      * @return a positive amount between 1,000 and 100,000 if the player wins,
      *         or a negative amount between -1,000 and -100,000 if the player loses
+     *         or a CardType
      */
-    public long spin() {
+    public SpinResult spin() {
         int chance = RANDOM.nextInt(100);
 
-        if (chance < 60) {
-            return RANDOM.nextLong(config.amountLowerBound(), config.amountUpperBound());
+        if (chance <= 20) {
+            return new SpinResult(receiveCard());
+        } else if (chance <= 32) {
+
+            long amount = -RANDOM.nextLong(config.amountLowerBound(), config.amountUpperBound());
+            return new SpinResult(amount);
+        } else {
+            long amount = RANDOM.nextLong(config.amountLowerBound(), config.amountUpperBound());
+            return new SpinResult(amount);
         }
 
-        return -RANDOM.nextLong(config.amountLowerBound(), config.amountUpperBound());
     }
 
 
-    // TODO implement spin method to receive Action Cards
+    public CardType receiveCard() {
+        List<CardType> cards = CardType.all();
+        return cards.get(RANDOM.nextInt(cards.size()));
+    }
 }
