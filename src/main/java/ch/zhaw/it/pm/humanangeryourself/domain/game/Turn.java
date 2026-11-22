@@ -38,10 +38,20 @@ public class Turn {
         return player;
     }
 
+    /**
+     * Returns the result of the last primary action performed by the player during this turn.
+     *
+     * @return the result of the last primary action, or {@code null} if no action was performed yet
+     */
     public @Nullable PrimaryActionResult getPrimaryActionResult() {
         return primaryActionResult;
     }
 
+    /**
+     * Sets the result of the last primary action performed by the player during this turn.
+     *
+     * @param primaryActionResult the result of the last primary action, must not be {@code null}
+     */
     public void setPrimaryActionResult(@NotNull PrimaryActionResult primaryActionResult) {
         this.primaryActionResult = primaryActionResult;
     }
