@@ -5,6 +5,7 @@ import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
+import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.TileType;
 
 import java.util.ArrayList;
@@ -15,8 +16,8 @@ import java.util.Random;
 /**
  * Defines the movement rules for pieces on the game board.
  * <p>
- * Responsible for calculating possible moves, determining when pieces
- * enter their colour-specific staircase and handling pieces that must
+ * Responsible for rolling the die, calculating possible moves, determining when pieces
+ * enter their colour-specific staircase and determining which pieces must
  * be sent back home.
  */
 public class MovementRules {
@@ -69,23 +70,27 @@ public class MovementRules {
 
     /**
      * Determines which pieces must be sent back home when the given piece
-     * lands on its destination tile.
+     * has landed on its destination tile.
      *
      * <p>
-     * Pieces on safe tiles cannot be sent back home. The identification of
-     * opponent pieces on the destination tile is not yet implemented.
+     * Pieces on safe tiles cannot be sent back home, so the result is empty in that case.
+     * Otherwise, the pieces of all other players that occupy the same tile as
+     * {@code pieceMoved} are returned. Pieces of the moving player are never included.
      *
-     * @param pieceMoved the piece that has just moved
-     * @return a list of pieces that must be sent back home
+     * @param pieceMoved the piece that has just moved, its current tile is the destination tile
+     * @param mover      the player who moved the piece, their pieces are not sent home
+     * @param players    all players of the game, including the moving player
+     * @return an unmodifiable list of pieces that must be sent back home, empty if there are none
      */
-    public List<Piece> piecesToSendBackHome(Piece pieceMoved) {
-        List<Piece> piecesToSendBackHome = new ArrayList<>();
-        if (pieceMoved.getCurrentTile().isSafe()) {
+    public List<Piece> piecesToSendBackHome(Piece pieceMoved, Player mover, List<Player> players) {
+        Tile tile = pieceMoved.getCurrentTile();
+        if (tile.isSafe()) {
             return Collections.emptyList();
-        } else {
-            // TODO: Find all opponent pieces occupying the destination tile.
         }
-        return piecesToSendBackHome;
+        return players.stream()
+                .filter(player -> player.getColor() != mover.getColor())
+                .flatMap(player -> player.getPieces(tile).stream())
+                .toList();
     }
 
     /**
