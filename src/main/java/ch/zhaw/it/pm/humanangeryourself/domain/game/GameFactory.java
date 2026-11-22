@@ -50,6 +50,7 @@ public final class GameFactory {
 
     /**
      * Creates a player with the start money and one piece on each home tile of the player's color.
+     * Each piece gets the id of its home tile, so every piece on the board has its own id.
      *
      * @param setup      name and color of the player
      * @param board      board that provides the home tiles
@@ -58,7 +59,7 @@ public final class GameFactory {
      */
     private static Player createPlayer(PlayerSetup setup, Board board, long startMoney) {
         List<Piece> pieces = board.getHomeTiles(setup.color()).stream()
-                .map(Piece::new)
+                .map(homeTile -> new Piece(homeTile.getId(), homeTile))
                 .toList();
         return new Player(setup.name(), setup.color(), startMoney, pieces);
     }
