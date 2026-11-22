@@ -80,6 +80,13 @@ public class NPCIntegrationTest extends BaseIntegrationTest {
 
     @Test
     @Disabled
+    @DisplayName("Exceeding Hand Limit triggers Hand Card Discard")
+    void exceedingHandLimitTriggersHandCardDiscard() {
+        // TODO: implement
+    }
+
+    @Test
+    @Disabled
     @DisplayName("Buying a Instant Card")
     void buyingInstantCard() {
         // TODO: make sure the card is an Instant Card
