@@ -40,6 +40,6 @@ public record GamblingConfig(
      */
     // TODO, change values to something meaningful
     public static GamblingConfig defaults() {
-        return new GamblingConfig(40, 40, 20, 100000, 1000);
+        return new GamblingConfig(48, 32, 20, 100000, 1000);
     }
 }

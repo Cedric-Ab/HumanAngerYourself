@@ -29,12 +29,15 @@ public class GamblingPhase extends GamePhaseBase {
      */
     @Override
     public @NotNull GamePhase process() {
-        // TODO: update when gambling can yield action cards
         SpinResult result = getGame().getGamblingRules().spin();
-        getCurrentPlayer().changeBalanceBy(result.getAmount());
-
-        //TODO update for action cards
-        GamblingOutcome outcome = new GamblingOutcome(false, String.format("You won %,d$", result.getAmount()));
+        GamblingOutcome outcome;
+        if (result.isCard()) {
+            getCurrentPlayer().addCard(result.getCardType());
+            outcome = new GamblingOutcome(true, "You won " + result.getCardType().name());
+        } else {
+            getCurrentPlayer().changeBalanceBy(result.getAmount());
+            outcome = new GamblingOutcome(false, String.format("You won %,d$", result.getAmount()));
+        }
         getGame().getTurn().setGamblingOutcome(outcome);
 
         return new EndOfTurnPhase(getGame());

@@ -8,8 +8,10 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 public class MoneyTigerCard implements HandCard {
     @Override
     public void apply(Game game, Player player, Action action) {
-        String result = String.valueOf(game.getGamblingRules().spin().getAmount() * 2);
-        GamblingOutcome gamblingOutcome = new GamblingOutcome(false, String.format(result));
+        long result = game.getGamblingRules().spinWin().getAmount() * 2;
+        player.changeBalanceBy(result);
+
+        GamblingOutcome gamblingOutcome = new GamblingOutcome(false, String.format("You won %,d$", result));
         game.getTurn().setGamblingOutcome(gamblingOutcome);
     }
 }

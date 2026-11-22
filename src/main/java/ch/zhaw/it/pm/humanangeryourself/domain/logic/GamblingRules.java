@@ -40,20 +40,24 @@ public class GamblingRules {
     public SpinResult spin() {
         int chance = RANDOM.nextInt(100);
 
-        if (chance <= 20) {
-            return new SpinResult(receiveCard());
-        } else if (chance <= 32) {
-
+        if (chance <= config.cardWeight() - 1) {
+            return spinCard();
+        } else if (chance <= config.lossWeight() + config.cardWeight() - 1) {
             long amount = -RANDOM.nextLong(config.amountLowerBound(), config.amountUpperBound());
             return new SpinResult(amount);
         } else {
-            long amount = RANDOM.nextLong(config.amountLowerBound(), config.amountUpperBound());
-            return new SpinResult(amount);
+            return spinWin();
         }
-
     }
 
+    public SpinResult spinCard() {
+        return new SpinResult(receiveCard());
+    }
 
+    public SpinResult spinWin() {
+        long amount = RANDOM.nextLong(config.amountLowerBound(), config.amountUpperBound());
+        return new SpinResult(amount);
+    }
     public CardType receiveCard() {
         List<CardType> cards = CardType.all();
         return cards.get(RANDOM.nextInt(cards.size()));
