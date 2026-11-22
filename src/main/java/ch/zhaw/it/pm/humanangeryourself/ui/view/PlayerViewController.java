@@ -156,7 +156,7 @@ public class PlayerViewController {
         if (snapshot.winner() != null) {
             resultLabel.setText("Winner: " + playerName(snapshot, snapshot.winner()));
         } else if (snapshot.primaryActionResult() != null) {
-            resultLabel.setText(toPrimaryActionResult(snapshot));
+            resultLabel.setText(toResultMessage(snapshot.primaryActionResult()));
         } else if (snapshot.decision() != null) {
             resultLabel.setText("Choose an available action.");
         }
@@ -165,14 +165,12 @@ public class PlayerViewController {
     /**
      * Returns a string representation of the given primary action result.
      *
-     * @param snapshot the game snapshot (may not be null)
+     * @param result result of a primary action
      * @return a string representation of the given primary action result
      */
-    private String toPrimaryActionResult(GameSnapshot snapshot) {
-        return switch (snapshot.primaryActionResult()) {
-            case PrimaryActionResult.RollResult r -> String.format("You rolled a %d\n%s", r.dieRoll(),
-                    findAction(snapshot, MovePiece.class).isEmpty()
-                            ? "That's no good to you" : "Choose a piece to move");
+    private String toResultMessage(PrimaryActionResult result) {
+        return switch (result) {
+            case PrimaryActionResult.RollResult r -> "You rolled a " + r.dieRoll();
             case PrimaryActionResult.GambleResult.MoneyResult m -> m.amount() > 0
                     ? String.format("Hurray, you won %,d$", m.amount())
                     : String.format("Oh no, you lost %,d$", -m.amount());
