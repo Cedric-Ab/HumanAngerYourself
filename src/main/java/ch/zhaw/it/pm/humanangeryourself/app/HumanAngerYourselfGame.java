@@ -1,19 +1,18 @@
 package ch.zhaw.it.pm.humanangeryourself.app;
 
+import javafx.application.Application;
+import javafx.stage.Stage;
+
+import ch.zhaw.it.pm.humanangeryourself.api.GameService;
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerSetup;
 import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
+import ch.zhaw.it.pm.humanangeryourself.domain.game.GameBuilder;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.GameController;
-import ch.zhaw.it.pm.humanangeryourself.domain.game.GameFactory;
 import ch.zhaw.it.pm.humanangeryourself.service.LocalGameService;
-import ch.zhaw.it.pm.humanangeryourself.api.GameService;
-
+import ch.zhaw.it.pm.humanangeryourself.ui.view.MainViewLoader;
 import ch.zhaw.it.pm.humanangeryourself.ui.view.StartScreenViewLoader;
 import ch.zhaw.it.pm.humanangeryourself.ui.viewmodel.GameViewModel;
-import ch.zhaw.it.pm.humanangeryourself.ui.view.MainViewLoader;
-
-import javafx.application.Application;
-import javafx.stage.Stage;
 
 import java.util.List;
 
@@ -80,7 +79,10 @@ public class HumanAngerYourselfGame extends Application {
      * @return the view model of the new game
      */
     private GameViewModel createViewModel(GameConfig config, List<PlayerSetup> playerSetups) {
-        Game game = GameFactory.create(config, playerSetups);
+        Game game = new GameBuilder()
+                .setGameConfig(config)
+                .setPlayerSetups(playerSetups)
+                .createGame();
         GameService service = new LocalGameService(new GameController(game));
         return new GameViewModel(service);
     }
