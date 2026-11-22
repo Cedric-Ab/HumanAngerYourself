@@ -98,6 +98,18 @@ public class Player {
     }
 
     /**
+     * Returns all the player's pieces that stand on the given tile.
+     *
+     * @param tile tile to look at
+     * @return an unmodifiable list of the player's pieces on the tile, empty if none of them is there
+     */
+    public List<Piece> getPieces(Tile tile) {
+        return pieces.stream()
+                .filter(piece -> piece.getCurrentTile().equals(tile))
+                .toList();
+    }
+
+    /**
      * Returns the name of the player.
      *
      * @return the player's name, never {@code null}
