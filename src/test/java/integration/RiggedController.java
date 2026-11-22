@@ -16,24 +16,28 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
 /**
- *
+ * A rigged game controller that allows for controlling the results of die rolls and gambling spins.
  */
 public class RiggedController extends GameController {
-    private final GameController controller;
-
     private final MovementRules movementRules;
     private final GamblingRules gamblingRules;
 
+    private RiggedController(Game game) {
+        super(game);
+
+        movementRules = game.getMovementRules();
+        gamblingRules = game.getGamblingRules();
+    }
+
     public RiggedController() {
-        movementRules = spy(MovementRules.class);
-        gamblingRules = spy(GamblingRules.class);
+        this(createGame());
+    }
 
-        Game game = new GameBuilder()
-                .setMovementRules(movementRules)
-                .setGamblingRules(gamblingRules)
+    private static Game createGame() {
+        return new GameBuilder()
+                .setMovementRules(spy(MovementRules.class))
+                .setGamblingRules(spy(GamblingRules.class))
                 .createGame();
-
-        controller = new GameController(game);
     }
 
     @Override
@@ -43,12 +47,12 @@ public class RiggedController extends GameController {
 
     @Override
     public void submit(PlayerColor color, Action action) {
-        controller.submit(color, action);
+        super.submit(color, action);
     }
 
     @Override
     public DecisionInfo getDecision() {
-        return controller.getDecision();
+        return super.getDecision();
     }
 
     /**
@@ -62,11 +66,11 @@ public class RiggedController extends GameController {
      */
     @Override
     public Game getGame() {
-        return controller.getGame();
+        return super.getGame();
     }
 
     public GameSnapshot getSnapshot(PlayerColor viewer) {
-        return SnapshotFactory.create(controller, viewer);
+        return SnapshotFactory.create(this, viewer);
     }
 
     public GameSnapshot getSnapshot() {
