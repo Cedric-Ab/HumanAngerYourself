@@ -35,18 +35,38 @@ public class Turn {
         return player;
     }
 
+    /**
+     * Returns the outcome of the gambling spin of this turn.
+     *
+     * @return the gambling outcome, or {@code null} if no gambling outcome has been set
+     */
     public @Nullable GamblingOutcome getGamblingOutcome() {
         return gamblingOutcome;
     }
 
+    /**
+     * Sets the outcome of the gambling spin of this turn.
+     *
+     * @param gamblingOutcome the gambling outcome to record
+     */
     public void setGamblingOutcome(@NotNull GamblingOutcome gamblingOutcome) {
         this.gamblingOutcome = gamblingOutcome;
     }
 
+    /**
+     * Returns the outcome of the die roll of this turn.
+     *
+     * @return the roll outcome, or {@code null} if no roll outcome has been set
+     */
     public @Nullable RollOutcome getRollOutcome() {
         return rollOutcome;
     }
 
+    /**
+     * Sets the outcome of the die roll of this turn.
+     *
+     * @param rollOutcome the roll outcome to record
+     */
     public void setRollOutcome(@NotNull RollOutcome rollOutcome) {
         this.rollOutcome = rollOutcome;
     }
