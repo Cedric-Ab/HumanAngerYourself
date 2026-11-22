@@ -7,7 +7,7 @@ package ch.zhaw.it.pm.humanangeryourself.config;
  * the standard game settings.</p>
  *
  * @param jackpot     the amount awarded when a jackpot card is drawn
- * @param charity     the amount deducted when a charity card is drawn; n
+ * @param charity     the amount deducted when a charity card is drawn
  * @param maxHandSize the maximum number of cards a player may hold in their hand
  */
 public record CardConfig(
