@@ -258,8 +258,8 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         @Test
         @DisplayName("Piece cannot enter finish area with depth")
         void pieceCannotEnterFinishAreaWithDepth() {
-            getGame().getPlayer(decider()).resetBalanceToZero();
-            getGame().getPlayer(decider()).changeBalanceBy(-1);
+            getCurrentPlayer().resetBalanceToZero();
+            getCurrentPlayer().changeBalanceBy(-1);
 
             assertEquals(TILE_ID_STAIRCASE_TOP_RED - 1, getTargetTile(TILE_ID_STAIRCASE_TOP_RED - 1, 2),
                     "Expected a player in debt to bounce back instead of entering the finish area");

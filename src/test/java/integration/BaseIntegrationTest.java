@@ -12,6 +12,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PlayerInfo;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.MovementRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
+import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
 
 import java.util.ArrayList;
@@ -123,10 +124,13 @@ public abstract class BaseIntegrationTest {
         submitChecked(new Roll());
     }
 
+    protected Player getCurrentPlayer() {
+        return getGame().getPlayer(decider());
+    }
+
     protected List<Piece> getPieces() {
         return new ArrayList<>(
-                getGame()
-                        .getPlayer(decider())
+                getCurrentPlayer()
                         .getPieces()
         );
     }
