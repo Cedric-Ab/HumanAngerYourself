@@ -49,8 +49,12 @@ public class Player {
      *
      * @param amount amount to add, may be negative
      */
-    public void addMoney(long amount) {
+    public void changeBalanceBy(long amount) {
         money = Math.addExact(money, amount);
+    }
+
+    public void resetBalanceToZero(){
+        money = 0;
     }
 
     /**

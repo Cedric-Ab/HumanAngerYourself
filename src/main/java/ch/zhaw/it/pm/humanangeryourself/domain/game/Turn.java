@@ -3,6 +3,9 @@ package ch.zhaw.it.pm.humanangeryourself.domain.game;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * A single turn of the game, belonging to one player.
  */
@@ -11,18 +14,18 @@ public class Turn {
     /**
      * The player whose turn it is.
      */
-    private final Player player;
+    private final @NotNull Player player;
     /**
      * The result of the last primary action (may be null if no action was performed yet)
      */
-    private PrimaryActionResult primaryActionResult;
+    private @Nullable PrimaryActionResult primaryActionResult;
 
     /**
      * Creates a new turn for the given player.
      *
      * @param player the player whose turn it is
      */
-    public Turn(Player player) {
+    public Turn(@NotNull Player player) {
         this.player = player;
     }
 
@@ -31,15 +34,15 @@ public class Turn {
      *
      * @return the player of this turn
      */
-    public Player getPlayer() {
+    public @NotNull Player getPlayer() {
         return player;
     }
 
-    public PrimaryActionResult getPrimaryActionResult() {
+    public @Nullable PrimaryActionResult getPrimaryActionResult() {
         return primaryActionResult;
     }
 
-    public void setPrimaryActionResult(PrimaryActionResult primaryActionResult) {
+    public void setPrimaryActionResult(@NotNull PrimaryActionResult primaryActionResult) {
         this.primaryActionResult = primaryActionResult;
     }
 
