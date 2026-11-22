@@ -88,7 +88,7 @@ public class MovementRules {
             return Collections.emptyList();
         }
         return players.stream()
-                .filter(player -> !player.equals(mover))
+                .filter(player -> player.getColor() != mover.getColor())
                 .flatMap(player -> player.getPieces(tile).stream())
                 .toList();
     }
