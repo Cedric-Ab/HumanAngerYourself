@@ -33,7 +33,8 @@ public class GamblingPhase extends GamePhaseBase {
         SpinResult result = getGame().getGamblingRules().spin();
         getCurrentPlayer().changeBalanceBy(result.getAmount());
 
-        GamblingOutcome outcome = new GamblingOutcome(false, String.format("You won %,d$", result));
+        //TODO update for action cards
+        GamblingOutcome outcome = new GamblingOutcome(false, String.format("You won %,d$", result.getAmount()));
         getGame().getTurn().setGamblingOutcome(outcome);
 
         return new EndOfTurnPhase(getGame());
