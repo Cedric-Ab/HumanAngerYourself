@@ -52,7 +52,7 @@ public class ChooseMovePhase extends GamePhaseBase {
      * @param player the player who made the decision
      * @param action the chosen action, must be a {@link MovePiece}
      * @return the {@link EndOfTurnPhase} that follows after the move
-     * @throws IllegalArgumentException if the action is not a {@link MovePiece}
+     * @throws IllegalArgumentException         if the action is not a {@link MovePiece}
      * @throws java.util.NoSuchElementException if the player has no piece on the start tile
      */
     @Override
@@ -71,7 +71,7 @@ public class ChooseMovePhase extends GamePhaseBase {
 
         piece.moveTo(endTile);
 
-        List<Piece> piecesToSendBackHome = getGame().getMovementRules().piecesToSendBackHome(piece);
+        List<Piece> piecesToSendBackHome = getGame().getMovementRules().piecesToSendBackHome(piece, player, getGame().getPlayers());
         piecesToSendBackHome.forEach(Piece::sendHome);
 
         return new EndOfTurnPhase(getGame());

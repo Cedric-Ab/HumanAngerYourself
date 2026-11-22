@@ -14,6 +14,16 @@ import java.util.Objects;
  * Represents a game of Human Anger Yourself, containing the board, players, and the current turn.
  */
 public class Game {
+
+    /**
+     * Minimum number of players in a game.
+     */
+    private static final int MIN_PLAYERS = 2;
+    /**
+     * Maximum number of players in a game, one per color.
+     */
+    private static final int MAX_PLAYERS = 4;
+
     private final MovementRules movementRules;
     private final GamblingRules gamblingRules;
     private final Economy economy;
@@ -26,6 +36,7 @@ public class Game {
      */
     private Turn turn;
 
+
     /**
      * Creates a new game with the given movement rules, gambling rules, economy, board, and players.
      *
@@ -33,18 +44,18 @@ public class Game {
      * @param gamblingRules the gambling rules of the game
      * @param economy       the economy of the game
      * @param board         the board of the game
-     * @param players       the players of the game, must contain 4 players
+     * @param players       the players of the game, must be between min and max players
      */
     public Game(MovementRules movementRules, GamblingRules gamblingRules, Economy economy,
                 Board board, List<Player> players) {
-        // TODO: add parameter validation
-        this.movementRules = movementRules;
-        this.gamblingRules = gamblingRules;
-        this.economy = economy;
-        this.board = board;
-        this.players = List.copyOf(players);
+        this.movementRules = Objects.requireNonNull(movementRules, "movementRules must not be null");
+        this.gamblingRules = Objects.requireNonNull(gamblingRules, "gamblingRules must not be null");
+        this.economy = Objects.requireNonNull(economy, "economy must not be null");
+        this.board = Objects.requireNonNull(board, "board must not be null");
+        this.players = List.copyOf(Objects.requireNonNull(players, "players must not be null"));
+        requireValidPlayers();
 
-        turn = new Turn(players.getFirst());
+        turn = new Turn(this.players.getFirst());
     }
 
     /**
@@ -80,7 +91,7 @@ public class Game {
      * @return the board of the game
      */
     public Board getBoard() {
-        return this.board;
+        return board;
     }
 
     /**
@@ -97,6 +108,7 @@ public class Game {
      *
      * @param color the color of the player to look up, must not be {@code null}
      * @return the player with the given color.
+     * @throws IllegalArgumentException if no player has this color
      */
     public Player getPlayer(PlayerColor color) {
         Objects.requireNonNull(color, "color");
@@ -131,5 +143,23 @@ public class Game {
         int nextIndex = (prevIndex + 1) % getPlayers().size();
 
         turn = new Turn(getPlayers().get(nextIndex));
+    }
+
+
+    /**
+     * Checks that the game has between MIN_PLAYERS and MAX_PLAYERS players
+     * and that every color is used only once.
+     *
+     * @throws IllegalArgumentException if the number of players or their colors are invalid
+     */
+    private void requireValidPlayers() {
+        boolean validPlayerCount = players.size() >= MIN_PLAYERS && players.size() <= MAX_PLAYERS;
+        long distinctColors = players.stream().map(Player::getColor).distinct().count();
+        boolean colorsUnique = distinctColors == players.size();
+
+        if (!validPlayerCount || !colorsUnique) {
+            throw new IllegalArgumentException(
+                    "A game needs " + MIN_PLAYERS + " to " + MAX_PLAYERS + " players with different colors");
+        }
     }
 }

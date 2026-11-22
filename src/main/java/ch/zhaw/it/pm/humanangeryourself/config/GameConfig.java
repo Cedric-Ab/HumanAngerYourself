@@ -13,6 +13,7 @@ import java.util.Objects;
  * @param maxHandSize             maximum number of cards a player can hold
  * @param maxPropertiesPerQuarter maximum number of properties per board quarter
  * @param gambling                gambling settings
+ * @param cards                   ActionCard settings
  * @param propertyPrices          purchase price and rent for each size of property
  */
 public record GameConfig(
@@ -21,6 +22,7 @@ public record GameConfig(
         int maxHandSize,
         int maxPropertiesPerQuarter,
         GamblingConfig gambling,
+        CardConfig cards,
         Map<PropertySize, PropertyPrice> propertyPrices
 ) {
     /**
@@ -30,6 +32,7 @@ public record GameConfig(
      */
     public GameConfig {
         Objects.requireNonNull(gambling, "gambling must be present");
+        Objects.requireNonNull(cards, "cards must be present");
         propertyPrices = Map.copyOf(propertyPrices);
         if (startMoney < 0 || debtLimit < 0 || maxHandSize < 1 || maxPropertiesPerQuarter < 1) {
             throw new IllegalArgumentException("GameConfig invalid");
@@ -48,6 +51,6 @@ public record GameConfig(
                 PropertySize.LARGE, new PropertyPrice(500_000, 20_000));
 
         return new GameConfig(100_000, 50_000, 10, 5,
-                GamblingConfig.defaults(), propertyPrices);
+                GamblingConfig.defaults(), CardConfig.defaults(), propertyPrices);
     }
 }

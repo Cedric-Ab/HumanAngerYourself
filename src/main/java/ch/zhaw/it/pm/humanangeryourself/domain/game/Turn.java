@@ -1,6 +1,7 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game;
 
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GamblingOutcome;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.RollOutcome;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +15,7 @@ public class Turn {
     /** The player whose turn it is. */
     private final @NotNull Player player;
     private @Nullable GamblingOutcome gamblingOutcome;
+    private @Nullable RollOutcome rollOutcome;
 
     /**
      * Creates a new turn for the given player.
@@ -39,6 +41,14 @@ public class Turn {
 
     public void setGamblingOutcome(@NotNull GamblingOutcome gamblingOutcome) {
         this.gamblingOutcome = gamblingOutcome;
+    }
+
+    public @Nullable RollOutcome getRollOutcome() {
+        return rollOutcome;
+    }
+
+    public void setRollOutcome(@NotNull RollOutcome rollOutcome) {
+        this.rollOutcome = rollOutcome;
     }
 
     // TODO: add effect stuff
