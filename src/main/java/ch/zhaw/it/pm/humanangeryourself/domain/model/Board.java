@@ -1,187 +1,60 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.model;
 
+import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
 /**
- * The board class is responsible for creating and managing the tiles of the game board.
+ * The game board with all its tiles.
  * <p>
- * It knows all tiles and how they are connected.
- * It can answer questions about the tiles, such as whether a tile is buyable or which properties belong to a player.
+ * Responsibilities:
+ * </p>
+ * <ul>
+ *     <li>builds the standard board when it is created</li>
+ *     <li>knows which quarter and which home tiles belong to each color</li>
+ *     <li>finds tiles by id and answers questions about them, for example which properties a player owns</li>
+ * </ul>
+ * <p>
+ * Tile ids (same numbers as the fx:ids "tile&lt;id&gt;" in BoardView.fxml):
+ * </p>
+ * <ul>
+ *     <li>{@code 1 - 60}: main track, counter-clockwise, every 5th tile is a safe space</li>
+ *     <li>{@code 100}: shared finish in the centre</li>
+ *     <li>{@code X01 - X04}: home slots of color X</li>
+ *     <li>{@code X05 - X14}: staircase of color X, X05 is next to the track, X14 next to the finish</li>
+ * </ul>
+ * <p>
+ * Color X: 1 = red, 2 = yellow, 3 = blue, 4 = green (counter-clockwise, X - 1 is also the quarter).
+ * </p>
  */
 public class Board {
-    private final List<Tile> tiles;
+    private static final int QUARTER_COUNT = 4;
+    private static final int TILES_PER_QUARTER = 15;
+    private static final int SAFE_INTERVAL = 5;
+    private static final int FINISH_TILE_ID = 100;
+    private static final int COLOR_ID_BLOCK = 100;
+    private static final int HOME_SLOT_COUNT = 4;
+    private static final int STAIRCASE_LENGTH = 10;
+    private static final int NO_QUARTER = -1;
+
+    private final List<Tile> tiles = new ArrayList<>();
 
     /**
-     * Creates a new board.
-     *
-     * @param tiles all tiles of the board
-     * @throws NullPointerException     if {@code tiles} or one of its elements is {@code null}
-     * @throws IllegalArgumentException if two tiles have the same id
-     */
-    public Board(List<Tile> tiles) {
-        Objects.requireNonNull(tiles, "tiles must not be null");
-        Set<Integer> ids = new HashSet<>();
-        for (Tile tile : tiles) {
-            Objects.requireNonNull(tile, "tiles must not contain null");
-            if (!ids.add(tile.getId())) {
-                throw new IllegalArgumentException("Duplicate tile id: " + tile.getId());
-            }
-        }
-        this.tiles = new ArrayList<>(tiles);
-    }
-
-    /**
-     * Creates a new board with all tiles, matching BoardView.fxml.
+     * Creates the board.
      */
     public Board() {
-        this(createAll());
-    }
-
-    /**
-     * Creates all tiles of the board, matching BoardView.fxml.
-     *
-     * @return unmodifiable list of all tiles, the track in moving direction
-     */
-    public static List<Tile> createAll() {
-        return List.of(
-                // Main track 1 - 60, counter-clockwise
-                // Quarter 0 (red)
-                new Tile(1, TileType.TRACK, 0, null, null),
-                new Tile(2, TileType.TRACK, 0, null, null),
-                new Tile(3, TileType.TRACK, 0, null, null),
-                new Tile(4, TileType.TRACK, 0, null, null),
-                new Tile(5, TileType.SAFE, 0, null, null),
-                new Tile(6, TileType.TRACK, 0, null, null),
-                new Tile(7, TileType.TRACK, 0, null, null),
-                new Tile(8, TileType.TRACK, 0, null, null),
-                new Tile(9, TileType.TRACK, 0, null, null),
-                new Tile(10, TileType.SAFE, 0, null, null),
-                new Tile(11, TileType.TRACK, 0, null, null),
-                new Tile(12, TileType.TRACK, 0, null, null),
-                new Tile(13, TileType.TRACK, 0, null, null),
-                new Tile(14, TileType.TRACK, 0, null, null),
-                new Tile(15, TileType.SAFE, 0, null, null),
-                // Quarter 1 (yellow)
-                new Tile(16, TileType.TRACK, 1, null, null),
-                new Tile(17, TileType.TRACK, 1, null, null),
-                new Tile(18, TileType.TRACK, 1, null, null),
-                new Tile(19, TileType.TRACK, 1, null, null),
-                new Tile(20, TileType.SAFE, 1, null, null),
-                new Tile(21, TileType.TRACK, 1, null, null),
-                new Tile(22, TileType.TRACK, 1, null, null),
-                new Tile(23, TileType.TRACK, 1, null, null),
-                new Tile(24, TileType.TRACK, 1, null, null),
-                new Tile(25, TileType.SAFE, 1, null, null),
-                new Tile(26, TileType.TRACK, 1, null, null),
-                new Tile(27, TileType.TRACK, 1, null, null),
-                new Tile(28, TileType.TRACK, 1, null, null),
-                new Tile(29, TileType.TRACK, 1, null, null),
-                new Tile(30, TileType.SAFE, 1, null, null),
-                // Quarter 2 (blue)
-                new Tile(31, TileType.TRACK, 2, null, null),
-                new Tile(32, TileType.TRACK, 2, null, null),
-                new Tile(33, TileType.TRACK, 2, null, null),
-                new Tile(34, TileType.TRACK, 2, null, null),
-                new Tile(35, TileType.SAFE, 2, null, null),
-                new Tile(36, TileType.TRACK, 2, null, null),
-                new Tile(37, TileType.TRACK, 2, null, null),
-                new Tile(38, TileType.TRACK, 2, null, null),
-                new Tile(39, TileType.TRACK, 2, null, null),
-                new Tile(40, TileType.SAFE, 2, null, null),
-                new Tile(41, TileType.TRACK, 2, null, null),
-                new Tile(42, TileType.TRACK, 2, null, null),
-                new Tile(43, TileType.TRACK, 2, null, null),
-                new Tile(44, TileType.TRACK, 2, null, null),
-                new Tile(45, TileType.SAFE, 2, null, null),
-                // Quarter 3 (green)
-                new Tile(46, TileType.TRACK, 3, null, null),
-                new Tile(47, TileType.TRACK, 3, null, null),
-                new Tile(48, TileType.TRACK, 3, null, null),
-                new Tile(49, TileType.TRACK, 3, null, null),
-                new Tile(50, TileType.SAFE, 3, null, null),
-                new Tile(51, TileType.TRACK, 3, null, null),
-                new Tile(52, TileType.TRACK, 3, null, null),
-                new Tile(53, TileType.TRACK, 3, null, null),
-                new Tile(54, TileType.TRACK, 3, null, null),
-                new Tile(55, TileType.SAFE, 3, null, null),
-                new Tile(56, TileType.TRACK, 3, null, null),
-                new Tile(57, TileType.TRACK, 3, null, null),
-                new Tile(58, TileType.TRACK, 3, null, null),
-                new Tile(59, TileType.TRACK, 3, null, null),
-                new Tile(60, TileType.SAFE, 3, null, null),
-
-                // Shared finish in the centre
-                new Tile(100, TileType.FINISH_AREA, -1, null, null),
-
-                // Red: home slots, then staircase (from the track towards the finish)
-                new Tile(101, TileType.HOME, 0, null, null),
-                new Tile(102, TileType.HOME, 0, null, null),
-                new Tile(103, TileType.HOME, 0, null, null),
-                new Tile(104, TileType.HOME, 0, null, null),
-                new Tile(105, TileType.STAIRCASE, 0, null, null),
-                new Tile(106, TileType.STAIRCASE, 0, null, null),
-                new Tile(107, TileType.STAIRCASE, 0, null, null),
-                new Tile(108, TileType.STAIRCASE, 0, null, null),
-                new Tile(109, TileType.STAIRCASE, 0, null, null),
-                new Tile(110, TileType.STAIRCASE, 0, null, null),
-                new Tile(111, TileType.STAIRCASE, 0, null, null),
-                new Tile(112, TileType.STAIRCASE, 0, null, null),
-                new Tile(113, TileType.STAIRCASE, 0, null, null),
-                new Tile(114, TileType.STAIRCASE, 0, null, null),
-
-                // Yellow: home slots, then staircase (from the track towards the finish)
-                new Tile(201, TileType.HOME, 1, null, null),
-                new Tile(202, TileType.HOME, 1, null, null),
-                new Tile(203, TileType.HOME, 1, null, null),
-                new Tile(204, TileType.HOME, 1, null, null),
-                new Tile(205, TileType.STAIRCASE, 1, null, null),
-                new Tile(206, TileType.STAIRCASE, 1, null, null),
-                new Tile(207, TileType.STAIRCASE, 1, null, null),
-                new Tile(208, TileType.STAIRCASE, 1, null, null),
-                new Tile(209, TileType.STAIRCASE, 1, null, null),
-                new Tile(210, TileType.STAIRCASE, 1, null, null),
-                new Tile(211, TileType.STAIRCASE, 1, null, null),
-                new Tile(212, TileType.STAIRCASE, 1, null, null),
-                new Tile(213, TileType.STAIRCASE, 1, null, null),
-                new Tile(214, TileType.STAIRCASE, 1, null, null),
-
-                // Blue: home slots, then staircase (from the track towards the finish)
-                new Tile(301, TileType.HOME, 2, null, null),
-                new Tile(302, TileType.HOME, 2, null, null),
-                new Tile(303, TileType.HOME, 2, null, null),
-                new Tile(304, TileType.HOME, 2, null, null),
-                new Tile(305, TileType.STAIRCASE, 2, null, null),
-                new Tile(306, TileType.STAIRCASE, 2, null, null),
-                new Tile(307, TileType.STAIRCASE, 2, null, null),
-                new Tile(308, TileType.STAIRCASE, 2, null, null),
-                new Tile(309, TileType.STAIRCASE, 2, null, null),
-                new Tile(310, TileType.STAIRCASE, 2, null, null),
-                new Tile(311, TileType.STAIRCASE, 2, null, null),
-                new Tile(312, TileType.STAIRCASE, 2, null, null),
-                new Tile(313, TileType.STAIRCASE, 2, null, null),
-                new Tile(314, TileType.STAIRCASE, 2, null, null),
-
-                // Green: home slots, then staircase (from the track towards the finish)
-                new Tile(401, TileType.HOME, 3, null, null),
-                new Tile(402, TileType.HOME, 3, null, null),
-                new Tile(403, TileType.HOME, 3, null, null),
-                new Tile(404, TileType.HOME, 3, null, null),
-                new Tile(405, TileType.STAIRCASE, 3, null, null),
-                new Tile(406, TileType.STAIRCASE, 3, null, null),
-                new Tile(407, TileType.STAIRCASE, 3, null, null),
-                new Tile(408, TileType.STAIRCASE, 3, null, null),
-                new Tile(409, TileType.STAIRCASE, 3, null, null),
-                new Tile(410, TileType.STAIRCASE, 3, null, null),
-                new Tile(411, TileType.STAIRCASE, 3, null, null),
-                new Tile(412, TileType.STAIRCASE, 3, null, null),
-                new Tile(413, TileType.STAIRCASE, 3, null, null),
-                new Tile(414, TileType.STAIRCASE, 3, null, null)
-        );
+        for (int quarter = 0; quarter < QUARTER_COUNT; quarter++) {
+            addTrackTiles(quarter);
+        }
+        tiles.add(new Tile(FINISH_TILE_ID, TileType.FINISH_AREA, NO_QUARTER, null, null));
+        for (int quarter = 0; quarter < QUARTER_COUNT; quarter++) {
+            addHomeAndStaircaseTiles(quarter);
+        }
+        requireUniqueIds();
     }
 
     /**
@@ -209,6 +82,34 @@ public class Board {
     }
 
     /**
+     * Returns the quarter of the board that belongs to the given color.
+     *
+     * @param color color of a player
+     * @return quarter of the color, from 0 to 3 in moving direction
+     */
+    public int getQuarterOf(PlayerColor color) {
+        return switch (color) {
+            case RED -> 0;
+            case YELLOW -> 1;
+            case BLUE -> 2;
+            case GREEN -> 3;
+        };
+    }
+
+    /**
+     * Returns the home tiles of the given color, where its pieces start.
+     *
+     * @param color color of a player
+     * @return the home tiles of the color, ordered by id
+     */
+    public List<Tile> getHomeTiles(PlayerColor color) {
+        int quarter = getQuarterOf(color);
+        return tiles.stream()
+                .filter(tile -> tile.getType() == TileType.HOME && tile.getQuarter() == quarter)
+                .toList();
+    }
+
+    /**
      * Returns the tile with the given id.
      *
      * @param tileId id of the tile
@@ -229,5 +130,49 @@ public class Board {
      */
     public List<Tile> getTiles() {
         return List.copyOf(tiles);
+    }
+
+    /**
+     * Checks that no two tiles of this board have the same id.
+     *
+     * @throws IllegalArgumentException if an id is used more than once
+     */
+    private void requireUniqueIds() {
+        Set<Integer> ids = new HashSet<>();
+        for (Tile tile : tiles) {
+            if (!ids.add(tile.getId())) {
+                throw new IllegalArgumentException("Duplicate tile id: " + tile.getId());
+            }
+        }
+    }
+
+    /**
+     * Adds the track tiles of one quarter, in moving direction.
+     * Every 5th tile is a safe space.
+     *
+     * @param quarter quarter to add the tiles for, from 0 to 3
+     */
+    private void addTrackTiles(int quarter) {
+        for (int i = 1; i <= TILES_PER_QUARTER; i++) {
+            int id = quarter * TILES_PER_QUARTER + i;
+            TileType type = id % SAFE_INTERVAL == 0 ? TileType.SAFE : TileType.TRACK;
+            tiles.add(new Tile(id, type, quarter, null, null));
+        }
+    }
+
+    /**
+     * Adds the home slots and the staircase of the color that belongs to the given quarter.
+     *
+     * @param quarter quarter of the color, from 0 to 3
+     */
+    private void addHomeAndStaircaseTiles(int quarter) {
+        int firstId = (quarter + 1) * COLOR_ID_BLOCK;
+        for (int i = 1; i <= HOME_SLOT_COUNT; i++) {
+            tiles.add(new Tile(firstId + i, TileType.HOME, quarter, null, null));
+        }
+        for (int i = 1; i <= STAIRCASE_LENGTH; i++) {
+            tiles.add(new Tile(firstId + HOME_SLOT_COUNT + i, TileType.STAIRCASE, quarter, null, null));
+        }
+
     }
 }

@@ -3,6 +3,7 @@ package ch.zhaw.it.pm.humanangeryourself.domain.logic;
 import ch.zhaw.it.pm.humanangeryourself.api.PropertySize;
 import ch.zhaw.it.pm.humanangeryourself.api.action.BuyCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.BuyProperty;
+import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
@@ -17,10 +18,21 @@ import java.util.List;
  */
 public class Economy {
 
+    private GameConfig config;
+
     /**
-     * Creates a new economy logic instance.
+     * Creates a new instance of the economy logic.
      */
     public Economy() {
+    }
+
+    /**
+     * Injects the game configuration into the economy logic, allowing it to access
+     *
+     * @param config the game configuration to be used for economy calculations
+     */
+    public void inject(GameConfig config) {
+        this.config = config;
     }
 
     /**
