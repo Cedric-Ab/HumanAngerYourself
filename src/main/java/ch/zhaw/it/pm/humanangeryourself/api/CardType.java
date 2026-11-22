@@ -1,5 +1,7 @@
 package ch.zhaw.it.pm.humanangeryourself.api;
 
+import java.util.List;
+
 /**
  * Types of action cards.
  * <p>
@@ -44,6 +46,8 @@ public enum CardType {
     private final boolean targeting;
     private final boolean counterable;
 
+    private static final List<CardType> VALUES = List.of(values());
+
     /**
      * Creates a card type with the given properties.
      *
@@ -83,4 +87,14 @@ public enum CardType {
     public boolean isCounterable() {
         return counterable;
     }
+
+    /**
+     * Returns a list of the CardTypes.
+     *
+     * @return List of CardType
+     */
+    public static List<CardType> all() {
+        return VALUES;
+    }
+
 }

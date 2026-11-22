@@ -3,6 +3,7 @@ package ch.zhaw.it.pm.humanangeryourself.domain.game.phase;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GamblingOutcome;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
+import ch.zhaw.it.pm.humanangeryourself.domain.logic.SpinResult;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,11 +29,15 @@ public class GamblingPhase extends GamePhaseBase {
      */
     @Override
     public @NotNull GamePhase process() {
-        // TODO: update when gambling can yield action cards
-        int result = getGame().getGamblingRules().spin();
-        getCurrentPlayer().addMoney(result);
-
-        GamblingOutcome outcome = new GamblingOutcome(false, String.format("You won %,d$", result));
+        SpinResult result = getGame().getGamblingRules().spin();
+        GamblingOutcome outcome;
+        if (result.isCard()) {
+            getCurrentPlayer().addCard(result.getCardType());
+            outcome = new GamblingOutcome(true, "You won " + result.getCardType().name());
+        } else {
+            getCurrentPlayer().changeBalanceBy(result.getAmount());
+            outcome = new GamblingOutcome(false, String.format("You won %,d$", result.getAmount()));
+        }
         getGame().getTurn().setGamblingOutcome(outcome);
 
         return new EndOfTurnPhase(getGame());
