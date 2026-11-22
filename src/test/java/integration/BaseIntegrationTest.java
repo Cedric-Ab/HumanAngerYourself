@@ -17,6 +17,10 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Base class for integration tests
+ * that provides utility methods for interacting with the game controller and game state.
+ */
 public abstract class BaseIntegrationTest {
     private final RiggedController controller = new RiggedController();
 
