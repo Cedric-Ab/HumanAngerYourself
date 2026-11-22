@@ -34,7 +34,7 @@ public class GamblingPhase extends GamePhaseBase {
 
         switch (result) {
             case GambleResult.MoneyResult m:
-                getCurrentPlayer().addMoney(m.amount());
+                getCurrentPlayer().changeBalanceBy(m.amount());
                 break;
             case GambleResult.CardResult c:
                 if (c.cardType().isInstant()) {
