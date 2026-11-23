@@ -97,7 +97,7 @@ public class RiggedController extends GameController {
                 .spin();
     }
 
-    public void setGambleResult(int money) {
+    public void setGambleResult(long money) {
         PrimaryActionResult.GambleResult result = new PrimaryActionResult.GambleResult.MoneyResult(money);
         setGambleResult(result);
 
