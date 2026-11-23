@@ -9,21 +9,22 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Represents a game of Human Anger Yourself, containing the rules (movement, gambling and economy),
  * the board, the players, and the current turn.
  */
 public class Game {
+
     /**
      * Minimum number of players in a game.
      */
-    public static final int MIN_PLAYERS = 2;
+    private static final int MIN_PLAYERS = 2;
     /**
      * Maximum number of players in a game, one per color.
      */
-    public static final int MAX_PLAYERS = 4;
-
+    private static final int MAX_PLAYERS = 4;
     /**
      * Rules for moving pieces.
      */
@@ -44,11 +45,14 @@ public class Game {
      * The players of the game, in turn order.
      */
     private final List<Player> players;
-
     /**
      * The current turn, which tells whose turn it is.
      */
     private Turn turn;
+    /**
+     * The winner of the game, if there is one. If the game is still ongoing, this is {@code null}.
+     */
+    private Player winner = null;
 
 
     /**
@@ -149,12 +153,27 @@ public class Game {
     }
 
     /**
+     * Returns the winner of the game, if there is one.
+     *
+     * @return an {@code Optional} containing the winner of the game,
+     *         or an empty {@code Optional} if there is no winner yet
+     */
+    public Optional<Player> getWinner() {
+        return Optional.ofNullable(winner);
+    }
+
+    /**
      * Advances the game to the next turn.
      *
      * @throws IllegalStateException if the current player is not found in the list of players,
      *                               this should never happen if the game is in a valid state
+     * @throws IllegalStateException if the game has already been won by a player
      */
     public void nextTurn() {
+        if (getWinner().isPresent()) {
+            throw new IllegalStateException("Cannot advance turn: the game has already been won by " + getWinner().get());
+        }
+
         int prevIndex = getPlayers().indexOf(getTurn().getPlayer());
 
         if (prevIndex == -1) {
@@ -167,7 +186,22 @@ public class Game {
     }
 
     /**
-     * Checks that the game has between {@value #MIN_PLAYERS} and {@value #MAX_PLAYERS} players,
+     * Sets the given player as the winner of the game.
+     *
+     * @param player the player to set as the winner, must not be {@code null} and must be part of the game
+     * @throws NullPointerException     if {@code player} is {@code null}
+     * @throws IllegalArgumentException if {@code player} is not part of the game
+     */
+    public void setAsWinner(Player player) {
+        Objects.requireNonNull(player, "player must not be null");
+        if (!players.contains(player)) {
+            throw new IllegalArgumentException("Player is not part of this game.");
+        }
+        this.winner = player;
+    }
+
+    /**
+     * Checks that the game has between MIN_PLAYERS and MAX_PLAYERS players
      * and that every color is used only once.
      *
      * @throws IllegalArgumentException if the number of players or their colors are invalid
