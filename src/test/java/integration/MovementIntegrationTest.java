@@ -245,7 +245,7 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         void pieceBouncesBackAtBottomOfStaircase() {
             int roll = TILE_ID_STAIRCASE_TOP_RED - TILE_ID_STAIRCASE_BOTTOM_RED + 3;
             assertEquals(TILE_ID_STAIRCASE_BOTTOM_RED + 2, getTargetTile(TILE_ID_STAIRCASE_TOP_RED, roll),
-                    "Expected a piece to bounce back towards the bottom of the staircase after overshooting the finish area");
+                    "Expected a piece to bounce back towards the top of the staircase after overshooting the the top and the bottom");
         }
 
         @Test
