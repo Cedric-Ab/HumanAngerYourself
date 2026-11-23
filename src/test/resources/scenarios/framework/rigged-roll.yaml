@@ -1,0 +1,12 @@
+name: Rigged Roll
+
+steps:
+  - input:
+      rollDieResult: 3
+      submittedBy: RED
+      action:
+        type: Roll
+
+    expect:
+      primaryActionResult:
+        dieRoll: 3
