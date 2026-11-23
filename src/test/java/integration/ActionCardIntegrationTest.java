@@ -1,5 +1,6 @@
 package integration;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -8,6 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
+import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Gamble;
 import ch.zhaw.it.pm.humanangeryourself.api.action.PlayCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
@@ -84,7 +86,6 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
         }
     }
 
-    // TODO: implement integration test for ActionCard
     @Nested
     @DisplayName("Hand Cards")
     class HandCards {
@@ -154,24 +155,42 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
             }
         }
 
-        // TODO: implement
         @Nested
-        @Disabled
         @DisplayName("Double It")
         class DoubleIt {
-            @Test
-            @DisplayName("Double It doubles debt")
-            void doubleItDoublesDebt() {
+            private static final int DEBT = 1000;
+            private static final PlayerColor NEXT_PLAYER = PlayerColor.YELLOW;
+
+            @BeforeEach
+            void setup() {
+                getCurrentPlayer().resetBalanceToZero();
+                getCurrentPlayer().changeBalanceBy(-DEBT);
+
+                giveCurrentPlayerCard(CardType.DOUBLE_IT);
             }
 
             @Test
-            @DisplayName("Double It transfers debt to next player")
+            @DisplayName("Double It transfers double the debt to the next player")
             void doubleItTransfersDebtToNextPlayer() {
+                long moneyBefore = getPlayerInfo(NEXT_PLAYER).money();
+
+                currentPlayerPlayCard(CardType.DOUBLE_IT);
+
+                long moneyAfter = getPlayerInfo(NEXT_PLAYER).money();
+
+                assertEquals(moneyBefore - DEBT * 2, moneyAfter,
+                        "Expected Double It to transfer double the debt to the next player");
             }
 
             @Test
             @DisplayName("Double It sets player balance to zero")
             void doubleItSetsPlayerBalanceToZero() {
+                currentPlayerPlayCard(CardType.DOUBLE_IT);
+
+                long balanceAfter = getDeciderInfo().money();
+
+                assertEquals(0, balanceAfter,
+                        "Expected Double It to set the player's balance to zero");
             }
         }
 
@@ -181,13 +200,15 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
         @DisplayName("Switch")
         class Switch {
             @Test
-            @DisplayName("Switch swaps piece positions")
-            void switchSwapsPiecePositions() {
+            @DisplayName("Switch works on normal Tiles")
+            void switchWorksOnNormalTiles() {
+
             }
 
             @Test
-            @DisplayName("Switch requires target piece")
-            void switchRequiresTargetPiece() {
+            @DisplayName("Switch does not work on Safe Tiles")
+            void switchDoesNotWorkOnSafeTiles() {
+
             }
         }
 
