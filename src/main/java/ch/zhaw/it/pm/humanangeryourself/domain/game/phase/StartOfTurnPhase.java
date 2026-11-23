@@ -61,10 +61,13 @@ public class StartOfTurnPhase extends GamePhaseBase {
         return switch (action) {
             case Roll ignored -> new ChooseMovePhase(getGame());
             case Gamble ignored -> new GamblingPhase(getGame());
-            case PlayCard(CardType card) ->
-                // TODO: implement
-                    new PrimaryActionChoicePhase(getGame());
+            case PlayCard(CardType card) -> playCard(player, card);
             default -> throw new RuntimeException("Unexpected action type: " + action.getClass().getName());
         };
+    }
+
+    private GamePhase playCard(Player player, CardType card) {
+        // TODO: Implement card playing logic here
+        return new PrimaryActionChoicePhase(getGame());
     }
 }
