@@ -4,17 +4,43 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
+import ch.zhaw.it.pm.humanangeryourself.api.action.Gamble;
 import ch.zhaw.it.pm.humanangeryourself.api.action.PlayCard;
+import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-// TODO: enable once the ActionCards are implemented
-@Disabled
 @DisplayName("ActionCard Integration Test")
 public class ActionCardIntegrationTest extends BaseIntegrationTest {
+    private void rushThroughRound() {
+        rushThroughTurn();
+        rushThroughTurn();
+        rushThroughTurn();
+        rushThroughTurn();
+    }
+
+    private void giveCurrentPlayerCard(CardType cardType) {
+        getCurrentPlayer().addCard(cardType);
+
+        // so that the available actions are recalculated
+        rushThroughRound();
+    }
+
+    private void playCard(CardType cardType) {
+        submitChecked(new PlayCard(cardType));
+    }
+
+    private void currentPlayerPlayCard(CardType cardType) {
+        giveCurrentPlayerCard(cardType);
+        playCard(cardType);
+    }
+
     @Nested
     @DisplayName("General Card Rules")
     class GeneralCardRules {
@@ -22,7 +48,7 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
         @DisplayName("Cards may only be played during step one")
         void cardsMayOnlyBePlayedDuringStepOne() {
             // Arrange
-            getCurrentPlayer().addCard(CardType.DOUBLE_IT);
+            giveCurrentPlayerCard(CardType.DOUBLE_IT);
 
             // Assert
             assertTrue(availableActions().stream().anyMatch(PlayCard.class::isInstance),
@@ -40,8 +66,8 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
         @DisplayName("Player may play only one card per turn")
         void playerMayPlayOnlyOneCardPerTurn() {
             // Arrange
-            getCurrentPlayer().addCard(CardType.DOUBLE_IT);
-            getCurrentPlayer().addCard(CardType.DOUBLE_IT);
+            giveCurrentPlayerCard(CardType.DOUBLE_IT);
+            giveCurrentPlayerCard(CardType.DOUBLE_IT);
 
             // Act
             submitChecked(availableActions().stream()
@@ -56,5 +82,163 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
         }
     }
 
-    // TODO: implement integration test for ActionCard, once it's clear how the api interaction should work.
+    // TODO: implement integration test for ActionCard
+    @Nested
+    @DisplayName("Hand Cards")
+    class HandCards {
+        @ParameterizedTest
+        @DisplayName("Hand cards are consumed after use")
+        @EnumSource(value = CardType.class,
+                names = {"SPEED_BOOST", "TRY_AGAIN", "MONEY_TIGER", "DOUBLE_IT", "SWITCH"})
+        void handCardsAreConsumedAfterUse(CardType card) {
+            currentPlayerPlayCard(card);
+
+            assertFalse(getSnapshot().viewerCards().contains(card),
+                    "Expected " + card + " card to be consumed after use");
+        }
+
+        @Test
+        @DisplayName("Speed Boost doubles next movement")
+        void speedBoost() {
+            giveCurrentPlayerCard(CardType.SPEED_BOOST);
+            setRollDieResult(5);
+
+            playCard(CardType.SPEED_BOOST);
+            submitChecked(new Roll());
+
+            assertEquals(10, getSnapshot().lastRoll(),
+                    "Expected Speed Boost to double the next movement");
+        }
+
+        @Test
+        @DisplayName("Try Again guarantees gambling card result")
+        void tryAgain() {
+            currentPlayerPlayCard(CardType.TRY_AGAIN);
+
+            submitChecked(new Gamble());
+
+            assertTrue(getSnapshot().gamblingOutcome().isCard(),
+                    "Expected Try Again to guarantee a gambling card result");
+        }
+
+        @Nested
+        @DisplayName("Money Tiger")
+        class MoneyTiger {
+            @Test
+            @DisplayName("Money Tiger guarantees gambling payout")
+            void moneyTigerGuaranteesGamblingPayout() {
+                currentPlayerPlayCard(CardType.MONEY_TIGER);
+
+                assertFalse(getSnapshot().gamblingOutcome().isCard(),
+                        "Expected Money Tiger to guarantee a gambling payout, not a card");
+            }
+
+            @Test
+            @DisplayName("Money Tiger doubles gambling payout")
+            void moneyTigerDoublesGamblingPayout() {
+                setGambleResult(1000);
+
+                currentPlayerPlayCard(CardType.MONEY_TIGER);
+
+                assertEquals("You won 2000", getSnapshot().gamblingOutcome().message(),
+                        "Expected Money Tiger to double the gambling payout");
+            }
+        }
+
+        // TODO: implement
+        @Nested
+        @Disabled
+        @DisplayName("Double It")
+        class DoubleIt {
+            @Test
+            @DisplayName("Double It doubles debt")
+            void doubleItDoublesDebt() {
+            }
+
+            @Test
+            @DisplayName("Double It transfers debt to next player")
+            void doubleItTransfersDebtToNextPlayer() {
+            }
+
+            @Test
+            @DisplayName("Double It sets player balance to zero")
+            void doubleItSetsPlayerBalanceToZero() {
+            }
+        }
+
+        // TODO: implement
+        @Nested
+        @Disabled
+        @DisplayName("Switch")
+        class Switch {
+            @Test
+            @DisplayName("Switch swaps piece positions")
+            void switchSwapsPiecePositions() {
+            }
+
+            @Test
+            @DisplayName("Switch requires target piece")
+            void switchRequiresTargetPiece() {
+            }
+        }
+
+        // TODO: implement
+        @Nested
+        @Disabled
+        @DisplayName("Anger Reverse")
+        class AngerReverse {
+            @Test
+            @DisplayName("Anger Reverse counters Double It")
+            void angerReverseCountersDoubleIt() {
+            }
+
+            @Test
+            @DisplayName("Anger Reverse counters Switch")
+            void angerReverseCountersSwitch() {
+            }
+
+            @Test
+            @DisplayName("Anger Reverse counters another Anger Reverse")
+            void angerReverseCountersAnotherAngerReverse() {
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("Instant Cards")
+    class InstantCards {
+        @Test
+        @DisplayName("Jackpot grants money when drawn")
+        void jackpotGrantsMoneyWhenDrawn() {
+            final long jackpotAmount = 250000L;
+
+            long balanceBefore = getDeciderInfo().money();
+
+            setGambleResult(CardType.JACKPOT);
+
+            submitChecked(new Gamble());
+
+            long balanceAfter = getDeciderInfo().money();
+
+            assertEquals(balanceBefore + jackpotAmount, balanceAfter,
+                    "Expected Jackpot to grant " + jackpotAmount + " money when drawn");
+        }
+
+        @Test
+        @DisplayName("Charity removes money when drawn")
+        void charityRemovesMoneyWhenDrawn() {
+            final long charityAmount = 100000L;
+
+            long balanceBefore = getDeciderInfo().money();
+
+            setGambleResult(CardType.CHARITY);
+
+            submitChecked(new Gamble());
+
+            long balanceAfter = getDeciderInfo().money();
+
+            assertEquals(balanceBefore - charityAmount, balanceAfter,
+                    "Expected Charity to remove " + charityAmount + " money when drawn");
+        }
+    }
 }
