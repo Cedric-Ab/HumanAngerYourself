@@ -2,17 +2,16 @@ package ch.zhaw.it.pm.humanangeryourself.service;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
-import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GamblingOutcome;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.NpcInfo;
-import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PieceInfo;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PlayerInfo;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PropertyInfo;
-import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
-import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.GameController;
+import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
+import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +26,7 @@ import java.util.Objects;
 public final class SnapshotFactory {
 
     /**
-     * // util class, no instances.
+     * util class, no instances.
      */
     private SnapshotFactory() {
         // util class, no instances
@@ -53,15 +52,13 @@ public final class SnapshotFactory {
         List<PropertyInfo> propertyInfos = toPropertyInfos(board);
         List<NpcInfo> npcInfos = toNpcInfos(board);
         List<CardType> viewerCards = getViewerCards(game, viewer);
-        int lastRoll = 0; // TODO; maybe game.getTurn().getLastRoll();
         DecisionInfo decisionInfo = controller.getDecision();
-        GamblingOutcome gamblingOutcome = game.getTurn().getGamblingOutcome();
 
         return new GameSnapshot(
                 viewer, currentPlayer,
                 playerInfos, pieceInfos,
                 propertyInfos, npcInfos, viewerCards,
-                lastRoll, decisionInfo, gamblingOutcome,
+                game.getTurn().getPrimaryActionResult(), decisionInfo,
                 getWinnerColor(game));
     }
 
@@ -106,7 +103,6 @@ public final class SnapshotFactory {
     }
 
     private static PlayerColor getWinnerColor(Game game) {
-        return null;
-        //TODO: maybe return game.getWinner().map(Player::getColor).orElse(null);
+        return game.getWinner().map(Player::getColor).orElse(null);
     }
 }
