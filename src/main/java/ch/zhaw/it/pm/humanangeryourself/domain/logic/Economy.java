@@ -3,11 +3,13 @@ package ch.zhaw.it.pm.humanangeryourself.domain.logic;
 import ch.zhaw.it.pm.humanangeryourself.api.PropertySize;
 import ch.zhaw.it.pm.humanangeryourself.api.action.BuyCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.BuyProperty;
-import ch.zhaw.it.pm.humanangeryourself.config.PropertyPrice;
+import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -20,10 +22,22 @@ import java.util.stream.Stream;
  */
 public class Economy {
 
+    private final GameConfig config;
+
     /**
-     * Creates a new economy logic instance.
+     * Creates a new economy logic instance with the default configuration.
      */
     public Economy() {
+        this(GameConfig.defaults());
+    }
+
+    /**
+     * Creates a new economy logic instance with a custom configuration.
+     *
+     * @param config the custom configuration to use
+     */
+    public Economy(GameConfig config) {
+        this.config = config;
     }
 
     /**
