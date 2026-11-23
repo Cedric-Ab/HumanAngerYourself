@@ -2,7 +2,6 @@ package ch.zhaw.it.pm.humanangeryourself.domain.game.phase;
 
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.GambleResult;
-import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
@@ -41,7 +40,7 @@ public class GamblingPhase extends GamePhaseBase {
                 if (c.cardType().isInstant()) {
                     // TODO: activate card effect
                 } else {
-                    getCurrentPlayer().addCard(Card.fromType(c.cardType()));
+                    getCurrentPlayer().addCard(Game.cardFromType(c.cardType()));
                 }
                 break;
         }
