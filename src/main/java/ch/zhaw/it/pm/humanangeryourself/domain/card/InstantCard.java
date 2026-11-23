@@ -7,7 +7,7 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
  * A card whose effect is applied immediately when it is drawn, without being
  * added to the player's hand. Compare {@link HandCard}.
  */
-public interface InstantCard {
+public interface InstantCard extends Card {
     /**
      * Applies the effect of this card to the player who drew it.
      *

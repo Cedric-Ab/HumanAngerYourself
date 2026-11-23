@@ -1,5 +1,6 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.card;
 
+import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.RollResult;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
@@ -22,5 +23,15 @@ public class SpeedBoostCard implements HandCard {
     public void apply(Game game, Player player, Action action) {
         int newRoll = game.getMovementRules().rollDie() * 2;
         game.getTurn().setPrimaryActionResult(new RollResult(newRoll));
+    }
+
+    @Override
+    public boolean preconditionsMet() {
+        return true;
+    }
+
+    @Override
+    public CardType type() {
+        return CardType.SPEED_BOOST;
     }
 }

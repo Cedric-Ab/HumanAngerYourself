@@ -50,7 +50,7 @@ public class GamblingPhase extends GamePhaseBase {
             // TODO: activate card effect
             return createEndOfTurnPhase();
         } else {
-            getCurrentPlayer().addCard(cardResult.cardType());
+            getCurrentPlayer().addCard(Game.cardFromType(cardResult.cardType()));
             return new DiscardPhase(getGame(), createEndOfTurnPhase(), getCurrentPlayer());
         }
     }
