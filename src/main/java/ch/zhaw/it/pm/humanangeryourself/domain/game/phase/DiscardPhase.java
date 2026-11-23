@@ -3,7 +3,6 @@ package ch.zhaw.it.pm.humanangeryourself.domain.game.phase;
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.action.DiscardCard;
-import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
@@ -31,8 +30,7 @@ public class DiscardPhase extends NonFlowGamePhase {
      * @param nextPhase the next game phase to transition to after this phase is completed
      * @param player    the  player who is currently discarding a card
      */
-    public DiscardPhase(@NotNull Game game, @NotNull GamePhase nextPhase,
-                        @NotNull Player player) {
+    public DiscardPhase(@NotNull Game game, @NotNull GamePhase nextPhase, @NotNull Player player) {
         this(game, nextPhase, player, null);
     }
 
@@ -54,16 +52,19 @@ public class DiscardPhase extends NonFlowGamePhase {
 
     @Override
     public @NotNull GamePhase process() {
-        GameConfig gameConfig = GameConfig.getInstance();
-
-        List<CardType> cards = discardingPlayer.getCards();
-
-        if (cards.size() <= gameConfig.maxHandSize()) {
-            return getNextPhase();
-        } else {
-            createDecisionInfo();
-            return this;
-        }
+        // TODO: get access to the config and check if the player has to discard a card or not
+//         GameConfig gameConfig = GameConfig.getInstance();
+//
+//         List<CardType> cards = discardingPlayer.getCards();
+//
+//         if (cards.size() <= gameConfig.maxHandSize()) {
+//             return getNextPhase();
+//         } else {
+//             createDecisionInfo();
+//             return this;
+//         }
+        createDecisionInfo();
+        return this;
     }
 
     private void createDecisionInfo() {
