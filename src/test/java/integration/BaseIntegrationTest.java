@@ -1,5 +1,6 @@
 package integration;
 
+import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.action.EndTurn;
@@ -12,11 +13,16 @@ import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PlayerInfo;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.MovementRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
+import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Base class for integration tests
+ * that provides utility methods for interacting with the game controller and game state.
+ */
 public abstract class BaseIntegrationTest {
     private final RiggedController controller = new RiggedController();
 
@@ -44,6 +50,10 @@ public abstract class BaseIntegrationTest {
 
     protected void setGambleResult(int result) {
         controller.setGambleResult(result);
+    }
+
+    protected void setGambleResult(CardType cardType) {
+        controller.setGambleResult(cardType);
     }
 
     protected Game getGame() {
@@ -119,10 +129,13 @@ public abstract class BaseIntegrationTest {
         submitChecked(new Roll());
     }
 
+    protected Player getCurrentPlayer() {
+        return getGame().getPlayer(decider());
+    }
+
     protected List<Piece> getPieces() {
         return new ArrayList<>(
-                getGame()
-                        .getPlayer(decider())
+                getCurrentPlayer()
                         .getPieces()
         );
     }

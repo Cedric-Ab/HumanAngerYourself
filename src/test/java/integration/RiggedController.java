@@ -1,5 +1,6 @@
 package integration;
 
+import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
@@ -10,30 +11,35 @@ import ch.zhaw.it.pm.humanangeryourself.domain.game.GameController;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.GameObserver;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.GamblingRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.MovementRules;
+import ch.zhaw.it.pm.humanangeryourself.domain.logic.SpinResult;
 import ch.zhaw.it.pm.humanangeryourself.service.SnapshotFactory;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
 /**
- *
+ * A rigged game controller that allows for controlling the results of die rolls and gambling spins.
  */
 public class RiggedController extends GameController {
-    private final GameController controller;
-
     private final MovementRules movementRules;
     private final GamblingRules gamblingRules;
 
+    private RiggedController(Game game) {
+        super(game);
+
+        movementRules = game.getMovementRules();
+        gamblingRules = game.getGamblingRules();
+    }
+
     public RiggedController() {
-        movementRules = spy(MovementRules.class);
-        gamblingRules = spy(GamblingRules.class);
+        this(createGame());
+    }
 
-        Game game = new GameBuilder()
-                .setMovementRules(movementRules)
-                .setGamblingRules(gamblingRules)
+    private static Game createGame() {
+        return new GameBuilder()
+                .setMovementRules(spy(MovementRules.class))
+                .setGamblingRules(spy(GamblingRules.class))
                 .createGame();
-
-        controller = new GameController(game);
     }
 
     @Override
@@ -43,12 +49,12 @@ public class RiggedController extends GameController {
 
     @Override
     public void submit(PlayerColor color, Action action) {
-        controller.submit(color, action);
+        super.submit(color, action);
     }
 
     @Override
     public DecisionInfo getDecision() {
-        return controller.getDecision();
+        return super.getDecision();
     }
 
     /**
@@ -62,11 +68,11 @@ public class RiggedController extends GameController {
      */
     @Override
     public Game getGame() {
-        return controller.getGame();
+        return super.getGame();
     }
 
     public GameSnapshot getSnapshot(PlayerColor viewer) {
-        return SnapshotFactory.create(controller, viewer);
+        return SnapshotFactory.create(this, viewer);
     }
 
     public GameSnapshot getSnapshot() {
@@ -85,9 +91,27 @@ public class RiggedController extends GameController {
                 .rollDie();
     }
 
-    public void setGambleResult(int result) {
+    public void setGambleResult(SpinResult result) {
         doReturn(result)
                 .when(gamblingRules)
                 .spin();
+    }
+
+    public void setGambleResult(int result) {
+        SpinResult spinResult = new SpinResult(Long.valueOf(result));
+        setGambleResult(spinResult);
+
+        doReturn(spinResult)
+                .when(gamblingRules)
+                .spinWin();
+    }
+
+    public void setGambleResult(CardType cardType) {
+        SpinResult spinResult = new SpinResult(cardType);
+        setGambleResult(spinResult);
+
+        doReturn(spinResult)
+                .when(gamblingRules)
+                .spinCard();
     }
 }
