@@ -9,12 +9,12 @@ public sealed interface PrimaryActionResult {
     /**
      * Represents the result of a die roll.
      *
-     * @param dieRoll the die roll (must be between 1 and 6)
+     * @param dieRoll the die roll, must be greater than 0
      */
     record RollResult(int dieRoll) implements PrimaryActionResult {
         public RollResult {
-            if (dieRoll < 1 || 6 < dieRoll) {
-                throw new IllegalArgumentException("Die roll must be between 1 and 6");
+            if (dieRoll < 1) {
+                throw new IllegalArgumentException("Die roll must be greater than 0, but was " + dieRoll);
             }
         }
     }
