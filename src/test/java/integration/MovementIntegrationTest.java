@@ -256,8 +256,8 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         }
 
         @Test
-        @DisplayName("Piece cannot enter finish area with depth")
-        void pieceCannotEnterFinishAreaWithDepth() {
+        @DisplayName("Piece cannot enter finish area with debt")
+        void pieceCannotEnterFinishAreaWithDebt() {
             getCurrentPlayer().resetBalanceToZero();
             getCurrentPlayer().changeBalanceBy(-1);
 
