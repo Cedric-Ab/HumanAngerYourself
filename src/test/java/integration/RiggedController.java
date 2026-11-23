@@ -5,13 +5,13 @@ import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.GameBuilder;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.GameController;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.GameObserver;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.GamblingRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.MovementRules;
-import ch.zhaw.it.pm.humanangeryourself.domain.logic.SpinResult;
 import ch.zhaw.it.pm.humanangeryourself.service.SnapshotFactory;
 
 import static org.mockito.Mockito.doReturn;
@@ -91,26 +91,26 @@ public class RiggedController extends GameController {
                 .rollDie();
     }
 
-    public void setGambleResult(SpinResult result) {
+    public void setGambleResult(PrimaryActionResult.GambleResult result) {
         doReturn(result)
                 .when(gamblingRules)
                 .spin();
     }
 
-    public void setGambleResult(int result) {
-        SpinResult spinResult = new SpinResult(Long.valueOf(result));
-        setGambleResult(spinResult);
+    public void setGambleResult(int money) {
+        PrimaryActionResult.GambleResult result = new PrimaryActionResult.GambleResult.MoneyResult(money);
+        setGambleResult(result);
 
-        doReturn(spinResult)
+        doReturn(result)
                 .when(gamblingRules)
                 .spinWin();
     }
 
     public void setGambleResult(CardType cardType) {
-        SpinResult spinResult = new SpinResult(cardType);
-        setGambleResult(spinResult);
+        PrimaryActionResult.GambleResult result = new PrimaryActionResult.GambleResult.CardResult(cardType);
+        setGambleResult(result);
 
-        doReturn(spinResult)
+        doReturn(result)
                 .when(gamblingRules)
                 .spinCard();
     }
