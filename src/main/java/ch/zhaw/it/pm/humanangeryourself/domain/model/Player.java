@@ -49,8 +49,12 @@ public class Player {
      *
      * @param amount amount to add, may be negative
      */
-    public void addMoney(long amount) {
+    public void changeBalanceBy(long amount) {
         money = Math.addExact(money, amount);
+    }
+
+    public void resetBalanceToZero(){
+        money = 0;
     }
 
     /**
@@ -95,6 +99,18 @@ public class Player {
         return pieces.stream()
                 .filter(piece -> piece.getCurrentTile().equals(tile))
                 .findFirst();
+    }
+
+    /**
+     * Returns all the player's pieces that stand on the given tile.
+     *
+     * @param tile tile to look at
+     * @return an unmodifiable list of the player's pieces on the tile, empty if none of them is there
+     */
+    public List<Piece> getPieces(Tile tile) {
+        return pieces.stream()
+                .filter(piece -> piece.getCurrentTile().equals(tile))
+                .toList();
     }
 
     /**
