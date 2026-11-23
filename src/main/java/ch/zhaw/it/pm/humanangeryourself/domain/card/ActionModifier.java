@@ -6,7 +6,7 @@ import ch.zhaw.it.pm.humanangeryourself.config.GamblingConfig;
 import java.util.List;
 import java.util.stream.Stream;
 
-public sealed interface ActionModifier {
+public sealed interface ActionModifier extends Card {
     Action forcedAction();
 
     non-sealed interface GambleModifier extends ActionModifier {
