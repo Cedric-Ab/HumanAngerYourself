@@ -110,7 +110,8 @@ public class GameBuilder {
     /**
      * Sets the players for the game being built.
      *
-     * @param players the list of players to set, must contain 2 to 4 players
+     * @param players the list of players to set,
+     *                must contain {@value Game#MIN_PLAYERS} to {@value Game#MAX_PLAYERS} players
      * @return the current GameBuilder instance for method chaining
      */
     public GameBuilder setPlayers(List<Player> players) {
@@ -121,7 +122,8 @@ public class GameBuilder {
     /**
      * Sets the player setups for the game being built.
      *
-     * @param playerSetups the list of player setups to set, must contain 2 to 4 setups
+     * @param playerSetups the list of player setups to set,
+     *                     must contain {@value Game#MIN_PLAYERS} to {@value Game#MAX_PLAYERS} setups
      * @return the current GameBuilder instance for method chaining
      */
     public GameBuilder setPlayerSetups(List<PlayerSetup> playerSetups) {
