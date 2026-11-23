@@ -91,8 +91,8 @@ public class EndOfTurnPhase extends GamePhaseBase {
      * @return this phase with an updated decision
      */
     private GamePhase buyCard(Player player, BuyCard buyCard) {
-        // TODO: medium priority
-        return process();
+        // TODO: low priority
+        return new DiscardPhase(getGame(), this, player);
     }
 
     /**
@@ -103,7 +103,7 @@ public class EndOfTurnPhase extends GamePhaseBase {
      * @return this phase with an updated decision
      */
     private GamePhase buyProperty(Player player, BuyProperty buyProperty) {
-        // TODO: low priority
+        // TODO: medium priority
         return process();
     }
 }
