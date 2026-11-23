@@ -9,9 +9,11 @@ import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.api.action.EndTurn;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -23,7 +25,10 @@ class DiceIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Roll result appears in snapshot")
     void rollResultAppearsInSnapshot(int roll) {
         rollNumber(roll);
-        assertEquals(roll, getSnapshot().lastRoll(), "The roll result should be " + roll);
+        assertInstanceOf(PrimaryActionResult.RollResult.class, getSnapshot().primaryActionResult(),
+                "Expected the primary action result to be a RollResult");
+        assertEquals(roll, ((PrimaryActionResult.RollResult) getSnapshot().primaryActionResult()).dieRoll(),
+                "Expected the roll result in the snapshot to match the rolled number");
     }
 
     @Test

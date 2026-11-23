@@ -11,9 +11,11 @@ import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Gamble;
 import ch.zhaw.it.pm.humanangeryourself.api.action.PlayCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("ActionCard Integration Test")
@@ -106,7 +108,7 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
             playCard(CardType.SPEED_BOOST);
             submitChecked(new Roll());
 
-            assertEquals(10, getSnapshot().lastRoll(),
+            assertEquals(10, ((PrimaryActionResult.RollResult) getSnapshot().primaryActionResult()).dieRoll(),
                     "Expected Speed Boost to double the next movement");
         }
 
@@ -117,7 +119,8 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
 
             submitChecked(new Gamble());
 
-            assertTrue(getSnapshot().gamblingOutcome().isCard(),
+            assertInstanceOf(PrimaryActionResult.GambleResult.CardResult.class,
+                    getSnapshot().primaryActionResult(),
                     "Expected Try Again to guarantee a gambling card result");
         }
 
@@ -129,8 +132,11 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
             void moneyTigerGuaranteesGamblingPayout() {
                 currentPlayerPlayCard(CardType.MONEY_TIGER);
 
-                assertFalse(getSnapshot().gamblingOutcome().isCard(),
-                        "Expected Money Tiger to guarantee a gambling payout, not a card");
+                submitChecked(new Gamble());
+
+                assertInstanceOf(PrimaryActionResult.GambleResult.MoneyResult.class,
+                        getSnapshot().primaryActionResult(),
+                        "Expected Money Tiger to guarantee a gambling payout");
             }
 
             @Test
@@ -140,7 +146,10 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
 
                 currentPlayerPlayCard(CardType.MONEY_TIGER);
 
-                assertEquals("You won 2000", getSnapshot().gamblingOutcome().message(),
+                submitChecked(new Gamble());
+
+                long actualAmount = ((PrimaryActionResult.GambleResult.MoneyResult) getSnapshot().primaryActionResult()).amount();
+                assertEquals(2000, actualAmount,
                         "Expected Money Tiger to double the gambling payout");
             }
         }
