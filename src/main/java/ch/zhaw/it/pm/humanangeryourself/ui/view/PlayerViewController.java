@@ -14,6 +14,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.TargetPiece;
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PlayerInfo;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult;
 import ch.zhaw.it.pm.humanangeryourself.ui.viewmodel.GameViewModel;
 
 import javafx.fxml.FXML;
@@ -122,8 +123,8 @@ public class PlayerViewController {
 
         String name = currentPlayer == null
                 ? snapshot.decision() == null
-                        ? "Waiting"
-                        : String.valueOf(snapshot.decision().decider())
+                ? "Waiting"
+                : String.valueOf(snapshot.decision().decider())
                 : currentPlayer.name();
 
         playerNameLabel.setText("Turn: " + name);
@@ -143,13 +144,38 @@ public class PlayerViewController {
         renderCards(snapshot);
         renderAdditionalActions(snapshot);
 
+        displayResultMessage(snapshot);
+    }
+
+    /**
+     * Displays an appropriate message in the result label.
+     *
+     * @param snapshot the game snapshot (may not be null)
+     */
+    private void displayResultMessage(GameSnapshot snapshot) {
         if (snapshot.winner() != null) {
             resultLabel.setText("Winner: " + playerName(snapshot, snapshot.winner()));
-        } else if (snapshot.gamblingOutcome() != null) {
-            resultLabel.setText(snapshot.gamblingOutcome().message());
+        } else if (snapshot.primaryActionResult() != null) {
+            resultLabel.setText(toResultMessage(snapshot.primaryActionResult()));
         } else if (snapshot.decision() != null) {
             resultLabel.setText("Choose an available action.");
         }
+    }
+
+    /**
+     * Returns a string representation of the given primary action result.
+     *
+     * @param result result of a primary action
+     * @return a string representation of the given primary action result
+     */
+    private String toResultMessage(PrimaryActionResult result) {
+        return switch (result) {
+            case PrimaryActionResult.RollResult r -> "You rolled a " + r.dieRoll();
+            case PrimaryActionResult.GambleResult.MoneyResult m -> m.amount() > 0
+                    ? String.format("Hurray, you won %,d$", m.amount())
+                    : String.format("Oh no, you lost %,d$", -m.amount());
+            case PrimaryActionResult.GambleResult.CardResult c -> "You received " + c.cardType().toString();
+        };
     }
 
     private void renderCards(GameSnapshot snapshot) {
