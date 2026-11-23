@@ -18,20 +18,21 @@ import java.util.List;
  */
 public class Economy {
 
-    private GameConfig config;
+    private final GameConfig config;
 
     /**
-     * Creates a new instance of the economy logic.
+     * Creates a new economy logic instance with the default configuration.
      */
     public Economy() {
+        this(GameConfig.defaults());
     }
 
     /**
-     * Injects the game configuration into the economy logic, allowing it to access
+     * Creates a new economy logic instance with a custom configuration.
      *
-     * @param config the game configuration to be used for economy calculations
+     * @param config the custom configuration to use
      */
-    public void inject(GameConfig config) {
+    public Economy(GameConfig config) {
         this.config = config;
     }
 
