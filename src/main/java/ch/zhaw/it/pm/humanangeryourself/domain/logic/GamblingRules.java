@@ -1,6 +1,7 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.logic;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.GambleResult;
 import ch.zhaw.it.pm.humanangeryourself.config.GamblingConfig;
 
 import java.util.List;
@@ -42,19 +43,19 @@ public class GamblingRules {
      * The outcome is chosen according to the configured card and loss weights:
      * a card, a loss, or (for the remaining probability) a win.
      *
-     * @return a {@link SpinResult} containing a random card if the player receives a card,
+     * @return a {@link GambleResult} containing a random card if the player receives a card,
      *         a negative amount if the player loses, or a positive amount if the player wins.
      *         Amounts lie between the configured lower bound (inclusive) and upper bound
      *         (exclusive), negated in the case of a loss
      */
-    public SpinResult spin() {
+    public GambleResult spin() {
         int chance = RANDOM.nextInt(100);
 
         if (chance <= config.cardWeight() - 1) {
             return spinCard();
         } else if (chance <= config.lossWeight() + config.cardWeight() - 1) {
             long amount = -RANDOM.nextLong(config.amountLowerBound(), config.amountUpperBound());
-            return new SpinResult(amount);
+            return new GambleResult.MoneyResult(amount);
         } else {
             return spinWin();
         }
@@ -63,22 +64,22 @@ public class GamblingRules {
     /**
      * Produces a card outcome without regard to the configured weights.
      *
-     * @return a {@link SpinResult} containing a randomly chosen card
+     * @return a {@link GambleResult.CardResult} containing a randomly chosen card
      * @see #receiveCard()
      */
-    public SpinResult spinCard() {
-        return new SpinResult(receiveCard());
+    public GambleResult.CardResult spinCard() {
+        return new GambleResult.CardResult(receiveCard());
     }
 
     /**
      * Produces a winning outcome without regard to the configured weights.
      *
-     * @return a {@link SpinResult} containing a positive amount between the configured lower
+     * @return a {@link GambleResult.MoneyResult} containing a positive amount between the configured lower
      *         bound (inclusive) and upper bound (exclusive)
      */
-    public SpinResult spinWin() {
+    public GambleResult.MoneyResult spinWin() {
         long amount = RANDOM.nextLong(config.amountLowerBound(), config.amountUpperBound());
-        return new SpinResult(amount);
+        return new GambleResult.MoneyResult(amount);
     }
 
     /**
