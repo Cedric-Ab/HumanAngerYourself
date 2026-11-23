@@ -1,5 +1,6 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.logic;
 
+import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
 import ch.zhaw.it.pm.humanangeryourself.api.action.MovePiece;
 import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
@@ -73,6 +74,17 @@ public class MovementRules {
     }
 
     /**
+     * Checks if all pieces of the given player are in the finish area.
+     *
+     * @param player the player whose pieces are checked
+     * @return {@code true} if all pieces are in the finish area, otherwise {@code false}
+     */
+    public boolean areAllPiecesInFinishArea(Player player) {
+        return player.getPieces().stream()
+                .allMatch(piece -> piece.getCurrentTile().getId() == FINISH_AREA_ID);
+    }
+
+    /**
      * Determines which pieces must be sent back home when the given piece
      * has landed on its destination tile.
      *
@@ -143,11 +155,12 @@ public class MovementRules {
                 int lastTile = getLastStaircaseTileId(player);
                 int remainingSteps = lastTile - currentTile + 1;
 
-                if (roll == remainingSteps) {
+                if (roll == remainingSteps && !player.isInDebt()) {
                     possibleActions.add(new MovePiece(currentTile, FINISH_AREA_ID));
+                } else if(roll == remainingSteps && player.isInDebt()){
+                    throw new InvalidActionException("You must be debt free to enter the finish area.");
                 } else if (roll < remainingSteps) {
                     possibleActions.add(new MovePiece(currentTile, currentTile + roll));
-
                 } else {
                     int destination = lastTile - (roll - remainingSteps);
                     possibleActions.add(new MovePiece(currentTile, destination));
