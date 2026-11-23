@@ -77,7 +77,6 @@ public class EndOfTurnPhase extends GamePhaseBase {
      */
     private GamePhase endTurn() {
         // TODO: paying rent: low priority
-        // TODO: auction: lowest priority
 
         getGame().nextTurn();
         return new StartOfTurnPhase(getGame());

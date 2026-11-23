@@ -1,10 +1,10 @@
 package ch.zhaw.it.pm.humanangeryourself.service;
 
-import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
-import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
-import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.GameListener;
 import ch.zhaw.it.pm.humanangeryourself.api.GameService;
+import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
+import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
+import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.GameController;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.GameObserver;
@@ -94,7 +94,7 @@ public class LocalGameService implements GameService, GameObserver {
      * Returns the player who currently has to decide.
      * <p>
      * Usually this is the player whose turn it is, but it may be different during a reaction
-     * (the affected player) or an auction (the bidding player)
+     * (the affected player).
      *
      * @return the deciding player
      */

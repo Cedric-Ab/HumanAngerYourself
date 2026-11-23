@@ -9,7 +9,6 @@ import java.util.Objects;
  * Immutable game settings that control the economy and the card limits.
  *
  * @param startMoney              money each player starts with
- * @param debtLimit               maximum debt before an auction is triggered
  * @param maxHandSize             maximum number of cards a player can hold
  * @param maxPropertiesPerQuarter maximum number of properties per board quarter
  * @param gambling                gambling settings
@@ -18,7 +17,6 @@ import java.util.Objects;
  */
 public record GameConfig(
         long startMoney,
-        long debtLimit,
         int maxHandSize,
         int maxPropertiesPerQuarter,
         GamblingConfig gambling,
@@ -34,7 +32,7 @@ public record GameConfig(
         Objects.requireNonNull(gambling, "gambling must be present");
         Objects.requireNonNull(cards, "cards must be present");
         propertyPrices = Map.copyOf(propertyPrices);
-        if (startMoney < 0 || debtLimit < 0 || maxHandSize < 1 || maxPropertiesPerQuarter < 1) {
+        if (startMoney < 0 || maxHandSize < 1 || maxPropertiesPerQuarter < 1) {
             throw new IllegalArgumentException("GameConfig invalid");
         }
     }
@@ -50,7 +48,7 @@ public record GameConfig(
                 PropertySize.MEDIUM, new PropertyPrice(200_000, 7_000),
                 PropertySize.LARGE, new PropertyPrice(500_000, 20_000));
 
-        return new GameConfig(100_000, 50_000, 10, 5,
+        return new GameConfig(100_000, 10, 5,
                 GamblingConfig.defaults(), CardConfig.defaults(), propertyPrices);
     }
 }

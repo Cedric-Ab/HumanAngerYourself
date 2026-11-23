@@ -13,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * Game logic for everything related to money: buying properties and cards,
- * collecting rent, checking debt limits and handling bankruptcy.
+ * Game logic for everything related to money: buying properties and cards and collecting rent
  */
 public class Economy {
 
@@ -64,24 +63,6 @@ public class Economy {
      * Not implemented yet.
      */
     public void collectRent() { }
-
-    /**
-     * Returns whether the player's debt exceeds the allowed limit.
-     *
-     * @param player the player to check
-     * @return {@code true} if the player is over the debt limit and has to go bankrupt
-     */
-    public boolean isOverDebtLimit(Player player) {
-        return false;
-    }
-
-    /**
-     * Declares the given player bankrupt and updates the board accordingly.
-     *
-     * @param board  the board the player is playing on
-     * @param player the player who goes bankrupt
-     */
-    public void bankrupt(Board board, Player player) { }
 
     /**
      * Returns all card purchases the given player can currently make.
