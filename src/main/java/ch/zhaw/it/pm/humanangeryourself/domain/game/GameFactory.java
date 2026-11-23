@@ -40,7 +40,7 @@ public final class GameFactory {
                 .sorted(Comparator.comparingInt(setup -> board.getQuarterOf(setup.color())))
                 .map(setup -> createPlayer(setup, board, config.startMoney()))
                 .toList();
-        return new Game(new MovementRules(config, board), new GamblingRules(config.gambling()),
+        return new Game(config, new MovementRules(config, board), new GamblingRules(config.gambling()),
                 new Economy(config), board, players);
     }
 

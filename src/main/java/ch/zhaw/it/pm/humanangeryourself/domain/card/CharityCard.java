@@ -1,5 +1,6 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.card;
 
+import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.config.CardConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
@@ -37,5 +38,15 @@ public class CharityCard implements InstantCard {
     @Override
     public void apply(Game game, Player player) {
         player.changeBalanceBy(config.charity());
+    }
+
+    @Override
+    public boolean preconditionsMet() {
+        return true;
+    }
+
+    @Override
+    public CardType type() {
+        return CardType.CHARITY;
     }
 }

@@ -1,6 +1,17 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game;
 
+import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
+import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.AngerReverseCard;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.CharityCard;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.DoubleItCard;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.JackpotCard;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.MoneyTigerCard;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.SpeedBoostCard;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.SwitchCard;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.TryAgainCard;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.Economy;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.GamblingRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.MovementRules;
@@ -25,6 +36,11 @@ public class Game {
      * Maximum number of players in a game, one per color.
      */
     private static final int MAX_PLAYERS = 4;
+
+    /**
+     * Configuration of the game, containing various settings and parameters.
+     */
+    private final GameConfig config;
     /**
      * Rules for moving pieces.
      */
@@ -59,6 +75,7 @@ public class Game {
      * Creates a new game with the given movement rules, gambling rules, economy, board, and players.
      * The first player in the list starts with the first turn.
      *
+     * @param config        the configuration of the game, must not be {@code null}
      * @param movementRules the movement rules of the game, must not be {@code null}
      * @param gamblingRules the gambling rules of the game, must not be {@code null}
      * @param economy       the economy of the game, must not be {@code null}
@@ -70,16 +87,39 @@ public class Game {
      * @throws IllegalArgumentException if the number of players is outside the allowed range
      *                                  or two players share the same color
      */
-    public Game(MovementRules movementRules, GamblingRules gamblingRules, Economy economy,
+    public Game(GameConfig config, MovementRules movementRules, GamblingRules gamblingRules, Economy economy,
                 Board board, List<Player> players) {
-        this.movementRules = Objects.requireNonNull(movementRules, "movementRules must not be null");
-        this.gamblingRules = Objects.requireNonNull(gamblingRules, "gamblingRules must not be null");
-        this.economy = Objects.requireNonNull(economy, "economy must not be null");
-        this.board = Objects.requireNonNull(board, "board must not be null");
-        this.players = List.copyOf(Objects.requireNonNull(players, "players must not be null"));
+        this.config = Objects.requireNonNull(config);
+        this.movementRules = Objects.requireNonNull(movementRules);
+        this.gamblingRules = Objects.requireNonNull(gamblingRules);
+        this.economy = Objects.requireNonNull(economy);
+        this.board = Objects.requireNonNull(board);
+        this.players = List.copyOf(Objects.requireNonNull(players));
         requireValidPlayers();
 
         turn = new Turn(this.players.getFirst());
+    }
+
+    public static Card cardFromType(CardType type) {
+        return switch (type) {
+            case DOUBLE_IT -> new DoubleItCard();
+            case TRY_AGAIN -> new TryAgainCard();
+            case MONEY_TIGER -> new MoneyTigerCard();
+            case ANGER_REVERSE -> new AngerReverseCard();
+            case SPEED_BOOST -> new SpeedBoostCard();
+            case SWITCH -> new SwitchCard();
+            case JACKPOT -> new JackpotCard();
+            case CHARITY -> new CharityCard();
+        };
+    }
+
+    /**
+     * Returns the configuration of the game.
+     *
+     * @return the configuration of the game
+     */
+    public GameConfig getConfig() {
+        return config;
     }
 
     /**

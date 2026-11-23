@@ -1,5 +1,6 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.card;
 
+import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.GambleResult.MoneyResult;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
@@ -24,5 +25,15 @@ public class MoneyTigerCard implements HandCard {
         player.changeBalanceBy(result);
 
         game.getTurn().setPrimaryActionResult(new MoneyResult(result));
+    }
+
+    @Override
+    public boolean preconditionsMet() {
+        return true;
+    }
+
+    @Override
+    public CardType type() {
+        return CardType.MONEY_TIGER;
     }
 }
