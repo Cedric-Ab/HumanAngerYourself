@@ -1,7 +1,6 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game;
 
-import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GamblingOutcome;
-import ch.zhaw.it.pm.humanangeryourself.api.snapshot.RollOutcome;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import org.jetbrains.annotations.NotNull;
@@ -12,10 +11,14 @@ import org.jetbrains.annotations.Nullable;
  */
 public class Turn {
 
-    /** The player whose turn it is. */
+    /**
+     * The player whose turn it is.
+     */
     private final @NotNull Player player;
-    private @Nullable GamblingOutcome gamblingOutcome;
-    private @Nullable RollOutcome rollOutcome;
+    /**
+     * The result of the last primary action (may be null if no action was performed yet)
+     */
+    private @Nullable PrimaryActionResult primaryActionResult;
 
     /**
      * Creates a new turn for the given player.
@@ -36,39 +39,21 @@ public class Turn {
     }
 
     /**
-     * Returns the outcome of the gambling spin of this turn.
+     * Returns the result of the last primary action performed by the player during this turn.
      *
-     * @return the gambling outcome, or {@code null} if no gambling outcome has been set
+     * @return the result of the last primary action, or {@code null} if no action was performed yet
      */
-    public @Nullable GamblingOutcome getGamblingOutcome() {
-        return gamblingOutcome;
+    public @Nullable PrimaryActionResult getPrimaryActionResult() {
+        return primaryActionResult;
     }
 
     /**
-     * Sets the outcome of the gambling spin of this turn.
+     * Sets the result of the last primary action performed by the player during this turn.
      *
-     * @param gamblingOutcome the gambling outcome to record
+     * @param primaryActionResult the result of the last primary action, must not be {@code null}
      */
-    public void setGamblingOutcome(@NotNull GamblingOutcome gamblingOutcome) {
-        this.gamblingOutcome = gamblingOutcome;
-    }
-
-    /**
-     * Returns the outcome of the die roll of this turn.
-     *
-     * @return the roll outcome, or {@code null} if no roll outcome has been set
-     */
-    public @Nullable RollOutcome getRollOutcome() {
-        return rollOutcome;
-    }
-
-    /**
-     * Sets the outcome of the die roll of this turn.
-     *
-     * @param rollOutcome the roll outcome to record
-     */
-    public void setRollOutcome(@NotNull RollOutcome rollOutcome) {
-        this.rollOutcome = rollOutcome;
+    public void setPrimaryActionResult(@NotNull PrimaryActionResult primaryActionResult) {
+        this.primaryActionResult = primaryActionResult;
     }
 
     // TODO: add effect stuff

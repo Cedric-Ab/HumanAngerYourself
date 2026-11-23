@@ -3,6 +3,7 @@ package ch.zhaw.it.pm.humanangeryourself.domain.game.phase;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
 import ch.zhaw.it.pm.humanangeryourself.api.action.MovePiece;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.RollResult;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
@@ -36,6 +37,8 @@ public class ChooseMovePhase extends GamePhaseBase {
     @Override
     public @NotNull GamePhase process() {
         int roll = getGame().getMovementRules().rollDie();
+
+        getGame().getTurn().setPrimaryActionResult(new RollResult(roll));
 
         List<MovePiece> possibleMoves = getGame().getMovementRules().getPossibleMoves(getCurrentPlayer(), roll);
         if (possibleMoves.isEmpty()) {
