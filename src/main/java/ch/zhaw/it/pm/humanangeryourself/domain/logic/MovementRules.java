@@ -69,6 +69,17 @@ public class MovementRules {
     }
 
     /**
+     * Checks if all pieces of the given player are in the finish area.
+     *
+     * @param player the player whose pieces are checked
+     * @return {@code true} if all pieces are in the finish area, otherwise {@code false}
+     */
+    public boolean areAllPiecesInFinishArea(Player player) {
+        return player.getPieces().stream()
+                .allMatch(piece -> piece.getCurrentTile().getId() == FINISH_AREA_ID);
+    }
+
+    /**
      * Determines which pieces must be sent back home when the given piece
      * has landed on its destination tile.
      *
