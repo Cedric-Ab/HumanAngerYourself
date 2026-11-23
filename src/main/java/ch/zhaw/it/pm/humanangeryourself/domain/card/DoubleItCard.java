@@ -1,7 +1,6 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.card;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
-import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
@@ -21,14 +20,13 @@ public class DoubleItCard implements HandCard {
      *
      * @param game   the game in which the card is played
      * @param player the player who plays the card; must be in debt
-     * @param action the action that triggered the card play
      * @throws InvalidActionException if the player's balance is positive, i.e. the
      *                                player is not in debt
      */
     @Override
-    public void apply(Game game, Player player, Action action) {
-        if (player.getMoney() > 0) {
-            throw new InvalidActionException(action, "You must be in debt to play this card");
+    public void apply(Game game, Player player) {
+        if (!player.isInDebt()) {
+            throw new InvalidActionException(player, "You must be in debt to play this card");
         }
 
         long debtDoubled = player.getMoney() * 2;
@@ -41,7 +39,7 @@ public class DoubleItCard implements HandCard {
 
     @Override
     public boolean preconditionsMet() {
-        //TODO
+        // TODO
         return false;
     }
 

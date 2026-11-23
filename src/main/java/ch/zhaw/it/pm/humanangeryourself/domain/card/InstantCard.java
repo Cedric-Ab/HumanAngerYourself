@@ -14,5 +14,6 @@ public interface InstantCard extends Card {
      * @param game   the game in which the card is drawn
      * @param player the player who drew the card
      */
-    public void apply(Game game, Player player);
+    @Override
+    void apply(Game game, Player player);
 }

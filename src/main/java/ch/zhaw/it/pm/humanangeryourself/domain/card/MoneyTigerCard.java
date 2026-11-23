@@ -1,7 +1,6 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.card;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
-import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.GambleResult.MoneyResult;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
@@ -17,10 +16,9 @@ public class MoneyTigerCard implements HandCard {
      *
      * @param game   the game in which the card is played
      * @param player the player who receives the winnings
-     * @param action the action that triggered the card play
      */
     @Override
-    public void apply(Game game, Player player, Action action) {
+    public void apply(Game game, Player player) {
         long result = game.getGamblingRules().spinWin().amount() * 2;
         player.changeBalanceBy(result);
 
