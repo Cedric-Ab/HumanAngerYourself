@@ -13,7 +13,9 @@ import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Gamble;
 import ch.zhaw.it.pm.humanangeryourself.api.action.PlayCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
+import ch.zhaw.it.pm.humanangeryourself.api.action.TargetPiece;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult;
+import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -194,21 +196,85 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
             }
         }
 
-        // TODO: implement
         @Nested
-        @Disabled
         @DisplayName("Switch")
         class Switch {
+            private static final PlayerColor OTHER_PLAYER = PlayerColor.GREEN;
+
+            private static final int TILE_ID_NORMAL_TILE_1 = 3;
+            private static final int TILE_ID_NORMAL_TILE_2 = 8;
+            private static final int TILE_ID_SAFE_TILE = 8;
+
+            private SwitchSetup setupSwitchSituation(int ownTile, int targetTile) {
+                SwitchSetup setup = new SwitchSetup(getFirstPiece(),
+                        getGame().getPlayer(OTHER_PLAYER).getPieces().getFirst());
+
+                setup.ownPiece().moveTo(getGame().getBoard().getTileById(ownTile));
+                setup.targetPiece().moveTo(getGame().getBoard().getTileById(targetTile));
+
+                return setup;
+            }
+
+            private void submitOwn(SwitchSetup setup) {
+                TargetPiece action = setup.targetOwn(decider());
+
+            }
+
+            private void submitOther(SwitchSetup setup) {
+                submitChecked(new TargetPiece(OTHER_PLAYER, setup.ownPiece().getId()));
+            }
+
             @Test
             @DisplayName("Switch works on normal Tiles")
             void switchWorksOnNormalTiles() {
+                SwitchSetup setup = setupSwitchSituation(TILE_ID_NORMAL_TILE_1, TILE_ID_NORMAL_TILE_2);
 
+                giveCurrentPlayerCard(CardType.SWITCH);
+
+                TargetPiece targetOwn = setup.targetOwn(decider());
+                assertTrue(availableActions().contains(targetOwn),
+                        "Expected Switch action to be available for own piece on normal tile");
+                submitChecked(targetOwn);
+
+                TargetPiece targetOther = setup.targetOther(OTHER_PLAYER);
+                assertTrue(availableActions().contains(targetOther),
+                        "Expected Switch action to be available for other player's piece on normal tile");
+                submitChecked(targetOther);
+
+                assertEquals(TILE_ID_NORMAL_TILE_2, setup.targetPiece().getCurrentTile().getId(),
+                        "Expected own piece to be on the target piece's tile after switch");
+                assertEquals(TILE_ID_NORMAL_TILE_1, setup.ownPiece().getCurrentTile().getId(),
+                        "Expected target piece to be on the own piece's tile after switch");
             }
 
             @Test
             @DisplayName("Switch does not work on Safe Tiles")
             void switchDoesNotWorkOnSafeTiles() {
+                SwitchSetup setup = setupSwitchSituation(TILE_ID_NORMAL_TILE_1, TILE_ID_SAFE_TILE);
 
+                giveCurrentPlayerCard(CardType.SWITCH);
+
+                TargetPiece targetOwn = setup.targetOwn(decider());
+                assertTrue(availableActions().contains(targetOwn),
+                        "Expected Switch action to be available for own piece on normal tile");
+                submitChecked(targetOwn);
+
+                TargetPiece targetOther = setup.targetOther(OTHER_PLAYER);
+                assertFalse(availableActions().contains(targetOther),
+                        "Expected Switch action to be unavailable for other player's piece on safe tile");
+            }
+
+            private record SwitchSetup(
+                    Piece ownPiece,
+                    Piece targetPiece
+            ) {
+                private TargetPiece targetOwn(PlayerColor player) {
+                    return new TargetPiece(player, targetPiece().getId());
+                }
+
+                private TargetPiece targetOther(PlayerColor player) {
+                    return new TargetPiece(player, ownPiece().getId());
+                }
             }
         }
 
