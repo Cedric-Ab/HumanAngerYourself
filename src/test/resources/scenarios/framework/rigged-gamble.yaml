@@ -2,7 +2,8 @@ name: Rigged Gamble
 
 steps:
   - input:
-      gambleResult: 0
+      gambleResult:
+        amount: 0
       submittedBy: RED
       action:
         type: Gamble
@@ -10,3 +11,19 @@ steps:
     expect:
       primaryActionResult:
         amount: 0
+
+  - input:
+      submittedBy: RED
+      action:
+        type: EndTurn
+
+  - input:
+      gambleResult:
+        card: TRY_AGAIN
+      submittedBy: YELLOW
+      action:
+        type: Gamble
+
+    expect:
+      primaryActionResult:
+        card: TRY_AGAIN

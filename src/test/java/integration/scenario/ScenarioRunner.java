@@ -37,7 +37,10 @@ public class ScenarioRunner {
         if (handleMacros(input)) return;
 
         input.rollDieResult().ifPresent(controller::setRollDieResult);
-        input.gambleResult().ifPresent(controller::setGambleResult);
+        input.gambleResult().ifPresent(definition -> {
+            definition.amount().ifPresent(controller::setGambleResult);
+            definition.card().ifPresent(controller::setGambleResult);
+        });
 
         Action action = input.action().toAction();
 

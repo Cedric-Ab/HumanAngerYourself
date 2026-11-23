@@ -19,7 +19,7 @@ import java.util.Optional;
 
 public record StepInput(
         Optional<Integer> rollDieResult,
-        Optional<Integer> gambleResult,
+        Optional<GambleResultDefinition> gambleResult,
         PlayerColor submittedBy,
         ActionDefinition action
 ) {
@@ -29,6 +29,19 @@ public record StepInput(
         }
         if ("Gamble".equals(action.type) && gambleResult.isEmpty()) {
             throw new IllegalArgumentException("Gamble action requires a gambleResult");
+        }
+    }
+
+    public record GambleResultDefinition(
+            Optional<Integer> amount,
+            Optional<CardType> card
+    ) {
+        public GambleResultDefinition {
+            if (amount.isEmpty() && card.isEmpty()) {
+                throw new IllegalArgumentException("Gamble result must have either an amount or a card");
+            } else if (amount.isPresent() && card.isPresent()) {
+                throw new IllegalArgumentException("Gamble result cannot have both an amount and a card");
+            }
         }
     }
 
