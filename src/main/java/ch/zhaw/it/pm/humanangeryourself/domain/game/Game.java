@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Represents a game of Human Anger Yourself, containing the board, players, and the current turn.
+ * Represents a game of Human Anger Yourself, containing the rules (movement, gambling and economy),
+ * the board, the players, and the current turn.
  */
 public class Game {
 
@@ -23,32 +24,26 @@ public class Game {
      * Maximum number of players in a game, one per color.
      */
     private static final int MAX_PLAYERS = 4;
-
     /**
      * Rules for moving pieces.
      */
     private final MovementRules movementRules;
-
     /**
      * Rules for gambling.
      */
     private final GamblingRules gamblingRules;
-
     /**
      * Rules for buying, rent and bankruptcy.
      */
     private final Economy economy;
-
     /**
      * The board the game is played on.
      */
     private final Board board;
-
     /**
      * The players of the game, in turn order.
      */
     private final List<Player> players;
-
     /**
      * The current turn, which tells whose turn it is.
      */
@@ -57,12 +52,18 @@ public class Game {
 
     /**
      * Creates a new game with the given movement rules, gambling rules, economy, board, and players.
+     * The first player in the list starts with the first turn.
      *
-     * @param movementRules the movement rules of the game
-     * @param gamblingRules the gambling rules of the game
-     * @param economy       the economy of the game
-     * @param board         the board of the game
-     * @param players       the players of the game, must be between min and max players
+     * @param movementRules the movement rules of the game, must not be {@code null}
+     * @param gamblingRules the gambling rules of the game, must not be {@code null}
+     * @param economy       the economy of the game, must not be {@code null}
+     * @param board         the board of the game, must not be {@code null}
+     * @param players       the players of the game in turn order, must not be {@code null};
+     *                      the list is copied and must contain between {@value #MIN_PLAYERS}
+     *                      and {@value #MAX_PLAYERS} players with distinct colors
+     * @throws NullPointerException     if any of the arguments is {@code null}
+     * @throws IllegalArgumentException if the number of players is outside the allowed range
+     *                                  or two players share the same color
      */
     public Game(MovementRules movementRules, GamblingRules gamblingRules, Economy economy,
                 Board board, List<Player> players) {
@@ -125,7 +126,8 @@ public class Game {
      * Returns the player with the given color.
      *
      * @param color the color of the player to look up, must not be {@code null}
-     * @return the player with the given color.
+     * @return the player with the given color
+     * @throws NullPointerException     if {@code color} is {@code null}
      * @throws IllegalArgumentException if no player has this color
      */
     public Player getPlayer(PlayerColor color) {

@@ -31,15 +31,12 @@ public record GamblingConfig(
     }
 
     /**
-     * Returns the default gambling configuration: a 40% chance to win 20,000, a 40% chance to
-     * lose 15,000 and a 20% chance to receive a card.
+     * Returns the default gambling configuration: a 48% chance to win money, a 32% chance to
+     * lose money and a 20% chance to receive a card.
      * <p>
-     * The values are placeholders and are still to be adjusted.
-     *
      * @return the default configuration
      */
-    // TODO, change values to something meaningful
     public static GamblingConfig defaults() {
-        return new GamblingConfig(40, 40, 20, 100000, 1000);
+        return new GamblingConfig(48, 32, 20, 100000, 1000);
     }
 }

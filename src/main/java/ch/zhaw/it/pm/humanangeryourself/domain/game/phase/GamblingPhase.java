@@ -1,8 +1,9 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game.phase;
 
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
-import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.GambleResult;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GamblingOutcome;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
+import ch.zhaw.it.pm.humanangeryourself.domain.logic.SpinResult;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import org.jetbrains.annotations.NotNull;
@@ -22,28 +23,22 @@ public class GamblingPhase extends GamePhaseBase {
     }
 
     /**
-     * Performs the gambling.
+     * Carries out the gamble for the current player. Not implemented yet.
      *
      * @return the phase to continue with
      */
     @Override
     public @NotNull GamePhase process() {
-        GambleResult result = getGame().getGamblingRules().spin();
-
-        getGame().getTurn().setPrimaryActionResult(result);
-
-        switch (result) {
-            case GambleResult.MoneyResult m:
-                getCurrentPlayer().changeBalanceBy(m.amount());
-                break;
-            case GambleResult.CardResult c:
-                if (c.cardType().isInstant()) {
-                    // TODO: trigger card effect
-                } else {
-                    getCurrentPlayer().addCard(c.cardType());
-                }
-                break;
+        SpinResult result = getGame().getGamblingRules().spin();
+        GamblingOutcome outcome;
+        if (result.isCard()) {
+            getCurrentPlayer().addCard(result.getCardType());
+            outcome = new GamblingOutcome(true, "You won " + result.getCardType().name());
+        } else {
+            getCurrentPlayer().changeBalanceBy(result.getAmount());
+            outcome = new GamblingOutcome(false, String.format("You won %,d$", result.getAmount()));
         }
+        getGame().getTurn().setGamblingOutcome(outcome);
 
         return new EndOfTurnPhase(getGame());
     }
