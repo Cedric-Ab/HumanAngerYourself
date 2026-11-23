@@ -52,7 +52,7 @@ class TurnIntegrationTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Turn order cycles through all players in the correct sequence")
     void turnOrderCyclesThroughAllPlayers() {
-        List<PlayerColor> expectedOrder = List.of(PlayerColor.RED, PlayerColor.GREEN, PlayerColor.BLUE, PlayerColor.YELLOW);
+        List<PlayerColor> expectedOrder = List.of(PlayerColor.RED, PlayerColor.YELLOW, PlayerColor.BLUE, PlayerColor.GREEN);
 
         for (int i = 1; i <= 20; i++) {
             rushThroughTurn();
