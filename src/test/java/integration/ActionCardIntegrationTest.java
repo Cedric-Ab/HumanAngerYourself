@@ -216,15 +216,6 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
                 return setup;
             }
 
-            private void submitOwn(SwitchSetup setup) {
-                TargetPiece action = setup.targetOwn(decider());
-
-            }
-
-            private void submitOther(SwitchSetup setup) {
-                submitChecked(new TargetPiece(OTHER_PLAYER, setup.ownPiece().getId()));
-            }
-
             @Test
             @DisplayName("Switch works on normal Tiles")
             void switchWorksOnNormalTiles() {
