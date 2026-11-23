@@ -1,5 +1,6 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.logic;
 
+import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
 import ch.zhaw.it.pm.humanangeryourself.api.action.MovePiece;
 import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
@@ -150,11 +151,12 @@ public class MovementRules {
                 int lastTile = getLastStaircaseTileId(player);
                 int remainingSteps = lastTile - currentTile + 1;
 
-                if (roll == remainingSteps) {
+                if (roll == remainingSteps && !player.isInDebt()) {
                     possibleActions.add(new MovePiece(currentTile, FINISH_AREA_ID));
+                } else if(roll == remainingSteps && player.isInDebt()){
+                    throw new InvalidActionException("You must be debt free to enter the finish area.");
                 } else if (roll < remainingSteps) {
                     possibleActions.add(new MovePiece(currentTile, currentTile + roll));
-
                 } else {
                     int destination = lastTile - (roll - remainingSteps);
                     possibleActions.add(new MovePiece(currentTile, destination));
