@@ -98,10 +98,20 @@ public class RiggedController extends GameController {
     }
 
     public void setGambleResult(int result) {
-        setGambleResult(new SpinResult(Long.valueOf(result)));
+        SpinResult spinResult = new SpinResult(Long.valueOf(result));
+        setGambleResult(spinResult);
+
+        doReturn(spinResult)
+                .when(gamblingRules)
+                .spinWin();
     }
 
     public void setGambleResult(CardType cardType) {
-        setGambleResult(new SpinResult(cardType));
+        SpinResult spinResult = new SpinResult(cardType);
+        setGambleResult(spinResult);
+
+        doReturn(spinResult)
+                .when(gamblingRules)
+                .spinCard();
     }
 }
