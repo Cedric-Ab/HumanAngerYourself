@@ -15,6 +15,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.PlayCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
 import ch.zhaw.it.pm.humanangeryourself.api.action.TargetPiece;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult;
+import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,7 +33,7 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
     }
 
     private void giveCurrentPlayerCard(CardType cardType) {
-        getCurrentPlayer().addCard(cardType);
+        getCurrentPlayer().addCard(Game.cardFromType(cardType));
 
         // so that the available actions are recalculated
         rushThroughRound();

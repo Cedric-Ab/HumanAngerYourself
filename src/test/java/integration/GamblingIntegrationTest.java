@@ -10,6 +10,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.action.DiscardCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Gamble;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult;
+import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -97,7 +98,7 @@ public class GamblingIntegrationTest extends BaseIntegrationTest {
 
             // Fill Hand Cards to the limit
             for (int i = 0; i < handLimit; i++) {
-                getCurrentPlayer().addCard(CardType.SWITCH);
+                getCurrentPlayer().addCard(Game.cardFromType(CardType.SWITCH));
             }
 
             submitChecked(new Gamble());
