@@ -6,10 +6,12 @@ import ch.zhaw.it.pm.humanangeryourself.api.CardType;
  * Base abstraction for all cards in the game.
  */
 public interface Card {
+
+    boolean preconditionsMet();
     /**
      * Returns the type of this card.
      *
      * @return the {@link CardType} of this card
      */
-    public CardType type();
+    CardType type();
 }

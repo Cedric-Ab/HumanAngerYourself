@@ -2,6 +2,7 @@ package ch.zhaw.it.pm.humanangeryourself.domain.model;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.Optional;
 public class Player {
     private final String name;
     private final PlayerColor color;
-    private final List<CardType> cards = new ArrayList<>();
+    private final List<Card> cards = new ArrayList<>();
     private final List<Piece> pieces;
     private long money;
 
@@ -53,8 +54,22 @@ public class Player {
         money = Math.addExact(money, amount);
     }
 
-    public void resetBalanceToZero(){
+    public void resetBalanceToZero() {
         money = 0;
+    }
+
+    /**
+     * Returns the card of the given type that the player holds.
+     * Throws an exception if the player does not hold such a card.
+     *
+     * @param cardType the type of card to look for
+     * @return the card of the given type
+     */
+    public Card getCard(CardType cardType) {
+        return cards.stream()
+                .filter(card -> card.type() == cardType)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException(name + " does not have a " + cardType + " card"));
     }
 
     /**
@@ -63,29 +78,29 @@ public class Player {
      * @param card card to add
      * @throws NullPointerException if {@code card} is {@code null}
      */
-    public void addCard(CardType card) {
+    public void addCard(Card card) {
         cards.add(Objects.requireNonNull(card, "card must not be null"));
     }
 
     /**
-     * Removes one card of the given type from the player's hand.
+     * Removes a card from the player's hand. Throws an exception if the player does not hold such a card.
      *
      * @param card card to remove
      * @throws IllegalStateException if the player does not hold such a card
      */
-    public void removeCard(CardType card) {
+    public void removeCard(Card card) {
         if (!cards.remove(card)) {
             throw new IllegalStateException(name + " does not have card " + card);
         }
     }
 
     /**
-     * Returns whether the player holds at least one card of the given type.
+     * Returns whether the player has the given card in their hand.
      *
      * @param card card to look for
      * @return {@code true} if the player has the card
      */
-    public boolean hasCard(CardType card) {
+    public boolean hasCard(Card card) {
         return cards.contains(card);
     }
 
@@ -145,7 +160,7 @@ public class Player {
      *
      * @return an unmodifiable copy of the player's cards
      */
-    public List<CardType> getCards() {
+    public List<Card> getCards() {
         return List.copyOf(cards);
     }
 

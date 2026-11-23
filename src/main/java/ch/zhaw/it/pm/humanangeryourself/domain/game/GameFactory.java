@@ -32,7 +32,7 @@ public final class GameFactory {
      * @return a new game, ready for the first turn
      * @throws NullPointerException     if there are not 2 to 4 players or a color is used more than once
      * @throws IllegalArgumentException if the players are not valid for a game
-     * @see Game#Game(MovementRules, GamblingRules, Economy, Board, List)
+     * @see Game#Game(GameConfig, MovementRules, GamblingRules, Economy, Board, List)
      */
     public static Game create(GameConfig config, List<PlayerSetup> playerSetups) {
         Board board = new Board();
@@ -40,7 +40,7 @@ public final class GameFactory {
                 .sorted(Comparator.comparingInt(setup -> board.getQuarterOf(setup.color())))
                 .map(setup -> createPlayer(setup, board, config.startMoney()))
                 .toList();
-        return new Game(new MovementRules(config, board), new GamblingRules(config.gambling()),
+        return new Game(config, new MovementRules(config, board), new GamblingRules(config.gambling()),
                 new Economy(config), board, players);
     }
 
@@ -56,7 +56,7 @@ public final class GameFactory {
      * @throws NullPointerException     if there are not 2 to 4 players or
      *                                  a color is used more than once or any argument is null
      * @throws IllegalArgumentException if the players are not valid for a game
-     * @see Game#Game(MovementRules, GamblingRules, Economy, Board, List)
+     * @see Game#Game(GameConfig, MovementRules, GamblingRules, Economy, Board, List)
      */
     public static Game create(GameConfig config, Board board, List<PlayerSetup> playerSetups,
                               MovementRules movementRules, GamblingRules gamblingRules) {
@@ -64,7 +64,7 @@ public final class GameFactory {
                 .sorted(Comparator.comparingInt(setup -> board.getQuarterOf(setup.color())))
                 .map(setup -> createPlayer(setup, board, config.startMoney()))
                 .toList();
-        return new Game(movementRules, gamblingRules, new Economy(config), board, players);
+        return new Game(config, movementRules, gamblingRules, new Economy(config), board, players);
     }
 
     /**

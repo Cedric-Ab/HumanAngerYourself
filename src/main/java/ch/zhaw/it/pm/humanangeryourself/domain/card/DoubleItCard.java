@@ -1,5 +1,6 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.card;
 
+import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
@@ -36,5 +37,16 @@ public class DoubleItCard implements HandCard {
         int nextPlayerIndex = (currentPlayerIndex + 1) % players.size();
         players.get(nextPlayerIndex).changeBalanceBy(debtDoubled);
         player.resetBalanceToZero();
+    }
+
+    @Override
+    public boolean preconditionsMet() {
+        //TODO
+        return false;
+    }
+
+    @Override
+    public CardType type() {
+        return CardType.DOUBLE_IT;
     }
 }
