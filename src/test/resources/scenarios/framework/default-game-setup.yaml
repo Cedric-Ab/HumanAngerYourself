@@ -12,22 +12,22 @@ steps:
       players:
         mode: EXACT
         values:
-          - name: Alice
+          - name: Player RED
             color: RED
             money: 100000
             cardCount: 0
 
-          - name: Dave
+          - name: Player YELLOW
             color: YELLOW
             money: 100000
             cardCount: 0
 
-          - name: Charlie
+          - name: Player BLUE
             color: BLUE
             money: 100000
             cardCount: 0
 
-          - name: Bob
+          - name: Player GREEN
             color: GREEN
             money: 100000
             cardCount: 0
