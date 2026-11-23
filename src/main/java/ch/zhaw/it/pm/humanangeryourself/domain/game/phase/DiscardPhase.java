@@ -3,6 +3,8 @@ package ch.zhaw.it.pm.humanangeryourself.domain.game.phase;
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.action.DiscardCard;
+import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
@@ -21,7 +23,7 @@ import java.util.List;
 public class DiscardPhase extends NonFlowGamePhase {
 
     private final @NotNull Player discardingPlayer;
-    private final @Nullable CardType notDiscardableCard;
+    private final @Nullable Card notDiscardableCard;
 
     /**
      * Creates a new instance of the discard phase associated with the specified game.
@@ -44,7 +46,7 @@ public class DiscardPhase extends NonFlowGamePhase {
      *                           can be null if all cards are discardable
      */
     public DiscardPhase(@NotNull Game game, @NotNull GamePhase nextPhase,
-                        @NotNull Player player, @Nullable CardType notDiscardableCard) {
+                        @NotNull Player player, @Nullable Card notDiscardableCard) {
         super(game, nextPhase);
         this.discardingPlayer = player;
         this.notDiscardableCard = notDiscardableCard;
@@ -52,29 +54,27 @@ public class DiscardPhase extends NonFlowGamePhase {
 
     @Override
     public @NotNull GamePhase process() {
-        // TODO: get access to the config and check if the player has to discard a card or not
-//         GameConfig gameConfig = GameConfig.getInstance();
-//
-//         List<CardType> cards = discardingPlayer.getCards();
-//
-//         if (cards.size() <= gameConfig.maxHandSize()) {
-//             return getNextPhase();
-//         } else {
-//             createDecisionInfo();
-//             return this;
-//         }
-        createDecisionInfo();
-        return this;
+        GameConfig gameConfig = getGame().getConfig();
+
+        List<Card> cards = discardingPlayer.getCards();
+
+        if (cards.size() <= gameConfig.maxHandSize()) {
+            return getNextPhase();
+        } else {
+            createDecisionInfo();
+            return this;
+        }
     }
 
     private void createDecisionInfo() {
-        List<CardType> cards = new ArrayList<>(discardingPlayer.getCards());
+        List<Card> cards = new ArrayList<>(discardingPlayer.getCards());
 
         if (notDiscardableCard != null) {
             cards.remove(notDiscardableCard);
         }
 
         List<DiscardCard> possibleCardDiscards = cards.stream()
+                .map(Card::type)
                 .map(DiscardCard::new)
                 .toList();
 
