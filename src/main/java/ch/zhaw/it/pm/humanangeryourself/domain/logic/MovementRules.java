@@ -134,11 +134,6 @@ public class MovementRules {
 
                     int staircaseDestination = firstStaircaseTile + remainingRoll - 1;
 
-                    // TODO: properly handle bouncing back etc.
-                    if (staircaseDestination == getLastStaircaseTileId(player) + 1) {
-                        staircaseDestination = FINISH_AREA_ID;
-                    }
-
                     possibleActions.add(new MovePiece(currentTile, staircaseDestination));
                 } else {
                     possibleActions.add(new MovePiece(currentTile, dest));
