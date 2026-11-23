@@ -1,5 +1,6 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.model;
 
+import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
 
@@ -55,6 +56,20 @@ public class Player {
 
     public void resetBalanceToZero() {
         money = 0;
+    }
+
+    /**
+     * Returns the card of the given type that the player holds.
+     * Throws an exception if the player does not hold such a card.
+     *
+     * @param cardType the type of card to look for
+     * @return the card of the given type
+     */
+    public Card getCard(CardType cardType) {
+        return cards.stream()
+                .filter(card -> card.type() == cardType)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException(name + " does not have a " + cardType + " card"));
     }
 
     /**
