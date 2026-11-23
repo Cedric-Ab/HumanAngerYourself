@@ -8,6 +8,5 @@ steps:
         type: Gamble
 
     expect:
-      gamblingOutcome:
-        isCard: false
-        message: "You won 0$"
+      primaryActionResult:
+        amount: 0

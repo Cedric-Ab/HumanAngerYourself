@@ -8,4 +8,5 @@ steps:
         type: Roll
 
     expect:
-      lastRoll: 3
+      primaryActionResult:
+        dieRoll: 3
