@@ -1,6 +1,7 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game.phase;
 
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
+import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
 import ch.zhaw.it.pm.humanangeryourself.api.action.MovePiece;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.RollResult;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
@@ -55,7 +56,7 @@ public class ChooseMovePhase extends GamePhaseBase {
      * @param player the player who made the decision
      * @param action the chosen action, must be a {@link MovePiece}
      * @return the {@link EndOfTurnPhase} that follows after the move
-     * @throws IllegalArgumentException         if the action is not a {@link MovePiece}
+     * @throws InvalidActionException           if the action is not a {@link MovePiece}
      * @throws java.util.NoSuchElementException if the player has no piece on the start tile
      */
     @Override
@@ -64,7 +65,7 @@ public class ChooseMovePhase extends GamePhaseBase {
         validateAction(action);
 
         if (!(action instanceof MovePiece(int startTileID, int targetTileID))) {
-            throw new IllegalArgumentException("Action is not available in this phase.");
+            throw new InvalidActionException(action, "Action is not available in this phase.");
         }
 
         Tile startTile = getGame().getBoard().getTileById(startTileID);
