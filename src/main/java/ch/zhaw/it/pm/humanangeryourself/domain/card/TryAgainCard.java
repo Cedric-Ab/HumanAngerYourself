@@ -26,4 +26,14 @@ public class TryAgainCard implements HandCard {
 
         game.getTurn().setPrimaryActionResult(new CardResult(cardType));
     }
+
+    @Override
+    public boolean preconditionsMet() {
+        return true;
+    }
+
+    @Override
+    public CardType type() {
+        return CardType.TRY_AGAIN;
+    }
 }
