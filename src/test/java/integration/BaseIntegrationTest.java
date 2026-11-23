@@ -1,5 +1,6 @@
 package integration;
 
+import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.action.EndTurn;
@@ -49,6 +50,10 @@ public abstract class BaseIntegrationTest {
 
     protected void setGambleResult(int result) {
         controller.setGambleResult(result);
+    }
+
+    protected void setGambleResult(CardType cardType) {
+        controller.setGambleResult(cardType);
     }
 
     protected Game getGame() {

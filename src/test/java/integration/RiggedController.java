@@ -1,5 +1,6 @@
 package integration;
 
+import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
@@ -10,6 +11,7 @@ import ch.zhaw.it.pm.humanangeryourself.domain.game.GameController;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.GameObserver;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.GamblingRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.MovementRules;
+import ch.zhaw.it.pm.humanangeryourself.domain.logic.SpinResult;
 import ch.zhaw.it.pm.humanangeryourself.service.SnapshotFactory;
 
 import static org.mockito.Mockito.doReturn;
@@ -89,9 +91,17 @@ public class RiggedController extends GameController {
                 .rollDie();
     }
 
-    public void setGambleResult(int result) {
+    public void setGambleResult(SpinResult result) {
         doReturn(result)
                 .when(gamblingRules)
                 .spin();
+    }
+
+    public void setGambleResult(int result) {
+        setGambleResult(new SpinResult(Long.valueOf(result)));
+    }
+
+    public void setGambleResult(CardType cardType) {
+        setGambleResult(new SpinResult(cardType));
     }
 }
