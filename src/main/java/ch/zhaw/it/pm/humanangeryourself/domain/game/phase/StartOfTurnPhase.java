@@ -10,6 +10,7 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,8 +36,11 @@ public class StartOfTurnPhase extends GamePhaseBase {
      */
     @Override
     public @NotNull GamePhase process() {
-        // TODO: add cards to play
-        setDecisionInfo(getCurrentPlayer(), List.of(new Roll(), new Gamble()));
+        List<Action> availableActions = new ArrayList<>();
+        availableActions.add(new Roll());
+        availableActions.add(new Gamble());
+        availableActions.addAll(getCurrentPlayer().getCards().stream().map(PlayCard::new).toList());
+        setDecisionInfo(getCurrentPlayer(), availableActions);
         return this;
     }
 
