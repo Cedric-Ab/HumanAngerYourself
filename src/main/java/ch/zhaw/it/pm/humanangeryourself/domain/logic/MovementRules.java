@@ -1,5 +1,6 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.logic;
 
+import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
 import ch.zhaw.it.pm.humanangeryourself.api.action.MovePiece;
 import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
@@ -36,31 +37,27 @@ public class MovementRules {
 
     private static final Random RANDOM = new Random();
 
-    private GameConfig config;
-    private Board board;
+    private final GameConfig config;
+    private final Board board;
 
     /**
-     * Creates a new instance of the movement rules.
+     * Creates a new instance of the movement rules with the default configuration.
+     *
+     * @param board the game board used to determine piece positions and movement
      */
-    public MovementRules() {
+    public MovementRules(Board board) {
+        this(GameConfig.defaults(), board);
     }
 
     /**
-     * Injects the game configuration into the movement rules, allowing it to access
+     * Creates a new instance of the movement rules with a custom configuration.
      *
-     * @param config the game configuration to be used for movement calculations
+     * @param config the custom configuration to use
+     * @param board  the game board used to determine piece positions and movement
      */
-    public void inject(GameConfig config) {
-        this.config = config;
-    }
-
-    /**
-     * Injects the game board into the movement rules, allowing it to access
-     *
-     * @param board the game board to be used for movement calculations
-     */
-    public void inject(Board board) {
+    public MovementRules(GameConfig config, Board board) {
         this.board = board;
+        this.config = config;
     }
 
     /**
@@ -70,6 +67,17 @@ public class MovementRules {
      */
     public int rollDie() {
         return RANDOM.nextInt(1, 7);
+    }
+
+    /**
+     * Checks if all pieces of the given player are in the finish area.
+     *
+     * @param player the player whose pieces are checked
+     * @return {@code true} if all pieces are in the finish area, otherwise {@code false}
+     */
+    public boolean areAllPiecesInFinishArea(Player player) {
+        return player.getPieces().stream()
+                .allMatch(piece -> piece.getCurrentTile().getId() == FINISH_AREA_ID);
     }
 
     /**
@@ -143,11 +151,12 @@ public class MovementRules {
                 int lastTile = getLastStaircaseTileId(player);
                 int remainingSteps = lastTile - currentTile + 1;
 
-                if (roll == remainingSteps) {
+                if (roll == remainingSteps && !player.isInDebt()) {
                     possibleActions.add(new MovePiece(currentTile, FINISH_AREA_ID));
+                } else if(roll == remainingSteps && player.isInDebt()){
+                    throw new InvalidActionException("You must be debt free to enter the finish area.");
                 } else if (roll < remainingSteps) {
                     possibleActions.add(new MovePiece(currentTile, currentTile + roll));
-
                 } else {
                     int destination = lastTile - (roll - remainingSteps);
                     possibleActions.add(new MovePiece(currentTile, destination));

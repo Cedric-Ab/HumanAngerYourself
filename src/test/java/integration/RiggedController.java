@@ -2,17 +2,22 @@ package integration;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
+import ch.zhaw.it.pm.humanangeryourself.api.PlayerSetup;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult;
+import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
-import ch.zhaw.it.pm.humanangeryourself.domain.game.GameBuilder;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.GameController;
+import ch.zhaw.it.pm.humanangeryourself.domain.game.GameFactory;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.GameObserver;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.GamblingRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.MovementRules;
+import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
 import ch.zhaw.it.pm.humanangeryourself.service.SnapshotFactory;
+
+import java.util.List;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -36,10 +41,18 @@ public class RiggedController extends GameController {
     }
 
     private static Game createGame() {
-        return new GameBuilder()
-                .setMovementRules(spy(MovementRules.class))
-                .setGamblingRules(spy(GamblingRules.class))
-                .createGame();
+        GameConfig config = GameConfig.defaults();
+        Board board = new Board();
+
+        MovementRules movementRules = new MovementRules(config, board);
+        GamblingRules gamblingRules = new GamblingRules(config.gambling());
+
+        return GameFactory.create(config, board, List.of(
+                new PlayerSetup("Player RED", PlayerColor.RED),
+                new PlayerSetup("Player YELLOW", PlayerColor.YELLOW),
+                new PlayerSetup("Player BLUE", PlayerColor.BLUE),
+                new PlayerSetup("Player GREEN", PlayerColor.GREEN)
+        ), spy(movementRules), spy(gamblingRules));
     }
 
     @Override
