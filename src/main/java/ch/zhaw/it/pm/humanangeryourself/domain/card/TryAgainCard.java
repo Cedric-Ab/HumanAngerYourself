@@ -22,7 +22,7 @@ public class TryAgainCard implements HandCard {
     @Override
     public void apply(Game game, Player player, Action action) {
         CardType cardType = game.getGamblingRules().spinCard().cardType();
-        player.addCard(cardType);
+        player.addCard(Game.cardFromType(cardType));
 
         game.getTurn().setPrimaryActionResult(new CardResult(cardType));
     }

@@ -12,6 +12,7 @@ import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.GameController;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
 
 import java.util.List;
 import java.util.Objects;
@@ -99,7 +100,9 @@ public final class SnapshotFactory {
     private static List<CardType> getViewerCards(Game game, PlayerColor viewer) {
         if (viewer == null) { return List.of(); }
 
-        return List.copyOf(game.getPlayer(viewer).getCards());
+        return game.getPlayer(viewer).getCards().stream()
+                .map(Card::type)
+                .toList();
     }
 
     private static PlayerColor getWinnerColor(Game game) {

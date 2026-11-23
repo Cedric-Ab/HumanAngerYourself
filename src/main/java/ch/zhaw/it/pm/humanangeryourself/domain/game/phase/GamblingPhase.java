@@ -40,7 +40,7 @@ public class GamblingPhase extends GamePhaseBase {
                 if (c.cardType().isInstant()) {
                     // TODO: activate card effect
                 } else {
-                    getCurrentPlayer().addCard(c.cardType());
+                    getCurrentPlayer().addCard(Game.cardFromType(c.cardType()));
                 }
                 break;
         }
