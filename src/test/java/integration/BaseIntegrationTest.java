@@ -48,8 +48,8 @@ public abstract class BaseIntegrationTest {
         controller.setRollDieResult(result);
     }
 
-    protected void setGambleResult(int result) {
-        controller.setGambleResult(result);
+    protected void setGambleResult(long money) {
+        controller.setGambleResult(money);
     }
 
     protected void setGambleResult(CardType cardType) {
