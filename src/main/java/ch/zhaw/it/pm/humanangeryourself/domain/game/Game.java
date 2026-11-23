@@ -15,15 +15,15 @@ import java.util.Objects;
  * the board, the players, and the current turn.
  */
 public class Game {
-
     /**
      * Minimum number of players in a game.
      */
-    private static final int MIN_PLAYERS = 2;
+    public static final int MIN_PLAYERS = 2;
     /**
      * Maximum number of players in a game, one per color.
      */
-    private static final int MAX_PLAYERS = 4;
+    public static final int MAX_PLAYERS = 4;
+
     /**
      * Rules for moving pieces.
      */
@@ -166,9 +166,8 @@ public class Game {
         turn = new Turn(getPlayers().get(nextIndex));
     }
 
-
     /**
-     * Checks that the game has between MIN_PLAYERS and MAX_PLAYERS players
+     * Checks that the game has between {@value #MIN_PLAYERS} and {@value #MAX_PLAYERS} players,
      * and that every color is used only once.
      *
      * @throws IllegalArgumentException if the number of players or their colors are invalid
