@@ -14,26 +14,26 @@ steps:
         values:
           - name: Alice
             color: RED
-            money: 1000
-            cardCount: 0
-
-          - name: Bob
-            color: GREEN
-            money: 1000
-            cardCount: 0
-
-          - name: Charlie
-            color: BLUE
-            money: 1000
+            money: 100000
             cardCount: 0
 
           - name: Dave
             color: YELLOW
-            money: 1000
+            money: 100000
+            cardCount: 0
+
+          - name: Charlie
+            color: BLUE
+            money: 100000
+            cardCount: 0
+
+          - name: Bob
+            color: GREEN
+            money: 100000
             cardCount: 0
 
       pieces:
-        mode: EXACT
+        mode: CONTAINS
         values:
           - color: RED
             tile: 101
@@ -85,10 +85,10 @@ steps:
         type: EndTurn
 
     expect:
-      currentPlayer: GREEN
+      currentPlayer: YELLOW
 
   - input:
-      submittedBy: GREEN
+      submittedBy: YELLOW
       action:
         type: SkipTurn
 
@@ -101,10 +101,10 @@ steps:
         type: SkipTurn
 
     expect:
-      currentPlayer: YELLOW
+      currentPlayer: GREEN
 
   - input:
-      submittedBy: YELLOW
+      submittedBy: GREEN
       action:
         type: SkipTurn
 

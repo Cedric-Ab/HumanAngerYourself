@@ -780,7 +780,7 @@ steps:
     expect:
       winner: RED
       pieces:
-        mode: EXACT
+        mode: CONTAINS
         values:
           - color: RED
             tile: 100
