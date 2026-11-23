@@ -9,6 +9,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * Represents the game phase when the game is over. This phase is reached when a player has won the game.
+ */
 public class GameOverPhase extends GamePhaseBase {
     private final Player winner;
 
