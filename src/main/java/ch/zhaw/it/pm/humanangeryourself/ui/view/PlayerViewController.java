@@ -218,7 +218,7 @@ public class PlayerViewController {
 
     private String labelFor(Action action) {
         return switch (action) {
-            case BuyCard buyCard -> "Buy " + buyCard.card();
+            case BuyCard buyCard -> "Buy " + buyCard.offer().cardType();
             case BuyProperty buyProperty -> "Buy " + buyProperty.size() + " property";
             case Bid bid -> "Bid " + bid.amount();
             default -> action.toString();
