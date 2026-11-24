@@ -1,0 +1,120 @@
+.root {
+    -color-red: red;
+    -color-yellow: gold;
+    -color-green: limegreen;
+    -color-blue: dodgerblue;
+    -color-safe: saddlebrown;
+    -color-highlight: gold;
+    -color-selection: orange;
+    -player-color: black;
+
+    -fx-background-color: white;
+}
+
+.red    { -player-color: -color-red; }
+.yellow { -player-color: -color-yellow; }
+.green  { -player-color: -color-green; }
+.blue   { -player-color: -color-blue; }
+
+.panel {
+    -fx-border-color: black;
+    -fx-border-width: 2;
+}
+
+.clickable {
+    -fx-cursor: hand;
+}
+
+.title-text {
+    -fx-font-size: 80;
+}
+
+.name-field {
+    -fx-font-size: 15;
+    -fx-border-color: black;
+}
+
+.name-field.invalid {
+    -fx-border-color: red;
+}
+
+.start-button {
+    -fx-font-size: 20;
+}
+
+.settings-button {
+    -fx-font-size: 18;
+}
+
+.turn-label {
+    -fx-font-size: 34;
+}
+
+.section-label {
+    -fx-font-size: 22;
+}
+
+.result-label {
+    -fx-font-size: 20;
+}
+
+.tile {
+    -fx-fill: white;
+    -fx-stroke: black;
+    -fx-stroke-width: 1;
+}
+
+.safe {
+    -fx-fill: -color-safe;
+}
+
+.staircase {
+    -fx-fill: -player-color;
+}
+
+.home {
+    -fx-fill: transparent;
+    -fx-stroke: -player-color;
+    -fx-stroke-width: 4;
+}
+
+.home-slot {
+    -fx-fill: white;
+    -fx-stroke: -player-color;
+    -fx-stroke-width: 2;
+}
+
+.finish-area {
+    -fx-fill: -color-safe;
+    -fx-stroke: -color-safe;
+    -fx-stroke-width: 4;
+}
+
+.piece {
+    -fx-fill: -player-color;
+    -fx-stroke: black;
+    -fx-stroke-width: 1.5;
+}
+
+
+.piece.movable {
+    -fx-stroke: white;
+    -fx-stroke-width: 3;
+    -fx-effect: dropshadow(gaussian, black, 10, 0.6, 0, 0);
+}
+
+.active-home {
+    -fx-stroke: -color-highlight;
+    -fx-stroke-width: 6;
+    -fx-effect: dropshadow(gaussian, black, 10, 0.6, 0, 0);
+}
+
+.selected-source {
+    -fx-stroke: -color-selection;
+    -fx-stroke-width: 4;
+}
+
+.move-target {
+    -fx-stroke: -color-highlight;
+    -fx-stroke-width: 4;
+}

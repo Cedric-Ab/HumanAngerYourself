@@ -1,10 +1,16 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game.phase;
 
+import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
+import ch.zhaw.it.pm.humanangeryourself.api.action.DiscardCard;
+import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Game phase in which a player who holds more cards than allowed has to discard cards.
@@ -21,26 +27,48 @@ public class DiscardPhase extends NonFlowGamePhase {
         super(game, nextPhase);
     }
 
+
     /**
-     * Checks whether the current player has to discard cards and publishes the decision if so.
-     * Not implemented yet.
+     * Checks whether the current player has to discard cards and offers one {@link DiscardCard}
+     * per card type in the player's hand if so.
      *
-     * @return the phase to continue with
+     * @return this phase if a card has to be discarded, otherwise the next phase
      */
     @Override
     public @NotNull GamePhase process() {
-        return null;
+        Player player = getCurrentPlayer();
+        if (player.getCards().size() <= getGame().getConfig().maxHandSize()) {
+            return getNextPhase();
+        }
+
+        List<DiscardCard> options = player.getCards().stream()
+                .map(Card::type)
+                .distinct()
+                .map(DiscardCard::new)
+                .toList();
+        setDecisionInfo(player, options);
+        return this;
     }
 
+
     /**
-     * Handles the player's choice of which card to discard. Not implemented yet.
+     * Removes the chosen card from the player's hand.
      *
      * @param player the player who made the decision
-     * @param action the chosen action
-     * @return the phase to continue with
+     * @param action the chosen action, must be a {@link DiscardCard}
+     * @return a new discard phase, which checks the hand limit again
+     * @throws InvalidActionException if the player or the action is not allowed in this phase
      */
     @Override
     public @NotNull GamePhase handle(Player player, Action action) {
-        return null;
+        validatePlayer(player);
+        validateAction(action);
+
+        if (!(action instanceof DiscardCard(CardType cardType))) {
+            throw new InvalidActionException(action, "Action is not allowed");
+        }
+        player.removeCard(player.getCard(cardType));
+
+        return new DiscardPhase(getGame(), getNextPhase());
     }
 }

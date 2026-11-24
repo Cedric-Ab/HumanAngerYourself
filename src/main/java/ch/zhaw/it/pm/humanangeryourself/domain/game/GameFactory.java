@@ -2,15 +2,19 @@ package ch.zhaw.it.pm.humanangeryourself.domain.game;
 
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerSetup;
 import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
+import ch.zhaw.it.pm.humanangeryourself.config.NpcConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.Economy;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.GamblingRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.MovementRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
+import ch.zhaw.it.pm.humanangeryourself.domain.model.Npc;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Creates a {@link Game} from the players entered on the start screen.
@@ -35,7 +39,7 @@ public final class GameFactory {
      * @see Game#Game(GameConfig, MovementRules, GamblingRules, Economy, Board, List)
      */
     public static Game create(GameConfig config, List<PlayerSetup> playerSetups) {
-        Board board = new Board();
+        Board board = createBoard(config);
         List<Player> players = playerSetups.stream()
                 .sorted(Comparator.comparingInt(setup -> board.getQuarterOf(setup.color())))
                 .map(setup -> createPlayer(setup, board, config.startMoney()))
@@ -65,6 +69,19 @@ public final class GameFactory {
                 .map(setup -> createPlayer(setup, board, config.startMoney()))
                 .toList();
         return new Game(config, movementRules, gamblingRules, new Economy(config), board, players);
+    }
+
+    /**
+     * Creates the board with the NPC shops from the configuration.
+     *
+     * @param config settings that contain the NPC shops
+     * @return a new board with the configured NPCs on their tiles
+     * @throws IllegalArgumentException if an NPC is configured on a tile that is not a safe space
+     */
+    public static Board createBoard(GameConfig config) {
+        Map<Integer, Npc> npcsByTileId = config.npcs().stream()
+                .collect(Collectors.toMap(NpcConfig::tile, npc -> new Npc(npc.name(), npc.offers())));
+        return new Board(npcsByTileId);
     }
 
     /**
