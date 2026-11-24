@@ -1,6 +1,5 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.logic;
 
-import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
 import ch.zhaw.it.pm.humanangeryourself.api.action.MovePiece;
 import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
@@ -8,8 +7,6 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.TileType;
-
-import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Collections;
