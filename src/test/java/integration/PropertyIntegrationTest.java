@@ -1,7 +1,6 @@
 package integration;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("Property Integration Test")
 public class PropertyIntegrationTest extends BaseIntegrationTest {
 
-    private BuyProperty getFirstBuyProperty() {
+    private BuyProperty getABuyProperty() {
         return availableActions().stream()
                 .filter(BuyProperty.class::isInstance)
                 .map(BuyProperty.class::cast)
@@ -31,7 +30,7 @@ public class PropertyIntegrationTest extends BaseIntegrationTest {
     void payingRent() {
         setPieceOntoTile(getPieces().getFirst(), 6);
         rushThroughPrimaryAction();
-        submitChecked(getFirstBuyProperty());
+        submitChecked(getABuyProperty());
         submitChecked(new EndTurn());
 
         PlayerColor payingPlayer = decider();
@@ -92,7 +91,7 @@ public class PropertyIntegrationTest extends BaseIntegrationTest {
 
                 rushThroughPrimaryAction();
 
-                submitChecked(getFirstBuyProperty());
+                submitChecked(getABuyProperty());
 
                 submitChecked(new EndTurn());
             }
@@ -112,7 +111,7 @@ public class PropertyIntegrationTest extends BaseIntegrationTest {
 
                 rushThroughPrimaryAction();
 
-                submitChecked(getFirstBuyProperty());
+                submitChecked(getABuyProperty());
 
                 submitChecked(new EndTurn());
             }
@@ -131,7 +130,7 @@ public class PropertyIntegrationTest extends BaseIntegrationTest {
 
             rushThroughPrimaryAction();
 
-            submitChecked(getFirstBuyProperty());
+            submitChecked(new BuyProperty(TILE_ID_NORMAL_TILES[0], PropertySize.SMALL));
 
             assertTrue(getSnapshot().properties().contains(
                     new PropertyInfo(TILE_ID_NORMAL_TILES[0], decider(), PropertySize.SMALL)));
@@ -148,7 +147,7 @@ public class PropertyIntegrationTest extends BaseIntegrationTest {
             assertTrue(availableActions().contains(new BuyProperty(TILE_ID_NORMAL_TILES[0], PropertySize.SMALL)));
             assertTrue(availableActions().contains(new BuyProperty(TILE_ID_NORMAL_TILES[1], PropertySize.SMALL)));
 
-            submitChecked(getFirstBuyProperty());
+            submitChecked(getABuyProperty());
 
             assertTrue(availableActions().stream().anyMatch(BuyProperty.class::isInstance));
         }
