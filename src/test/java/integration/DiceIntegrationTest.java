@@ -6,7 +6,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
-import ch.zhaw.it.pm.humanangeryourself.api.action.EndTurn;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult;
@@ -61,12 +60,10 @@ class DiceIntegrationTest extends BaseIntegrationTest {
 
         rollNumber(6);
         submitChecked(getMoveActions().getFirst());
-        submitChecked(new EndTurn());
-
-        assertTrue(availableActions().contains(new Roll()),
-                "Expected another roll to be available after rolling six");
 
         assertEquals(orginalPlayer, getSnapshot().currentPlayer(),
                 "Expected the same player to keep the turn after rolling six");
+        assertTrue(availableActions().contains(new Roll()),
+                "Expected another roll to be available after rolling six");
     }
 }
