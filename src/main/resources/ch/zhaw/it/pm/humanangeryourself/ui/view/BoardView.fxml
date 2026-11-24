@@ -314,6 +314,8 @@
 
     <!-- Shared finish in the centre, tile id 100 -->
     <Rectangle fx:id="tile100" styleClass="finish-area" arcHeight="10.0" arcWidth="10.0" height="110.0" width="110.0" x="340.0" y="340.0"/>
+    <!-- Properties are drawn below the pieces, so pieces stay visible -->
+    <Pane fx:id="propertyPane" mouseTransparent="true" prefHeight="790" prefWidth="790" />
     <Pane fx:id="piecePane" mouseTransparent="true" prefHeight="790" prefWidth="790" />
   </Pane>
 

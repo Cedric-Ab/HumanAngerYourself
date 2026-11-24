@@ -2,6 +2,7 @@ package ch.zhaw.it.pm.humanangeryourself.ui.view;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
+import ch.zhaw.it.pm.humanangeryourself.api.PropertySize;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Bid;
 import ch.zhaw.it.pm.humanangeryourself.api.action.BuyCard;
@@ -78,6 +79,8 @@ public class PlayerViewController {
     public void setViewModel(GameViewModel viewModel) {
         this.viewModel = viewModel;
         viewModel.snapshotProperty().addListener((observable, oldSnapshot, newSnapshot) -> update(newSnapshot));
+        viewModel.selectedTileProperty().addListener((observable, oldTile, newTile) ->
+                renderOffers(viewModel.snapshotProperty().get()));
         viewModel.errorMessageProperty().addListener((observable, oldMessage, newMessage) -> showError(newMessage));
         update(viewModel.snapshotProperty().get());
     }
@@ -135,13 +138,16 @@ public class PlayerViewController {
     }
 
     /**
-     * Shows a button for every available purchase or bid.
+     * Shows a button for every available bid and every card the NPC on the selected tile sells,
+     * followed by the property buttons.
      */
     private void renderOffers(GameSnapshot snapshot) {
         offersBox.getChildren().setAll(snapshot.decision().availableActions().stream()
+                .filter(action -> !(action instanceof BuyCard buyCard) || isSelected(buyCard.tile()))
                 .flatMap(action -> offerLabel(snapshot, action).map(label -> createOfferButton(label, action)).stream())
                 .sorted(Comparator.comparing(Button::getText))
                 .toList());
+        renderPropertyButtons(snapshot);
     }
 
     private Button createOfferButton(String label, Action action) {
@@ -152,6 +158,23 @@ public class PlayerViewController {
     }
 
     /**
+     * Shows a button for every property size if a property can be bought somewhere.
+     * The buttons buy on the selected tile. They are disabled if no buyable tile is selected,
+     * and for sizes the player cannot afford, because those are not offered by the game.
+     */
+    private void renderPropertyButtons(GameSnapshot snapshot) {
+        if (findAction(snapshot, BuyProperty.class).isEmpty()) {
+            return;
+        }
+        for (PropertySize size : PropertySize.values()) {
+            Button button = new Button("Buy " + size + " property");
+            button.setMaxWidth(Double.MAX_VALUE);
+            bindButton(button, findPropertyAction(snapshot, size));
+            offersBox.getChildren().add(button);
+        }
+    }
+
+    /**
      * Returns the button label of an action shown in the offers area.
      *
      * @return the label, or empty if the action is not shown as an offer
@@ -159,7 +182,6 @@ public class PlayerViewController {
     private static Optional<String> offerLabel(GameSnapshot snapshot, Action action) {
         return switch (action) {
             case BuyCard buyCard -> Optional.of(buyCardLabel(snapshot, buyCard));
-            case BuyProperty buyProperty -> Optional.of("Buy " + buyProperty.size() + " property");
             case Bid bid -> Optional.of("Bid " + bid.amount());
             default -> Optional.empty();
         };
@@ -186,6 +208,19 @@ public class PlayerViewController {
                         || action instanceof DiscardCard discard && discard.card() == card)
                 .findFirst()
                 .map(Action.class::cast);
+    }
+
+    private Optional<BuyProperty> findPropertyAction(GameSnapshot snapshot, PropertySize size) {
+        return snapshot.decision().availableActions().stream()
+                .filter(action -> action instanceof BuyProperty buyProperty
+                        && buyProperty.size() == size && isSelected(buyProperty.tile()))
+                .map(BuyProperty.class::cast)
+                .findFirst();
+    }
+
+    private boolean isSelected(int tile) {
+        Integer selectedTile = viewModel.selectedTileProperty().get();
+        return selectedTile != null && selectedTile == tile;
     }
 
     private static <A extends Action> Optional<A> findAction(GameSnapshot snapshot, Class<A> type) {
