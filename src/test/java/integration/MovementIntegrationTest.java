@@ -237,8 +237,8 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         @Test
         @DisplayName("Piece bounces back at top of staircase")
         void pieceBouncesBackAtTopOfStaircase() {
-            assertEquals(TILE_ID_STAIRCASE_TOP_RED - 1, getTargetTile(TILE_ID_STAIRCASE_TOP_RED, 2),
-                    "Expected movement beyond the top of the staircase to bounce back");
+            assertEquals(TILE_ID_STAIRCASE_TOP_RED, getTargetTile(TILE_ID_STAIRCASE_TOP_RED, 2),
+                    "Expected movement beyond the top of the staircase / finish area to bounce back");
         }
 
         // TODO: enable this test once fixed
@@ -267,7 +267,7 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
             getCurrentPlayer().changeBalanceBy(-1);
 
             assertEquals(TILE_ID_STAIRCASE_TOP_RED - 1, getTargetTile(TILE_ID_STAIRCASE_TOP_RED - 1, 2),
-                    "Expected a player in debt to bounce back instead of entering the finish area");
+                    "Expected a player in debt to not be able to enter the finish area, even with an exact roll");
         }
 
         @Test
