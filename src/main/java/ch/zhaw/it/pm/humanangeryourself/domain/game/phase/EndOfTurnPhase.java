@@ -36,8 +36,7 @@ public class EndOfTurnPhase extends GamePhaseBase {
      */
     @Override
     public @NotNull GamePhase process() {
-        List<BuyCard> buyCardList = getGame().getEconomy()
-                .getBuyableCards(getCurrentPlayer());
+        List<BuyCard> buyCardList = getBuyableNpcCards();
 
         List<BuyProperty> buyPropertyList = getGame().getEconomy()
                 .getBuyableProperties(getCurrentPlayer());
@@ -113,5 +112,18 @@ public class EndOfTurnPhase extends GamePhaseBase {
     private GamePhase buyProperty(Player player, BuyProperty buyProperty) {
         // TODO: low priority
         return process();
+    }
+
+    /**
+     * Returns the cards the current player can buy from NPCs.
+     * Only one NPC card can be bought per turn.
+     *
+     * @return the possible {@link BuyCard} actions, empty if a card was already bought this turn
+     */
+    private List<BuyCard> getBuyableNpcCards() {
+        if (getGame().getTurn().hasBoughtNpcCard()) {
+            return List.of();
+        }
+        return getGame().getEconomy().getBuyableCards(getCurrentPlayer());
     }
 }

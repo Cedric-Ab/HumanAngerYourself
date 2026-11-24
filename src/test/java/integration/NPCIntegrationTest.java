@@ -42,7 +42,7 @@ class NPCIntegrationTest extends BaseIntegrationTest {
     void snapshotContainsNpcsWithNameAndOffers() {
         NpcInfo grumpyWoman = getSnapshot().npcAt(GRUMPY_OLD_WOMAN_TILE).orElseThrow();
 
-        assertEquals("grumpyWoman", grumpyWoman.name());
+        assertEquals("Grumpy old Woman", grumpyWoman.name());
         assertEquals(Optional.of(new CardOffer(CardType.SPEED_BOOST, 20_000)), grumpyWoman.offerFor(CardType.SPEED_BOOST));
         assertTrue(grumpyWoman.offerFor(CardType.JACKPOT).isEmpty());
         assertTrue(getSnapshot().npcAt(TRACK_TILE_WITHOUT_NPC).isEmpty());
