@@ -11,10 +11,14 @@ import java.util.Optional;
  * A property that can be bought by a player. Price and rent depend on its {@link PropertySize}.
  */
 public class Property {
-    /** Size of the property, which determines its price and rent. */
+    /**
+     * Size of the property, which determines its price and rent.
+     */
     private final PropertySize size;
 
-    /** Current owner, or {@code null} if nobody owns the property. */
+    /**
+     * Current owner, or {@code null} if nobody owns the property.
+     */
     private Player owner;
 
     /**
@@ -85,7 +89,7 @@ public class Property {
     /**
      * Sets the owner of this property.
      *
-     * @param owner new owner, or {@code null} to make the property available again (e.g. after bankruptcy)
+     * @param owner new owner, or {@code null} to make the property available again
      */
     public void setOwner(Player owner) {
         this.owner = owner;

@@ -50,7 +50,7 @@ public class Game {
      */
     private final GamblingRules gamblingRules;
     /**
-     * Rules for buying, rent and bankruptcy.
+     * Rules for buying and rent.
      */
     private final Economy economy;
     /**

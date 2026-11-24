@@ -1,7 +1,6 @@
 package ch.zhaw.it.pm.humanangeryourself.ui.view;
 
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
-import ch.zhaw.it.pm.humanangeryourself.api.action.Bid;
 import ch.zhaw.it.pm.humanangeryourself.api.action.BuyCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.BuyProperty;
 import ch.zhaw.it.pm.humanangeryourself.api.action.DiscardCard;
@@ -220,7 +219,6 @@ public class PlayerViewController {
         return switch (action) {
             case BuyCard buyCard -> "Buy " + buyCard.card();
             case BuyProperty buyProperty -> "Buy " + buyProperty.size() + " property";
-            case Bid bid -> "Bid " + bid.amount();
             default -> action.toString();
         };
     }
