@@ -1,5 +1,7 @@
 package ch.zhaw.it.pm.humanangeryourself.ui.view;
 
+import ch.zhaw.it.pm.humanangeryourself.api.CardType;
+import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Bid;
 import ch.zhaw.it.pm.humanangeryourself.api.action.BuyCard;
@@ -7,14 +9,14 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.BuyProperty;
 import ch.zhaw.it.pm.humanangeryourself.api.action.DiscardCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.EndTurn;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Gamble;
-import ch.zhaw.it.pm.humanangeryourself.api.action.MovePiece;
 import ch.zhaw.it.pm.humanangeryourself.api.action.PlayCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
-import ch.zhaw.it.pm.humanangeryourself.api.action.TargetPiece;
-import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PlayerInfo;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.GambleResult.CardResult;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.GambleResult.MoneyResult;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.RollResult;
 import ch.zhaw.it.pm.humanangeryourself.ui.viewmodel.GameViewModel;
 
 import javafx.fxml.FXML;
@@ -27,12 +29,21 @@ import java.util.Comparator;
 import java.util.Optional;
 
 /**
- * Controller for the player information and action area.
+ * Controller of the player area. Shows whose turn it is, the money and cards of
+ * the deciding player,
+ * the result of the last roll or gamble, and offers the available actions as
+ * buttons.
+ * <p>
+ * Every button submits an action taken from the available actions of the
+ * snapshot,
+ * buttons without a matching action are disabled.
+ * </p>
  */
 public class PlayerViewController {
+    private static final String CHOOSE_ACTION_MESSAGE = "Choose an available action.";
 
     @FXML
-    private Label playerNameLabel;
+    private Label turnLabel;
     @FXML
     private Label moneyLabel;
     @FXML
@@ -40,7 +51,7 @@ public class PlayerViewController {
     @FXML
     private HBox cardsBox;
     @FXML
-    private VBox additionalActionsBox;
+    private VBox offersBox;
     @FXML
     private Button gambleButton;
     @FXML
@@ -50,206 +61,135 @@ public class PlayerViewController {
 
     private GameViewModel viewModel;
 
+    /**
+     * Creates the controller. Called by the FXML loader.
+     */
+    public PlayerViewController() {
+    }
+
+    /**
+     * Connects the player area to the view model and updates it after every change
+     * of the game state.
+     *
+     * @param viewModel the view model of the game to display
+     */
     public void setViewModel(GameViewModel viewModel) {
         this.viewModel = viewModel;
-
-        viewModel.snapshotProperty().addListener(
-                (ignored, oldSnapshot, newSnapshot) -> update(newSnapshot));
-
-        viewModel.messageProperty().addListener(
-                (ignored, oldMessage, newMessage) -> {
-                    if (newMessage != null && !newMessage.isBlank()) {
-                        resultLabel.setText(newMessage);
-                    }
-                });
-
+        viewModel.snapshotProperty().addListener((observable, oldSnapshot, newSnapshot) -> update(newSnapshot));
+        viewModel.errorMessageProperty().addListener((observable, oldMessage, newMessage) -> showError(newMessage));
         update(viewModel.snapshotProperty().get());
     }
 
-    @FXML
-    private void roll() {
-        submitAvailable(Roll.class, "Rolling die...");
-    }
-
-    @FXML
-    private void gamble() {
-        submitAvailable(Gamble.class, "Gambling...");
-    }
-
-    @FXML
-    private void endTurn() {
-        submitAvailable(EndTurn.class, "Ending turn...");
-    }
-
-    /**
-     * Submits an available action to the backend through the ViewModel.
-     */
-    private void submitAvailable(Class<? extends Action> type, String pendingMessage) {
-        if (viewModel == null) {
-            return;
-        }
-
-        findAction(viewModel.snapshotProperty().get(), type).ifPresent(action -> {
-            resultLabel.setText(pendingMessage);
-
-            gambleButton.setDisable(true);
-            rollButton.setDisable(true);
-            endTurnButton.setDisable(true);
-
-            viewModel.submit(action);
-        });
-    }
-
-    /**
-     * Updates the displayed player information and available actions.
-     */
     private void update(GameSnapshot snapshot) {
-        cardsBox.getChildren().clear();
-        additionalActionsBox.getChildren().clear();
+        turnLabel.setText("Turn: " + playerName(snapshot, snapshot.currentPlayer()));
+        moneyLabel.setText("Money: " + findPlayer(snapshot, snapshot.viewer()).map(PlayerInfo::money)
+                .map(String::valueOf).orElse("--"));
+        resultLabel.setText(resultMessage(snapshot));
 
-        if (snapshot == null) {
-            gambleButton.setDisable(true);
-            rollButton.setDisable(true);
-            endTurnButton.setDisable(true);
-            return;
-        }
-
-        PlayerInfo currentPlayer = snapshot.players().stream()
-                .filter(player -> player.color() == snapshot.currentPlayer()
-                        || snapshot.currentPlayer() == null && snapshot.decision() != null
-                        && player.color() == snapshot.decision().decider())
-                .findFirst()
-                .orElse(null);
-
-        String name = currentPlayer == null
-                ? snapshot.decision() == null
-                ? "Waiting"
-                : String.valueOf(snapshot.decision().decider())
-                : currentPlayer.name();
-
-        playerNameLabel.setText("Turn: " + name);
-
-        PlayerInfo viewer = snapshot.players().stream()
-                .filter(player -> player.color() == snapshot.viewer())
-                .findFirst()
-                .orElse(null);
-
-        moneyLabel.setText(
-                viewer == null ? "Money: --" : "Money: " + viewer.money());
-
-        gambleButton.setDisable(findAction(snapshot, Gamble.class).isEmpty());
-        rollButton.setDisable(findAction(snapshot, Roll.class).isEmpty());
-        endTurnButton.setDisable(findAction(snapshot, EndTurn.class).isEmpty());
+        bindButton(rollButton, findAction(snapshot, Roll.class));
+        bindButton(gambleButton, findAction(snapshot, Gamble.class));
+        bindButton(endTurnButton, findAction(snapshot, EndTurn.class));
 
         renderCards(snapshot);
-        renderAdditionalActions(snapshot);
-
-        displayResultMessage(snapshot);
+        renderOffers(snapshot);
     }
 
-    /**
-     * Displays an appropriate message in the result label.
-     *
-     * @param snapshot the game snapshot (may not be null)
-     */
-    private void displayResultMessage(GameSnapshot snapshot) {
-        if (snapshot.winner() != null) {
-            resultLabel.setText("Winner: " + playerName(snapshot, snapshot.winner()));
-        } else if (snapshot.primaryActionResult() != null) {
-            resultLabel.setText(toResultMessage(snapshot.primaryActionResult()));
-        } else if (snapshot.decision() != null) {
-            resultLabel.setText("Choose an available action.");
+    private void showError(String message) {
+        if (!message.isBlank()) {
+            resultLabel.setText(message);
         }
     }
 
-    /**
-     * Returns a string representation of the given primary action result.
-     *
-     * @param result result of a primary action
-     * @return a string representation of the given primary action result
-     */
-    private String toResultMessage(PrimaryActionResult result) {
+    private String resultMessage(GameSnapshot snapshot) {
+        if (snapshot.winner() != null) {
+            return "Winner: " + playerName(snapshot, snapshot.winner());
+        }
+        if (snapshot.primaryActionResult() != null) {
+            return describe(snapshot.primaryActionResult());
+        }
+        return CHOOSE_ACTION_MESSAGE;
+    }
+
+    private String describe(PrimaryActionResult result) {
         return switch (result) {
-            case PrimaryActionResult.RollResult r -> "You rolled a " + r.dieRoll();
-            case PrimaryActionResult.GambleResult.MoneyResult m -> m.amount() > 0
-                    ? String.format("Hurray, you won %,d$", m.amount())
-                    : String.format("Oh no, you lost %,d$", -m.amount());
-            case PrimaryActionResult.GambleResult.CardResult c -> "You received " + c.cardType().toString();
+            case RollResult roll -> "You rolled a " + roll.dieRoll();
+            case MoneyResult money when money.amount() > 0 -> "Hurray, you won %,d$".formatted(money.amount());
+            case MoneyResult money -> "Oh no, you lost %,d$".formatted(-money.amount());
+            case CardResult card -> "You received " + card.cardType();
         };
     }
 
+    /**
+     * Shows a button for every card of the viewer. A card can be clicked if it may
+     * be played or discarded.
+     */
     private void renderCards(GameSnapshot snapshot) {
+        cardsBox.getChildren().clear();
         for (CardType card : snapshot.viewerCards()) {
             Button button = new Button(card.toString());
-            Action action = actionForCard(snapshot, card);
-            button.setDisable(action == null);
-            button.setOnAction(event -> submit(action));
+            bindButton(button, findCardAction(snapshot, card));
             cardsBox.getChildren().add(button);
         }
     }
 
-    private Action actionForCard(GameSnapshot snapshot, CardType card) {
-        if (snapshot.decision() == null) {
-            return null;
-        }
+    /**
+     * Shows a button for every available purchase or bid.
+     */
+    private void renderOffers(GameSnapshot snapshot) {
+        offersBox.getChildren().setAll(snapshot.decision().availableActions().stream()
+                .flatMap(action -> offerLabel(action).map(label -> createOfferButton(label, action)).stream())
+                .sorted(Comparator.comparing(Button::getText))
+                .toList());
+    }
+
+    private Button createOfferButton(String label, Action action) {
+        Button button = new Button(label);
+        button.setMaxWidth(Double.MAX_VALUE);
+        bindButton(button, Optional.of(action));
+        return button;
+    }
+
+    /**
+     * Returns the button label of an action shown in the offers area.
+     *
+     * @return the label, or empty if the action is not shown as an offer
+     */
+    private static Optional<String> offerLabel(Action action) {
+        return switch (action) {
+            case BuyCard buyCard -> Optional.of("Buy " + buyCard.card());
+            case BuyProperty buyProperty -> Optional.of("Buy " + buyProperty.size() + " property");
+            case Bid bid -> Optional.of("Bid " + bid.amount());
+            default -> Optional.empty();
+        };
+    }
+
+    private void bindButton(Button button, Optional<? extends Action> action) {
+        button.setDisable(action.isEmpty());
+        button.setOnAction(event -> action.ifPresent(viewModel::submit));
+    }
+
+    private static Optional<Action> findCardAction(GameSnapshot snapshot, CardType card) {
         return snapshot.decision().availableActions().stream()
                 .filter(action -> action instanceof PlayCard play && play.card() == card
                         || action instanceof DiscardCard discard && discard.card() == card)
                 .findFirst()
-                .orElse(null);
+                .map(Action.class::cast);
     }
 
-    private void renderAdditionalActions(GameSnapshot snapshot) {
-        if (snapshot.decision() == null) {
-            return;
-        }
-        snapshot.decision().availableActions().stream()
-                .filter(action -> !(action instanceof Roll || action instanceof Gamble || action instanceof EndTurn
-                        || action instanceof MovePiece || action instanceof PlayCard || action instanceof DiscardCard
-                        || action instanceof TargetPiece))
-                .sorted(Comparator.comparing(this::labelFor))
-                .forEach(action -> {
-                    Button button = new Button(labelFor(action));
-                    button.setMaxWidth(Double.MAX_VALUE);
-                    button.setOnAction(event -> submit(action));
-                    additionalActionsBox.getChildren().add(button);
-                });
-    }
-
-    private String labelFor(Action action) {
-        return switch (action) {
-            case BuyCard buyCard -> "Buy " + buyCard.card();
-            case BuyProperty buyProperty -> "Buy " + buyProperty.size() + " property";
-            case Bid bid -> "Bid " + bid.amount();
-            default -> action.toString();
-        };
-    }
-
-    private String playerName(GameSnapshot snapshot, ch.zhaw.it.pm.humanangeryourself.api.PlayerColor color) {
-        return snapshot.players().stream()
-                .filter(player -> player.color() == color)
-                .map(PlayerInfo::name)
-                .findFirst()
-                .orElse(color.toString());
-    }
-
-    private void submit(Action action) {
-        if (action != null && viewModel != null) {
-            viewModel.submit(action);
-        }
-    }
-
-    /**
-     * Finds an available action of the requested type.
-     */
-    private Optional<Action> findAction(GameSnapshot snapshot, Class<? extends Action> type) {
-        if (snapshot == null || snapshot.decision() == null) {
-            return Optional.empty();
-        }
-
+    private static <A extends Action> Optional<A> findAction(GameSnapshot snapshot, Class<A> type) {
         return snapshot.decision().availableActions().stream()
                 .filter(type::isInstance)
-                .findFirst()
-                .map(Action.class::cast);
+                .map(type::cast)
+                .findFirst();
+    }
+
+    private static Optional<PlayerInfo> findPlayer(GameSnapshot snapshot, PlayerColor color) {
+        return snapshot.players().stream()
+                .filter(player -> player.color() == color)
+                .findFirst();
+    }
+
+    private static String playerName(GameSnapshot snapshot, PlayerColor color) {
+        return findPlayer(snapshot, color).map(PlayerInfo::name).orElse(String.valueOf(color));
     }
 }
