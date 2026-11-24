@@ -57,22 +57,12 @@ public class Board {
         for (int quarter = 0; quarter < QUARTER_COUNT; quarter++) {
             addTrackTiles(quarter, npcsByTileId);
         }
-        tiles.add(new Tile(FINISH_TILE_ID, TileType.FINISH_AREA, NO_QUARTER, null, null));
+        tiles.add(new Tile(FINISH_TILE_ID, TileType.FINISH_AREA, NO_QUARTER, null));
         for (int quarter = 0; quarter < QUARTER_COUNT; quarter++) {
             addHomeAndStaircaseTiles(quarter);
         }
         requireUniqueIds();
         requireAllNpcsPlaced(npcsByTileId);
-    }
-
-    /**
-     * Returns whether the given tile is on this board and has a property nobody owns yet.
-     *
-     * @param tile tile to check
-     * @return {@code true} if the property on the tile can be bought
-     */
-    public boolean isBuyable(Tile tile) {
-        return tiles.contains(tile) && tile.isBuyable();
     }
 
     /**
@@ -85,7 +75,7 @@ public class Board {
         return tiles.stream()
                 .map(Tile::getProperty)
                 .flatMap(Optional::stream)
-                .filter(property -> property.getOwner().filter(player::equals).isPresent())
+                .filter(property -> property.getOwner() == player)
                 .toList();
     }
 
@@ -129,6 +119,18 @@ public class Board {
                 .filter(tile -> tile.getId() == tileId)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No tile with id " + tileId));
+    }
+
+    /**
+     * Returns all tiles of the given quarter.
+     *
+     * @param quarter quarter of the tiles
+     * @return list of all tiles of the quarter
+     */
+    public List<Tile> getTilesOfQuarter(int quarter) {
+        return tiles.stream()
+                .filter(tile -> tile.getQuarter() == quarter)
+                .toList();
     }
 
     /**
@@ -179,7 +181,7 @@ public class Board {
         for (int i = 1; i <= TILES_PER_QUARTER; i++) {
             int id = quarter * TILES_PER_QUARTER + i;
             TileType type = id % SAFE_INTERVAL == 0 ? TileType.SAFE : TileType.TRACK;
-            tiles.add(new Tile(id, type, quarter, null, npcsByTileId.get(id)));
+            tiles.add(new Tile(id, type, quarter, npcsByTileId.get(id)));
         }
     }
 
@@ -191,10 +193,10 @@ public class Board {
     private void addHomeAndStaircaseTiles(int quarter) {
         int firstId = (quarter + 1) * COLOR_ID_BLOCK;
         for (int i = 1; i <= HOME_SLOT_COUNT; i++) {
-            tiles.add(new Tile(firstId + i, TileType.HOME, quarter, null, null));
+            tiles.add(new Tile(firstId + i, TileType.HOME, quarter, null));
         }
         for (int i = 1; i <= STAIRCASE_LENGTH; i++) {
-            tiles.add(new Tile(firstId + HOME_SLOT_COUNT + i, TileType.STAIRCASE, quarter, null, null));
+            tiles.add(new Tile(firstId + HOME_SLOT_COUNT + i, TileType.STAIRCASE, quarter, null));
         }
 
     }

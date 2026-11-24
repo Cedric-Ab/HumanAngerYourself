@@ -6,45 +6,25 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.zhaw.it.pm.humanangeryourself.ui.view.StartScreenViewController">
+<AnchorPane prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ch.zhaw.it.pm.humanangeryourself.ui.view.StartScreenViewController">
   <VBox alignment="CENTER" prefWidth="900.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
     <children>
 
       <!-- Title Area -->
-      <VBox alignment="CENTER" prefHeight="300.0" style="-fx-border-color: black; -fx-border-width: 2;">
-        <Text style="-fx-font-size: 80;" text="HUMAN ANGER" textAlignment="CENTER" />
-        <Text style="-fx-font-size: 80;" text="YOURSELF" textAlignment="CENTER" />
+      <VBox alignment="CENTER" prefHeight="300.0" styleClass="panel">
+        <Text styleClass="title-text" text="HUMAN ANGER" textAlignment="CENTER" />
+        <Text styleClass="title-text" text="YOURSELF" textAlignment="CENTER" />
       </VBox>
 
-      <!-- Player Inputs -->
+      <!-- Player Inputs, in turn order (the order of the colors on the board) -->
       <HBox alignment="CENTER" spacing="85">
-
-        <TextField fx:id="player1Field" onKeyTyped="#validateField" promptText="Enter Player 1" style="-fx-border-color: black;" HBox.hgrow="ALWAYS">
-          <font>
-            <Font size="15.0" />
-          </font>
-        </TextField>
-
-        <TextField fx:id="player2Field" onKeyTyped="#validateField" promptText="Enter Player 2" style="-fx-border-color: black;" HBox.hgrow="ALWAYS">
-          <font>
-            <Font size="15.0" />
-          </font>
-        </TextField>
-
-        <TextField fx:id="player3Field" onKeyTyped="#validateField" promptText="Enter Player 3" style="-fx-border-color: black" HBox.hgrow="ALWAYS">
-          <font>
-            <Font size="15.0" />
-          </font>
-        </TextField>
-
-        <TextField fx:id="player4Field" onKeyTyped="#validateField" promptText="Enter Player 4" style="-fx-border-color: black;" HBox.hgrow="ALWAYS">
-          <font>
-            <Font size="15.0" />
-          </font>
-        </TextField>
+        <TextField fx:id="redPlayerField" onKeyTyped="#validateField" promptText="Player 1 (Red)" styleClass="name-field" HBox.hgrow="ALWAYS" />
+        <TextField fx:id="yellowPlayerField" onKeyTyped="#validateField" promptText="Player 2 (Yellow)" styleClass="name-field" HBox.hgrow="ALWAYS" />
+        <TextField fx:id="bluePlayerField" onKeyTyped="#validateField" promptText="Player 3 (Blue)" styleClass="name-field" HBox.hgrow="ALWAYS" />
+        <TextField fx:id="greenPlayerField" onKeyTyped="#validateField" promptText="Player 4 (Green)" styleClass="name-field" HBox.hgrow="ALWAYS" />
 
         <VBox.margin>
           <Insets bottom="30.0" top="30.0" />
@@ -52,7 +32,7 @@
       </HBox>
 
       <!-- Start Button -->
-      <Button onAction="#startGame" prefHeight="50.0" prefWidth="200.0" style="-fx-font-size: 20px;" text="Start Game">
+      <Button onAction="#startGame" prefHeight="50.0" prefWidth="200.0" styleClass="start-button" text="Start Game">
         <VBox.margin>
           <Insets top="40.0" />
         </VBox.margin>
@@ -60,7 +40,7 @@
     </children>
   </VBox>
 
-  <!-- Settings Button -->
-  <Button disable="true" onAction="#openSettings" prefHeight="30.0" prefWidth="150.0" style="-fx-font-size: 18px;" text="Settings" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+  <!-- Settings Button, placeholder until settings are implemented -->
+  <Button disable="true" prefHeight="30.0" prefWidth="150.0" styleClass="settings-button" text="Settings" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="20.0" />
 
 </AnchorPane>

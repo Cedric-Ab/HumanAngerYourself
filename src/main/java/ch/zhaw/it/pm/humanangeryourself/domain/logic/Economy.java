@@ -7,14 +7,19 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.BuyProperty;
 import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.CardOffer;
 import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
+import ch.zhaw.it.pm.humanangeryourself.config.PropertyPrice;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
+import ch.zhaw.it.pm.humanangeryourself.domain.model.Property;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Stream;
 import java.util.Optional;
 
 /**
@@ -42,16 +47,15 @@ public class Economy {
     }
 
     /**
-     * Checks whether the player is allowed to buy a property of the given size on the given tile.
+     * Executes the purchase of a property. Assumes the player can do that (performs no checks).
      *
      * @param player the player who wants to buy
      * @param tile   the tile the property is on
-     * @param board  the board the tile belongs to
      * @param size   the size of the property to buy
-     * @return {@code true} if the purchase is possible
      */
-    public boolean canBuy(Player player, Tile tile, Board board, PropertySize size) {
-        return false;
+    public void buyProperty(Player player, Tile tile, PropertySize size) {
+        player.changeBalanceBy(-config.propertyPrices().get(size).price());
+        tile.setProperty(new Property(player, size));
     }
 
     /**
@@ -78,9 +82,29 @@ public class Economy {
 
     /**
      * Collects rent from a player who landed on a property owned by another player.
-     * Not implemented yet.
+     * <p>
+     * If there is no property on the tile, this function does nothing and returns without throwing.
+     * </p>
+     *
+     * @param debtor the player who moved their piece
+     * @param tile   the tile the player landed on
      */
-    public void collectRent() { }
+    public void collectRent(Player debtor, Tile tile) {
+        if (tile.getProperty().isEmpty()) {
+            return;
+        }
+
+        Property property = tile.getProperty().get();
+        long rent = property.getRent(config);
+        Player owner = property.getOwner();
+
+        if (owner == debtor) {
+            return;
+        }
+
+        debtor.changeBalanceBy(-rent);
+        owner.changeBalanceBy(rent);
+    }
 
     /**
      * Returns whether the player's debt exceeds the allowed limit.
@@ -89,16 +113,44 @@ public class Economy {
      * @return {@code true} if the player is over the debt limit and has to go bankrupt
      */
     public boolean isOverDebtLimit(Player player) {
-        return false;
+        return player.getMoney() < -config.debtLimit();
     }
 
     /**
      * Declares the given player bankrupt and updates the board accordingly.
+     * <p>
+     * This includes:
+     * <ul>
+     *     <li>sending all the player's pieces home</li>
+     *     <li>resetting the players balance to the starting balance</li>
+     *     <li>removing all the player's properties from the board</li>
+     * </ul>
+     * </p>
      *
      * @param board  the board the player is playing on
      * @param player the player who goes bankrupt
      */
-    public void bankrupt(Board board, Player player) { }
+    public void bankrupt(Board board, Player player) {
+        player.getPieces().forEach(Piece::sendHome);
+
+        player.resetBalanceToZero();
+        player.changeBalanceBy(config.startMoney());
+
+        removePlayersProperties(player, board);
+    }
+
+    /**
+     * Removes all properties owned by the given player from the board.
+     *
+     * @param player the player whose properties should be removed
+     * @param board  the board the player is playing on
+     */
+    private void removePlayersProperties(Player player, Board board) {
+        board.getTiles().stream()
+                .filter(tile -> tile.getProperty().isPresent())
+                .filter(tile -> tile.getProperty().get().getOwner().equals(player))
+                .forEach(Tile::removeProperty);
+    }
 
 
     /**
@@ -112,7 +164,7 @@ public class Economy {
      * @param player the player who wants to buy cards, must not be {@code null}
      * @return the possible {@link BuyCard} actions, empty if none are available
      */
-    public List<BuyCard> getBuyableCards(@NotNull Player player) {
+    public List<BuyCard> getBuyableCards(Player player) {
         return player.getPieces().stream()
                 .map(Piece::getCurrentTile)
                 .distinct()
@@ -126,12 +178,34 @@ public class Economy {
     /**
      * Returns all property purchases the given player can currently make.
      *
-     * @param player the player who wants to buy properties, must not be {@code null}
+     * @param player the player who wants to buy properties
+     * @param board  the board
      * @return the possible {@link BuyProperty} actions, empty if none are available
      */
-    public List<BuyProperty> getBuyableProperties(@NotNull Player player) {
-        // TODO: low priority
-        return List.of();
+    public List<BuyProperty> getBuyableProperties(Player player, Board board) {
+        long budget = player.getMoney();
+        Map<PropertySize, PropertyPrice> propertyPrices = config.propertyPrices();
+
+        if (budget < propertyPrices.get(PropertySize.SMALL).price()) {
+            // the player can afford nothing
+            return List.of();
+        }
+
+        // tiles where the player can buy properties
+        // (cannot be a Stream, because it is consumed multiple times when creating the Cartesian product below)
+        List<Tile> availableTiles = findPlayersPositions(player)
+                .filter(tile -> isTileBuyable(tile, board))
+                .toList();
+
+        // property sizes the player can afford
+        Stream<PropertySize> availableSizes = propertyPrices.entrySet().stream()
+                .filter(entry -> entry.getValue().price() <= budget)
+                .map(Map.Entry::getKey);
+
+        // find the Cartesian product of available tiles and available sizes, then map to actions
+        return availableSizes.flatMap(entry -> availableTiles.stream()
+                        .map(tile -> new BuyProperty(tile.getId(), entry)))
+                .toList();
     }
 
 
@@ -164,4 +238,46 @@ public class Economy {
         return !player.isInDebt() && player.getMoney() >= offer.price();
     }
 
+
+    /**
+     * Checks whether a property could be placed on a given tile right now.
+     *
+     * @param tile  the tile to check for availability
+     * @param board the board
+     * @return true if the tile is buyable, false otherwise
+     */
+    private boolean isTileBuyable(Tile tile, Board board) {
+        return !tile.isSafe() && tile.getProperty().isEmpty() && !isQuarterFull(tile.getQuarter(), board);
+    }
+
+    /**
+     * Checks whether a given quarter already has the maximum number of properties.
+     *
+     * @param quarter the quarter to check
+     * @param board   the board
+     * @return true if the quarter can have no more properties, false otherwise
+     */
+    private boolean isQuarterFull(int quarter, Board board) {
+        if (quarter < 0 || quarter >= 4) {
+            throw new IllegalArgumentException("Invalid quarter: " + quarter);
+        }
+        Objects.requireNonNull(board);
+
+        return board.getTilesOfQuarter(quarter).stream()
+                .filter(t -> t.getProperty().isPresent())
+                .count() >= config.maxPropertiesPerQuarter();
+    }
+
+    /**
+     * Finds all tiles a given player's pieces are currently on.
+     *
+     * @param player the player
+     * @return a stream of tiles
+     */
+    private Stream<Tile> findPlayersPositions(Player player) {
+        return player.getPieces()
+                .stream()
+                .map(Piece::getCurrentTile)
+                .distinct();
+    }
 }

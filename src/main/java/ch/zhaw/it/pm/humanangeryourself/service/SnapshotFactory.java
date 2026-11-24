@@ -85,7 +85,7 @@ public final class SnapshotFactory {
                 .flatMap(tile -> tile.getProperty().stream()
                         .map(property -> new PropertyInfo(
                                 tile.getId(),
-                                property.getOwner().map(Player::getColor).orElse(null),
+                                property.getOwner().getColor(),
                                 property.getSize())))
                 .toList();
     }
