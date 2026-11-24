@@ -93,7 +93,7 @@ public final class SnapshotFactory {
     private static List<NpcInfo> toNpcInfos(Board board) {
         return board.getTiles().stream()
                 .flatMap(tile -> tile.getNpc().stream()
-                        .map(npc -> new NpcInfo(tile.getId(), List.copyOf(npc.getOffers()))))
+                        .map(npc -> new NpcInfo(tile.getId(), npc.getName(), List.copyOf(npc.getOffers()))))
                 .toList();
     }
 

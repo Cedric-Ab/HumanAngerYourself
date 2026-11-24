@@ -11,7 +11,9 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.EndTurn;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Gamble;
 import ch.zhaw.it.pm.humanangeryourself.api.action.PlayCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.CardOffer;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.NpcInfo;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PlayerInfo;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.GambleResult.CardResult;
@@ -137,7 +139,7 @@ public class PlayerViewController {
      */
     private void renderOffers(GameSnapshot snapshot) {
         offersBox.getChildren().setAll(snapshot.decision().availableActions().stream()
-                .flatMap(action -> offerLabel(action).map(label -> createOfferButton(label, action)).stream())
+                .flatMap(action -> offerLabel(snapshot, action).map(label -> createOfferButton(label, action)).stream())
                 .sorted(Comparator.comparing(Button::getText))
                 .toList());
     }
@@ -154,13 +156,23 @@ public class PlayerViewController {
      *
      * @return the label, or empty if the action is not shown as an offer
      */
-    private static Optional<String> offerLabel(Action action) {
+    private static Optional<String> offerLabel(GameSnapshot snapshot, Action action) {
         return switch (action) {
-            case BuyCard buyCard -> Optional.of("Buy " + buyCard.offer().cardType());
+            case BuyCard buyCard -> Optional.of(buyCardLabel(snapshot, buyCard));
             case BuyProperty buyProperty -> Optional.of("Buy " + buyProperty.size() + " property");
             case Bid bid -> Optional.of("Bid " + bid.amount());
             default -> Optional.empty();
         };
+    }
+
+    /**
+     * Creates the label for buying a card from an NPC, e.g. "Buy SWITCH from Grumpy old Woman (40000)".
+     */
+    private static String buyCardLabel(GameSnapshot snapshot, BuyCard buyCard) {
+        NpcInfo npc = snapshot.npcAt(buyCard.tile()).orElseThrow();
+        CardOffer offer = npc.offerFor(buyCard.card()).orElseThrow();
+
+        return "Buy " + buyCard.card() + " from " + npc.name() + " (" + offer.price() + ")";
     }
 
     private void bindButton(Button button, Optional<? extends Action> action) {

@@ -42,7 +42,7 @@ public class RiggedController extends GameController {
 
     private static Game createGame() {
         GameConfig config = GameConfig.defaults();
-        Board board = new Board();
+        Board board = GameFactory.createBoard(config);
 
         MovementRules movementRules = new MovementRules(config, board);
         GamblingRules gamblingRules = new GamblingRules(config.gambling());

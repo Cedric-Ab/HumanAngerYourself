@@ -21,6 +21,11 @@ public class Turn {
     private @Nullable PrimaryActionResult primaryActionResult;
 
     /**
+     * Whether the player has already bought a card from an NPC in this turn (allowed once per turn).
+     */
+    private boolean npcCardBought;
+
+    /**
      * Creates a new turn for the given player.
      *
      * @param player the player whose turn it is
@@ -54,6 +59,22 @@ public class Turn {
      */
     public void setPrimaryActionResult(@NotNull PrimaryActionResult primaryActionResult) {
         this.primaryActionResult = primaryActionResult;
+    }
+
+    /**
+     * Returns whether the player has already bought a card from an NPC in this turn.
+     *
+     * @return {@code true} if an NPC card was bought, then no further NPC card may be bought this turn
+     */
+    public boolean hasBoughtNpcCard() {
+        return npcCardBought;
+    }
+
+    /**
+     * Remembers that the player has bought a card from an NPC in this turn.
+     */
+    public void markNpcCardBought() {
+        npcCardBought = true;
     }
 
     // TODO: add effect stuff
