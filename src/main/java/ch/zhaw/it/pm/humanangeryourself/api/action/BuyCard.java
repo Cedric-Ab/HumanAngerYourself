@@ -1,12 +1,12 @@
 package ch.zhaw.it.pm.humanangeryourself.api.action;
 
-import ch.zhaw.it.pm.humanangeryourself.api.CardType;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.CardOffer;
 
 /**
  * Represent the action where a player buys a card from an NPC.
  *
- * @param card type of the card to be bought
+ * @param offer the accepted offer
  */
 public record BuyCard(
-        CardType card
+        CardOffer offer
 ) implements Action { }

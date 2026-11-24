@@ -38,7 +38,7 @@ public class EndOfTurnPhase extends GamePhaseBase {
                 .getBuyableCards(getCurrentPlayer());
 
         List<BuyProperty> buyPropertyList = getGame().getEconomy()
-                .getBuyableProperties(getCurrentPlayer());
+                .getBuyableProperties(getCurrentPlayer(), getGame().getBoard());
 
         List<Action> actions = new ArrayList<>();
         actions.add(new EndTurn());
@@ -84,26 +84,28 @@ public class EndOfTurnPhase extends GamePhaseBase {
     }
 
     /**
-     * Buys a card for the player. Not implemented yet, the phase is only offered again.
+     * Buys a card for the player.
      *
      * @param player  the player who buys the card
      * @param buyCard the chosen purchase
      * @return this phase with an updated decision
      */
     private GamePhase buyCard(Player player, BuyCard buyCard) {
-        // TODO: medium priority
+        getGame().getEconomy().buyCard(player, buyCard.offer());
+        // TODO: enforce that the player cannot buy another card
         return process();
     }
 
     /**
-     * Buys a property for the player. Not implemented yet, the phase is only offered again.
+     * Buys a property for the player.
      *
      * @param player      the player who buys the property
      * @param buyProperty the chosen purchase
      * @return this phase with an updated decision
      */
     private GamePhase buyProperty(Player player, BuyProperty buyProperty) {
-        // TODO: low priority
+        getGame().getEconomy().buyProperty(player, getGame().getBoard().getTileById(buyProperty.tile()), buyProperty.size());
+        // TODO: enforce that the player cannot buy another property (maybe???)
         return process();
     }
 }
