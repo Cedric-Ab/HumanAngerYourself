@@ -37,6 +37,7 @@ public class MovementRules {
 
     private static final int FINISH_AREA_ID = 100;
 
+    private record PartialMove(int intermediateDestination, int remainingSteps) { }
 
     private static final Random RANDOM = new Random();
 
@@ -131,48 +132,85 @@ public class MovementRules {
         return possibleActions;
     }
 
+    /**
+     * Calculates the possible move of a single piece for a given player and die roll.
+     *
+     * @param player the player whose possible moves are calculated
+     * @param piece  the piece whose possible move is calculated
+     * @param roll   the result of the die roll
+     * @return an optional move action, or empty if no move is possible
+     */
     public Optional<MovePiece> getPossibleMoveOfPiece(Player player, Piece piece, int roll) {
         int startTile = piece.getCurrentTile().getId();
 
         int intermediateDestination = startTile;
         int remainingSteps = roll;
         while (remainingSteps > 0) {
-            Pair<Integer, Integer> result = partialMove(intermediateDestination, remainingSteps, player);
-            intermediateDestination = result.getKey();
-            remainingSteps = result.getValue();
-        }
-        if (intermediateDestination == startTile) {
-            return Optional.empty();
+            Optional<PartialMove> result = partialMove(intermediateDestination, remainingSteps, player);
+            if (result.isEmpty()) {
+                return Optional.empty();
+            }
+
+            intermediateDestination = result.get().intermediateDestination();
+            remainingSteps = result.get().remainingSteps();
         }
 
         return Optional.of(new MovePiece(startTile, intermediateDestination));
     }
 
-    private Pair<Integer, Integer> partialMove(int currentTile, int steps, Player player) {
+    /**
+     * Calculates the partial move of a piece on the board for a given player and die roll.
+     * A partial move is either a complete move (uses all remaining steps) or a move that moves the piece
+     * to the next stage, where movement will be different
+     * (for example, from the track to start of the staircase
+     * or from the middle of staircase to the top of the staircase, from where the piece will move back down).
+     *
+     * @param currentTile the current tile of the piece
+     * @param steps       the number of remaining steps to move
+     * @param player      the player whose partial move is calculated
+     * @return a partial move (new position plus remaining steps), or empty if no move is possible
+     */
+    private Optional<PartialMove> partialMove(int currentTile, int steps, Player player) {
         TileType currentTileType = board.getTileById(currentTile).getType();
 
         return switch (currentTileType) {
             case HOME -> (steps == 5 || steps == 6)
-                    ? new Pair<>(getStartTileId(player), 0) // move onto the track
-                    : new Pair<>(currentTile, 0); // stay put
-            case TRACK, SAFE -> partialMoveOnTrack(currentTile, steps, player);
-            case STAIRCASE -> partialMoveOnStaircase(currentTile, steps, player);
-            default -> null;
+                    ? Optional.of(new PartialMove(getStartTileId(player), 0)) // move onto the track
+                    : Optional.empty(); // stay put
+            case TRACK, SAFE -> Optional.of(partialMoveOnTrack(currentTile, steps, player));
+            case STAIRCASE -> Optional.of(partialMoveOnStaircase(currentTile, steps, player));
+            default -> Optional.empty();
         };
     }
 
-    private Pair<Integer, Integer> partialMoveOnTrack(int currentTile, int steps, Player player) {
+    /**
+     * Calculates the partial move of a piece on the track for a given player and remaining steps.
+     *
+     * @param currentTile the current tile of the piece
+     * @param steps       the number of remaining steps to move
+     * @param player      the player whose partial move is calculated
+     * @return a partial move (new position plus remaining steps)
+     */
+    private PartialMove partialMoveOnTrack(int currentTile, int steps, Player player) {
         int endOfTrack = getEndTileId(player);
         int stepsToEnd = (endOfTrack - currentTile + 60) % 60;
 
         if (steps > stepsToEnd) { // when reaching the end of the track...
-            return new Pair<>(getFirstStaircaseTileId(player), steps - stepsToEnd - 1); // ...move onto the staircase
+            return new PartialMove(getFirstStaircaseTileId(player), steps - stepsToEnd - 1); // ...move onto the staircase
         } else {
-            return new Pair<>(currentTile + steps % 60, 0); // otherwise, simply move along the track the remaining steps
+            return new PartialMove((currentTile + steps) % 60, 0); // otherwise, simply move along the track the remaining steps
         }
     }
 
-    private Pair<Integer, Integer> partialMoveOnStaircase(int currentTile, int steps, Player player) {
+    /**
+     * Calculates the partial move of a piece on the staircase for a given player and remaining steps.
+     *
+     * @param currentTile the current tile of the piece
+     * @param steps       the number of remaining steps to move
+     * @param player      the player whose partial move is calculated
+     * @return a partial move (new position plus remaining steps)
+     */
+    private PartialMove partialMoveOnStaircase(int currentTile, int steps, Player player) {
         int topOfStaircase = getLastStaircaseTileId(player);
 
         if (currentTile == topOfStaircase) { // when starting at the top...
@@ -181,55 +219,22 @@ public class MovementRules {
             int stepsToBottom = currentTile - bottomOfStaircase;
 
             if (steps > stepsToBottom) { // when reaching the bottom of the staircase...
-                return new Pair<>(bottomOfStaircase, steps - stepsToBottom); // ...stop the partial move
+                return new PartialMove(bottomOfStaircase, steps - stepsToBottom); // ...stop the partial move
             } else {
-                return new Pair<>(currentTile - steps, 0); // otherwise, simply move down the remaining steps
+                return new PartialMove(currentTile - steps, 0); // otherwise, simply move down the remaining steps
             }
         } else { // when starting anywhere else on the staircase...
             // ...move up
             int stepsToTop = topOfStaircase - currentTile;
 
-            if (steps == stepsToTop && !player.isInDebt()) { // only with the exact roll and no debt...
-                return new Pair<>(FINISH_AREA_ID, 0); // ...may you enter the finish area
+            if (steps == stepsToTop + 1 && !player.isInDebt()) { // only with the exact roll and no debt...
+                return new PartialMove(FINISH_AREA_ID, 0); // ...may you enter the finish area
             } else if (steps > stepsToTop) { // when reaching the top of the staircase...
-                return new Pair<>(topOfStaircase, steps - stepsToTop); // ...stop the partial move
+                return new PartialMove(topOfStaircase, steps - stepsToTop); // ...stop the partial move
             } else {
-                return new Pair<>(currentTile + steps, 0); // otherwise, simply move up the remaining steps
+                return new PartialMove(currentTile + steps, 0); // otherwise, simply move up the remaining steps
             }
         }
-    }
-
-    /**
-     * Calculates the destination tile after moving a given number of steps
-     * along the main game track.
-     *
-     * <p>
-     * The calculation accounts for the circular layout of the track,
-     * where the tile after the last track tile is the first track tile.
-     *
-     * @param currentTile the current tile ID
-     * @param roll        the number of steps to move
-     * @return the calculated destination tile ID
-     */
-    private int calculateDestinationTile(int currentTile, int roll) {
-        return (currentTile - 1 + roll) % 60 + 1;
-    }
-
-    /**
-     * Checks whether a move passes the endpoint of the player's main track
-     * and therefore enters their colour-specific staircase.
-     *
-     * @param currentTile the piece's current tile ID
-     * @param roll        the number of steps to move
-     * @param player      the player whose staircase is being checked
-     * @return {@code true} if the move passes the track endpoint,
-     *         otherwise {@code false}
-     */
-    private boolean wouldEnterStaircase(int currentTile, int roll, Player player) {
-        int endTile = getEndTileId(player);
-        int stepsToEnd = (endTile - currentTile + 60) % 60;
-
-        return roll > stepsToEnd;
     }
 
     /**
