@@ -4,6 +4,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.GameListener;
 import ch.zhaw.it.pm.humanangeryourself.api.GameService;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
+import ch.zhaw.it.pm.humanangeryourself.api.action.MovePiece;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
 
 import javafx.beans.property.ObjectProperty;
@@ -33,6 +34,9 @@ public class GameViewModel implements GameListener {
     // message of the last rejected action, empty if the last action was accepted
     private final StringProperty errorMessage = new SimpleStringProperty("");
 
+    // tile the player selected to buy something on (property or NPC card), null if none is selected
+    private final ObjectProperty<Integer> selectedTile = new SimpleObjectProperty<>();
+
     /**
      * Creates a view model for the given game service.
      *
@@ -46,27 +50,55 @@ public class GameViewModel implements GameListener {
 
     /**
      * Replaces the stored snapshot with the new game state.
+     * The selected tile is cleared when the next player's turn starts.
      *
      * @param snapshot the new snapshot of the game
      */
     @Override
     public void onGameChanged(GameSnapshot snapshot) {
-        this.snapshot.set(Objects.requireNonNull(snapshot, "snapshot"));
+        Objects.requireNonNull(snapshot, "snapshot");
+        if (this.snapshot.get().currentPlayer() != snapshot.currentPlayer()) {
+            selectedTile.set(null);
+        }
+        this.snapshot.set(snapshot);
     }
 
     /**
      * Sends an action to the service. If the service rejects it, the reason is exposed
-     * through {@link #errorMessageProperty()}.
+     * through {@link #errorMessageProperty()}. After moving a piece, its target tile is selected,
+     * so the player can buy something there right away.
      *
      * @param action action selected by the player, should be one of the available actions of the snapshot
      */
     public void submit(Action action) {
+        Objects.requireNonNull(action, "action");
         errorMessage.set("");
+        if (action instanceof MovePiece move) {
+            selectedTile.set(move.targetTile());
+        }
         try {
-            service.submit(Objects.requireNonNull(action, "action"));
+            service.submit(action);
         } catch (InvalidActionException exception) {
             errorMessage.set(exception.getMessage());
         }
+    }
+
+    /**
+     * Selects the tile the player wants to buy something on.
+     *
+     * @param tile id of the tile
+     */
+    public void selectTile(int tile) {
+        selectedTile.set(tile);
+    }
+
+    /**
+     * Returns the tile the player selected to buy a property or an NPC card on.
+     *
+     * @return property holding the selected tile id, holds {@code null} if no tile is selected
+     */
+    public ReadOnlyObjectProperty<Integer> selectedTileProperty() {
+        return selectedTile;
     }
 
     /**
