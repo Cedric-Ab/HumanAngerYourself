@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
-import java.util.Optional;
 
 /**
  * Game logic for everything related to money: buying properties and cards,
@@ -57,11 +56,6 @@ public class Economy {
         player.changeBalanceBy(-config.propertyPrices().get(size).price());
         tile.setProperty(new Property(player, size));
     }
-
-    /**
-     * Executes the purchase of a property. Not implemented yet.
-     */
-    public void buyProperty() { }
 
     /**
      * Pays for a card bought from the NPC on the given tile.
