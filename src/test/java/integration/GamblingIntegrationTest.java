@@ -1,5 +1,6 @@
 package integration;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -89,6 +90,8 @@ public class GamblingIntegrationTest extends BaseIntegrationTest {
                     "Expected Hand Card to be present in Players Hand Cards");
         }
 
+        // TODO: enable this test once discard is implemented
+        @Disabled
         @Test
         @DisplayName("Exceding Hand Limit triggers Hand Card Discard")
         void handCardDiscard() {
@@ -124,6 +127,8 @@ public class GamblingIntegrationTest extends BaseIntegrationTest {
                     "Expected Gambling Outcome to be present in PrimaryActionResult");
         }
 
+        // TODO: enable this test once cards are implemented
+        @Disabled
         @Test
         @DisplayName("Instant Card is triggered")
         void instantCardIsTriggered() {

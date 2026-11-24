@@ -23,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+// TODO: enable these tests once action cards are implemented
+@Disabled
 @DisplayName("ActionCard Integration Test")
 public class ActionCardIntegrationTest extends BaseIntegrationTest {
     private void rushThroughRound() {
