@@ -6,6 +6,7 @@
     -color-safe: saddlebrown;
     -color-highlight: gold;
     -color-selection: orange;
+    -color-npc: darkviolet;
     -player-color: black;
 
     -fx-background-color: white;
@@ -97,6 +98,22 @@
 }
 
 
+.property {
+    -fx-fill: -player-color;
+    -fx-stroke: black;
+    -fx-stroke-width: 1;
+}
+
+.npc {
+    -fx-background-color: white, -color-npc;
+    -fx-background-insets: 0, 1.5;
+    -fx-background-radius: 8;
+    -fx-text-fill: white;
+    -fx-font-size: 10;
+    -fx-font-weight: bold;
+    -fx-padding: 0;
+}
+
 .piece.movable {
     -fx-stroke: white;
     -fx-stroke-width: 3;
@@ -107,6 +124,11 @@
     -fx-stroke: -color-highlight;
     -fx-stroke-width: 6;
     -fx-effect: dropshadow(gaussian, black, 10, 0.6, 0, 0);
+}
+
+.buyable {
+    -fx-stroke: -color-highlight;
+    -fx-stroke-width: 3;
 }
 
 .selected-source {
