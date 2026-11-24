@@ -34,10 +34,13 @@ public class Tile {
      * @param quarter board quarter the tile belongs to, -1 if it belongs to no quarter
      * @param npc     NPC on this tile, or {@code null} if there is none
      * @throws NullPointerException     if {@code type} is {@code null}
-     * @throws IllegalArgumentException if a property is placed on a tile that is not part of the track
+     * @throws IllegalArgumentException if an NPC is placed on a tile that is not a safe space
      */
     public Tile(int id, TileType type, int quarter, Npc npc) {
         this.type = Objects.requireNonNull(type, "type must not be null");
+        if (npc != null && type != TileType.SAFE) {
+            throw new IllegalArgumentException("NPCs can only be placed on SAFE tiles, tile " + id + " is " + type);
+        }
         this.id = id;
         this.quarter = quarter;
         this.npc = npc;

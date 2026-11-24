@@ -8,12 +8,10 @@ package ch.zhaw.it.pm.humanangeryourself.config;
  *
  * @param jackpot     the amount awarded when a jackpot card is drawn
  * @param charity     the amount deducted when a charity card is drawn
- * @param maxHandSize the maximum number of cards a player may hold in their hand
  */
 public record CardConfig(
         int jackpot,
-        int charity,
-        int maxHandSize
+        int charity
 ) {
     /**
      * Creates a {@code CardConfig} with the default game settings.
@@ -24,7 +22,7 @@ public record CardConfig(
      * @return a new {@code CardConfig} containing the default values
      */
     public static CardConfig defaults() {
-        return new CardConfig(250000, -150000, 10);
+        return new CardConfig(250000, -150000);
     }
 }
 

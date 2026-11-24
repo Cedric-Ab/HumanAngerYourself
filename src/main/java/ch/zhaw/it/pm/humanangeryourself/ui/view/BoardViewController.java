@@ -12,6 +12,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -24,6 +25,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -60,6 +63,7 @@ public class BoardViewController {
     private static final String SELECTED_SOURCE_STYLE = "selected-source";
     private static final String MOVE_TARGET_STYLE = "move-target";
     private static final String ACTIVE_HOME_STYLE = "active-home";
+    private static final String MOVABLE_PIECE_STYLE = "movable";
 
     private final Map<Integer, Shape> tiles = new HashMap<>();
     private final Map<PlayerColor, Shape> homes = new EnumMap<>(PlayerColor.class);
@@ -116,26 +120,44 @@ public class BoardViewController {
 
     private void render(GameSnapshot snapshot) {
         highlightActiveHome(snapshot.currentPlayer());
-        drawPieces(snapshot.pieces());
+        drawPieces(snapshot.pieces(), movablePieceTiles(snapshot), snapshot.decision().decider());
         enableInteractions(snapshot);
+    }
+
+    /**
+     * Returns the tiles of the pieces the deciding player can move with the
+     * available {@link MovePiece} actions, e.g. after rolling the die.
+     */
+    private static Set<Integer> movablePieceTiles(GameSnapshot snapshot) {
+        return availableActions(snapshot, MovePiece.class).stream()
+                .map(MovePiece::startTile)
+                .collect(Collectors.toSet());
     }
 
     private void highlightActiveHome(PlayerColor currentPlayer) {
         homes.forEach((color, home) -> setStyle(home, ACTIVE_HOME_STYLE, color == currentPlayer));
     }
 
-    private void drawPieces(List<PieceInfo> pieces) {
+    private void drawPieces(List<PieceInfo> pieces, Set<Integer> movableTiles, PlayerColor decider) {
         piecePane.getChildren().clear();
         Map<Integer, List<PieceInfo>> piecesByTile = pieces.stream()
                 .collect(Collectors.groupingBy(PieceInfo::tile, LinkedHashMap::new, Collectors.toList()));
-        piecesByTile.forEach((tileId, piecesOnTile) -> drawPiecesOnTile(tile(tileId), piecesOnTile));
+        piecesByTile.forEach((tileId, piecesOnTile) -> drawPiecesOnTile(tile(tileId), piecesOnTile,
+                piece -> piece.color() == decider && movableTiles.contains(piece.tile())));
     }
 
     /**
-     * Draws the pieces of one tile in a square grid centered on the tile.
+     * Draws the pieces of one tile in a square grid centered on the tile and
+     * highlights the pieces that can be moved.
+     * <p>
+     * The grid is laid out in the tile's own (unrotated) coordinates and then
+     * transformed to the board, so rotated tiles (the diagonal track tiles) get
+     * the same piece size as straight ones instead of being measured by their
+     * larger axis-aligned bounding box.
+     * </p>
      */
-    private void drawPiecesOnTile(Shape tile, List<PieceInfo> piecesOnTile) {
-        Bounds bounds = tile.getBoundsInParent();
+    private void drawPiecesOnTile(Shape tile, List<PieceInfo> piecesOnTile, Predicate<PieceInfo> isMovable) {
+        Bounds bounds = tile.getBoundsInLocal();
         int gridSize = (int) Math.ceil(Math.sqrt(piecesOnTile.size()));
         double spacing = Math.min(MAX_PIECE_SPACING,
                 Math.min(bounds.getWidth(), bounds.getHeight()) / (gridSize + 1));
@@ -143,9 +165,13 @@ public class BoardViewController {
         double gridCenter = (gridSize - 1) / 2.0;
 
         for (int slot = 0; slot < piecesOnTile.size(); slot++) {
-            double centerX = bounds.getCenterX() + (slot % gridSize - gridCenter) * spacing;
-            double centerY = bounds.getCenterY() + (slot / gridSize - gridCenter) * spacing;
-            piecePane.getChildren().add(createPiece(piecesOnTile.get(slot).color(), centerX, centerY, radius));
+            Point2D center = tile.localToParent(
+                    bounds.getCenterX() + (slot % gridSize - gridCenter) * spacing,
+                    bounds.getCenterY() + (slot / gridSize - gridCenter) * spacing);
+            PieceInfo pieceInfo = piecesOnTile.get(slot);
+            Circle piece = createPiece(pieceInfo.color(), center.getX(), center.getY(), radius);
+            setStyle(piece, MOVABLE_PIECE_STYLE, isMovable.test(pieceInfo));
+            piecePane.getChildren().add(piece);
         }
     }
 
