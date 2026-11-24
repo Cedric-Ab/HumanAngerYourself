@@ -23,28 +23,23 @@ public class Tile {
     private final int id;
     private final TileType type;
     private final int quarter;
-    private final Property property;
     private final Npc npc;
+    private Property property;
 
     /**
      * Creates a new tile.
      *
-     * @param id       unique id of the tile on the board
-     * @param type     type of the tile
-     * @param quarter  board quarter the tile belongs to, -1 if it belongs to no quarter
-     * @param property property on this tile, or {@code null} if there is none
-     * @param npc      NPC on this tile, or {@code null} if there is none
+     * @param id      unique id of the tile on the board
+     * @param type    type of the tile
+     * @param quarter board quarter the tile belongs to, -1 if it belongs to no quarter
+     * @param npc     NPC on this tile, or {@code null} if there is none
      * @throws NullPointerException     if {@code type} is {@code null}
      * @throws IllegalArgumentException if a property is placed on a tile that is not part of the track
      */
-    public Tile(int id, TileType type, int quarter, Property property, Npc npc) {
+    public Tile(int id, TileType type, int quarter, Npc npc) {
         this.type = Objects.requireNonNull(type, "type must not be null");
-        if (property != null && type != TileType.TRACK) {
-            throw new IllegalArgumentException("Properties can only be placed on TRACK tiles");
-        }
         this.id = id;
         this.quarter = quarter;
-        this.property = property;
         this.npc = npc;
     }
 
@@ -56,15 +51,6 @@ public class Tile {
      */
     public boolean isSafe() {
         return type != TileType.TRACK;
-    }
-
-    /**
-     * Returns whether this tile has a property that nobody owns yet.
-     *
-     * @return {@code true} if the property on this tile can be bought
-     */
-    public boolean isBuyable() {
-        return property != null && property.getOwner().isEmpty();
     }
 
     /**
@@ -101,6 +87,35 @@ public class Tile {
      */
     public Optional<Property> getProperty() {
         return Optional.ofNullable(property);
+    }
+
+    /**
+     * Sets the property on this tile.
+     *
+     * @param property the new property
+     * @throws IllegalStateException if the tile already has a property
+     * @throws NullPointerException  if the given property is null
+     */
+    public void setProperty(Property property) {
+        if (this.property != null) {
+            throw new IllegalStateException("Tile already has a property");
+        }
+        if (property == null) {
+            throw new NullPointerException("Property must not be null");
+        }
+        this.property = property;
+    }
+
+    /**
+     * Removes the property from this tile.
+     *
+     * @throws IllegalStateException if the tile does not have a property
+     */
+    public void removeProperty() {
+        if (property == null) {
+            throw new IllegalStateException("Tile does not have a property");
+        }
+        property = null;
     }
 
     /**

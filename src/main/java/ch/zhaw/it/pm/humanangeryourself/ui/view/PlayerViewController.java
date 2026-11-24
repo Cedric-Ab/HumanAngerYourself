@@ -156,7 +156,7 @@ public class PlayerViewController {
      */
     private static Optional<String> offerLabel(Action action) {
         return switch (action) {
-            case BuyCard buyCard -> Optional.of("Buy " + buyCard.card());
+            case BuyCard buyCard -> Optional.of("Buy " + buyCard.offer().cardType());
             case BuyProperty buyProperty -> Optional.of("Buy " + buyProperty.size() + " property");
             case Bid bid -> Optional.of("Bid " + bid.amount());
             default -> Optional.empty();
