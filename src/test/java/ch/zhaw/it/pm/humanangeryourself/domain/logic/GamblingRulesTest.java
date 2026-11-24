@@ -1,8 +1,12 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.logic;
 
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.GambleResult;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.GambleResult.CardResult;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.GambleResult.MoneyResult;
 import ch.zhaw.it.pm.humanangeryourself.config.GamblingConfig;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -15,29 +19,45 @@ class GamblingRulesTest {
      */
     @Test
     void amountStaysWithinLimits() {
-        GamblingRules rules = new GamblingRules(new GamblingConfig(1, 1, 1, 500L, 10L));
+        GamblingRules rules = new GamblingRules(new GamblingConfig(50, 50, 0, 500L, 10L));
 
         for (int i = 0; i < 1000; i++) {
-            long amount = Math.abs(rules.spin());
+            MoneyResult result = assertInstanceOf(MoneyResult.class, rules.spin());
+            long amount = Math.abs(result.amount());
             assertTrue(amount >= 10 && amount < 500, "amount out of range: " + amount);
         }
     }
 
     /**
-     * Over many spins, players both win and lose money.
+     * Over many spins, players win money, lose money and draw cards.
      */
     @Test
-    void canWinAndLose() {
+    void canWinLoseAndDrawCards() {
         GamblingRules rules = new GamblingRules();
         boolean won = false;
         boolean lost = false;
+        boolean drewCard = false;
 
         for (int i = 0; i < 1000; i++) {
-            long amount = rules.spin();
-            won |= amount > 0;
-            lost |= amount < 0;
+            GambleResult result = rules.spin();
+            won |= result instanceof MoneyResult money && money.amount() > 0;
+            lost |= result instanceof MoneyResult money && money.amount() < 0;
+            drewCard |= result instanceof CardResult;
         }
 
-        assertTrue(won && lost);
+        assertTrue(won && lost && drewCard);
+    }
+
+    /**
+     * A guaranteed win pays out, even if normal spins are always lost.
+     */
+    @Test
+    void spinWinAlwaysPays() {
+        GamblingRules rules = new GamblingRules(new GamblingConfig(0, 100, 0, 500L, 10L));
+
+        for (int i = 0; i < 1000; i++) {
+            long amount = rules.spinWin().amount();
+            assertTrue(amount >= 10 && amount < 500, "amount out of range: " + amount);
+        }
     }
 }

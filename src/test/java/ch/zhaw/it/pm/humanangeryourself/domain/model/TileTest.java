@@ -2,14 +2,12 @@ package ch.zhaw.it.pm.humanangeryourself.domain.model;
 
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.api.PropertySize;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -18,44 +16,64 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class TileTest {
 
-    /**
-     * Properties can only be built on normal track tiles.
-     */
-    @ParameterizedTest
-    @EnumSource(value = TileType.class, names = "TRACK", mode = EnumSource.Mode.EXCLUDE)
-    void propertyOnlyOnTrack(TileType type) {
-        Property property = new Property(PropertySize.SMALL);
+    private final Player alice = new Player("Alice", PlayerColor.RED, 0, List.of());
+    private final Property property = new Property(alice, PropertySize.SMALL);
+    private Tile tile;
 
-        assertThrows(IllegalArgumentException.class, () -> new Tile(1, type, 0, property, null));
+    @BeforeEach
+    void setUp() {
+        tile = new Tile(1, TileType.TRACK, 0, null);
     }
 
     /**
-     * A tile can be bought until someone owns its property.
+     * A property placed on a track tile can be found there.
      */
     @Test
-    void buyableUntilOwned() {
-        Property property = new Property(PropertySize.SMALL);
-        Tile tile = new Tile(1, TileType.TRACK, 0, property, null);
-        assertTrue(tile.isBuyable());
+    void keepsPlacedProperty() {
+        tile.setProperty(property);
 
-        property.setOwner(new Player("Alice", PlayerColor.RED, 0, List.of()));
-        assertFalse(tile.isBuyable());
+        assertSame(property, tile.getProperty().orElseThrow());
     }
 
     /**
-     * The generated board has every tile once, with a safe tile every five steps.
+     * A second property can't replace the first one.
      */
     @Test
-    void boardLayoutIsCorrect() {
-        List<Tile> tiles = Tile.createAll();
+    void rejectsSecondProperty() {
+        tile.setProperty(property);
+        Property second = new Property(alice, PropertySize.LARGE);
 
-        // 60 track tiles + 1 finish + 4 colours * (4 home + 10 staircase)
-        assertEquals(117, tiles.size());
-        // Board rejects duplicate ids, so this also checks that all ids are unique
-        Board board = new Board(tiles);
-        for (int id = 1; id <= 60; id++) {
-            TileType expected = id % 5 == 0 ? TileType.SAFE : TileType.TRACK;
-            assertEquals(expected, board.getTileById(id).getType(), "tile " + id);
-        }
+        assertThrows(IllegalStateException.class, () -> tile.setProperty(second));
+        assertSame(property, tile.getProperty().orElseThrow());
+    }
+
+    /**
+     * A missing property can't be placed, removing has its own method.
+     */
+    @Test
+    void rejectsNullProperty() {
+        assertThrows(NullPointerException.class, () -> tile.setProperty(null));
+    }
+
+    /**
+     * After removing a property, the tile is free for a new one.
+     */
+    @Test
+    void removedPropertyFreesTile() {
+        tile.setProperty(property);
+
+        tile.removeProperty();
+
+        assertTrue(tile.getProperty().isEmpty());
+        tile.setProperty(property);
+        assertSame(property, tile.getProperty().orElseThrow());
+    }
+
+    /**
+     * Removing a property from an empty tile fails.
+     */
+    @Test
+    void removingMissingPropertyFails() {
+        assertThrows(IllegalStateException.class, tile::removeProperty);
     }
 }

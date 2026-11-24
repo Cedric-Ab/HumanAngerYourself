@@ -15,6 +15,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -27,7 +28,7 @@ class MovementRulesTest {
 
     @BeforeEach
     void setUp() {
-        board = new Board(Tile.createAll());
+        board = new Board();
         rules = new MovementRules(board);
     }
 
@@ -35,13 +36,7 @@ class MovementRulesTest {
      * Puts a single piece of the given color on a tile and returns its possible moves.
      */
     private List<MovePiece> movesFor(PlayerColor color, int tileId, int roll) {
-        int homeId = switch (color) {
-            case RED -> 101;
-            case YELLOW -> 201;
-            case BLUE -> 301;
-            case GREEN -> 401;
-        };
-        Piece piece = new Piece(0, board.getTileById(homeId));
+        Piece piece = new Piece(0, board.getHomeTiles(color).getFirst());
         piece.moveTo(board.getTileById(tileId));
         Player player = new Player("Test", color, 0, List.of(piece));
         return rules.getPossibleMoves(player, roll);
@@ -118,11 +113,55 @@ class MovementRulesTest {
     }
 
     /**
+     * Doubled rolls above 6 lead from the track into the staircase as well.
+     */
+    @ParameterizedTest
+    @CsvSource({
+            "55, 8,  107",
+            "58, 12, 114",
+            "60, 10, 114"
+    })
+    void entersStaircaseWithHighRoll(int current, int roll, int expected) {
+        assertEquals(List.of(new MovePiece(current, expected)), movesFor(PlayerColor.RED, current, roll));
+    }
+
+    /**
+     * Inside the staircase rolls above 6 move, finish and bounce back like any other roll.
+     */
+    @ParameterizedTest
+    @CsvSource({
+            "105, 8,  113",
+            "105, 10, 100",
+            "107, 12, 110"
+    })
+    void movesInStaircaseWithHighRoll(int current, int roll, int expected) {
+        assertEquals(List.of(new MovePiece(current, expected)), movesFor(PlayerColor.RED, current, roll));
+    }
+
+    /**
      * The exact number of steps brings the piece into the finish.
      */
     @Test
     void reachesFinishWithExactRoll() {
         assertEquals(List.of(new MovePiece(113, 100)), movesFor(PlayerColor.RED, 113, 2));
+    }
+
+    /**
+     * A player has only won when every single piece is in the finish.
+     */
+    @Test
+    void allPiecesMustBeInFinish() {
+        Tile finish = board.getTileById(100);
+        Piece first = new Piece(0, board.getTileById(101));
+        Piece second = new Piece(1, board.getTileById(102));
+        Player player = new Player("Test", PlayerColor.RED, 0, List.of(first, second));
+        assertFalse(rules.areAllPiecesInFinishArea(player));
+
+        first.moveTo(finish);
+        assertFalse(rules.areAllPiecesInFinishArea(player));
+
+        second.moveTo(finish);
+        assertTrue(rules.areAllPiecesInFinishArea(player));
     }
 
     /**
@@ -154,9 +193,27 @@ class MovementRulesTest {
      */
     @Test
     void safeTileSendsNobodyHome() {
-        Piece piece = new Piece(0, board.getTileById(101));
-        piece.moveTo(board.getTileById(5));
+        Piece moved = new Piece(0, board.getTileById(101));
+        Piece other = new Piece(1, board.getTileById(301));
+        List.of(moved, other).forEach(piece -> piece.moveTo(board.getTileById(5)));
+        Player mover = new Player("Mover", PlayerColor.RED, 0, List.of(moved));
+        Player opponent = new Player("Opponent", PlayerColor.BLUE, 0, List.of(other));
 
-        assertTrue(rules.piecesToSendBackHome(piece).isEmpty());
+        assertTrue(rules.piecesToSendBackHome(moved, mover, List.of(mover, opponent)).isEmpty());
+    }
+
+    /**
+     * On a normal tile opponents are sent home, but the player's own pieces stay.
+     */
+    @Test
+    void sendsOnlyOpponentsHome() {
+        Piece moved = new Piece(0, board.getTileById(101));
+        Piece own = new Piece(1, board.getTileById(102));
+        Piece other = new Piece(2, board.getTileById(301));
+        List.of(moved, own, other).forEach(piece -> piece.moveTo(board.getTileById(7)));
+        Player mover = new Player("Mover", PlayerColor.RED, 0, List.of(moved, own));
+        Player opponent = new Player("Opponent", PlayerColor.BLUE, 0, List.of(other));
+
+        assertEquals(List.of(other), rules.piecesToSendBackHome(moved, mover, List.of(mover, opponent)));
     }
 }
