@@ -78,6 +78,7 @@ public class Economy {
                 .orElseThrow(() -> new InvalidActionException(player, new BuyCard(npcTile.getId(), cardType),
                         player.getName() + " cannot buy " + cardType + " from the NPC on tile " + npcTile.getId()));
         player.changeBalanceBy(-offer.price());
+        player.addCard(Card.fromType(cardType));
     }
 
     /**

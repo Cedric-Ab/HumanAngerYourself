@@ -16,6 +16,7 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Property;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.TileType;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -51,9 +52,9 @@ class EconomyTest {
         config = new GameConfig(1_000, 100, 10, 2, defaults.gambling(), defaults.cards(), Map.of(
                 PropertySize.SMALL, new PropertyPrice(100, 10),
                 PropertySize.MEDIUM, new PropertyPrice(200, 20),
-                PropertySize.LARGE, new PropertyPrice(500, 50)));
+                PropertySize.LARGE, new PropertyPrice(500, 50)), List.of());
         economy = new Economy(config);
-        board = new Board();
+        board = new Board(Map.of());
         player = newPlayer(PlayerColor.RED, 1_000);
         otherPlayer = newPlayer(PlayerColor.BLUE, 750);
     }
@@ -90,10 +91,9 @@ class EconomyTest {
 
     @Test
     void buyCardChargesPrice() {
-        player.addCard(Card.fromType(CardType.SWITCH));
-        CardOffer offer = new CardOffer(CardType.TRY_AGAIN, 125);
+        Tile npcTile = visitNpc(CardType.TRY_AGAIN, 125);
 
-        economy.buyCard(player, offer);
+        economy.buyCard(player, npcTile, CardType.TRY_AGAIN);
 
         assertEquals(875, player.getMoney());
     }
@@ -101,12 +101,18 @@ class EconomyTest {
     @Test
     void buyCardAddsToHand() {
         player.addCard(Card.fromType(CardType.SWITCH));
-        CardOffer offer = new CardOffer(CardType.TRY_AGAIN, 125);
+        Tile npcTile = visitNpc(CardType.TRY_AGAIN, 125);
 
-        economy.buyCard(player, offer);
+        economy.buyCard(player, npcTile, CardType.TRY_AGAIN);
 
         List<CardType> expected = List.of(CardType.SWITCH, CardType.TRY_AGAIN);
         assertEquals(expected, player.getCards().stream().map(Card::type).toList());
+    }
+
+    private Tile visitNpc(CardType cardType, long price) {
+        Tile npcTile = new Tile(5, TileType.SAFE, 0, new Npc("Seller", List.of(new CardOffer(cardType, price))));
+        player.getPieces().get(0).moveTo(npcTile);
+        return npcTile;
     }
 
     @ParameterizedTest
@@ -163,7 +169,7 @@ class EconomyTest {
     @CsvSource({"-1, true", "0, false", "1, false"})
     void zeroDebtLimitUsesThreshold(long balance, boolean expected) {
         GameConfig noDebt = new GameConfig(config.startMoney(), 0, config.maxHandSize(),
-                config.maxPropertiesPerQuarter(), config.gambling(), config.cards(), config.propertyPrices());
+                config.maxPropertiesPerQuarter(), config.gambling(), config.cards(), config.propertyPrices(), config.npcs());
         economy = new Economy(noDebt);
         player = newPlayer(PlayerColor.RED, balance);
 
@@ -244,9 +250,9 @@ class EconomyTest {
 
         assertEquals(3, offers.size());
 
-        assertTrue(offers.contains(new BuyCard(new CardOffer(CardType.TRY_AGAIN, 40))));
-        assertTrue(offers.contains(new BuyCard(new CardOffer(CardType.SPEED_BOOST, 100))));
-        assertFalse(offers.contains(new BuyCard(new CardOffer(CardType.SWITCH, 101))));
+        assertTrue(offers.contains(new BuyCard(1, CardType.TRY_AGAIN)));
+        assertTrue(offers.contains(new BuyCard(1, CardType.SPEED_BOOST)));
+        assertFalse(offers.contains(new BuyCard(1, CardType.SWITCH)));
     }
 
     @Test
@@ -255,8 +261,8 @@ class EconomyTest {
 
         List<BuyCard> offers = economy.getBuyableCards(player);
 
-        assertTrue(offers.contains(new BuyCard(new CardOffer(CardType.TRY_AGAIN, 40))));
-        assertTrue(offers.contains(new BuyCard(new CardOffer(CardType.MONEY_TIGER, 75))));
+        assertTrue(offers.contains(new BuyCard(1, CardType.TRY_AGAIN)));
+        assertTrue(offers.contains(new BuyCard(16, CardType.MONEY_TIGER)));
     }
 
     @Test
@@ -281,7 +287,7 @@ class EconomyTest {
     @ValueSource(longs = {-1, 0, 99})
     void cardOffersRequireFunds(long balance) {
         player = newPlayer(PlayerColor.RED, balance);
-        Tile npcTile = new Tile(1, TileType.TRACK, 0,
+        Tile npcTile = new Tile(1, TileType.SAFE, 0,
                 new Npc("Seller", List.of(new CardOffer(CardType.TRY_AGAIN, 100))));
         player.getPieces().get(0).moveTo(npcTile);
 
@@ -443,13 +449,17 @@ class EconomyTest {
 
     @Test
     void noDuplicatePropertyOffers() {
-        visitSameTileTwice();
+        visitSameTileTwice(board.getTileById(1));
         assertEquals(1, economy.getBuyableProperties(player, board).size());
     }
 
     @Test
     void noDuplicateCardOffers() {
-        visitSameTileTwice();
+        Tile npcTile = new Tile(1, TileType.SAFE, 0, new Npc("Jimmy", List.of(
+                new CardOffer(CardType.SPEED_BOOST, 100),
+                new CardOffer(CardType.SWITCH, 101))));
+        visitSameTileTwice(npcTile);
+        
         assertEquals(1, economy.getBuyableCards(player).size());
     }
 
@@ -470,11 +480,8 @@ class EconomyTest {
         player.getPieces().get(3).moveTo(occupied);
     }
 
-    private void visitSameTileTwice() {
+    private void visitSameTileTwice(Tile tile) {
         player = newPlayer(PlayerColor.RED, 100);
-        Tile tile = new Tile(1, TileType.TRACK, 0, new Npc("Jimmy", List.of(
-                new CardOffer(CardType.SPEED_BOOST, 100),
-                new CardOffer(CardType.SWITCH, 101))));
         player.getPieces().get(0).moveTo(tile);
         player.getPieces().get(1).moveTo(tile);
     }
@@ -490,11 +497,11 @@ class EconomyTest {
 
     private void visitNpcs() {
         player = newPlayer(PlayerColor.RED, 100);
-        Tile firstNpcTile = new Tile(1, TileType.TRACK, 0, new Npc("First", List.of(
+        Tile firstNpcTile = new Tile(1, TileType.SAFE, 0, new Npc("First", List.of(
                 new CardOffer(CardType.TRY_AGAIN, 40),
                 new CardOffer(CardType.SPEED_BOOST, 100),
                 new CardOffer(CardType.SWITCH, 101))));
-        Tile secondNpcTile = new Tile(16, TileType.TRACK, 1,
+        Tile secondNpcTile = new Tile(16, TileType.SAFE, 1,
                 new Npc("Second", List.of(new CardOffer(CardType.MONEY_TIGER, 75))));
         player.getPieces().get(0).moveTo(firstNpcTile);
         player.getPieces().get(1).moveTo(secondNpcTile);

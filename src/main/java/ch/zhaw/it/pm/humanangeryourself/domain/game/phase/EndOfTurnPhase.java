@@ -96,7 +96,6 @@ public class EndOfTurnPhase extends GamePhaseBase {
     private GamePhase buyCard(Player player, BuyCard buyCard) {
         Tile npcTile = getGame().getBoard().getTileById(buyCard.tile());
         getGame().getEconomy().buyCard(player, npcTile, buyCard.card());
-        player.addCard(Game.cardFromType(buyCard.card()));
         getGame().getTurn().markNpcCardBought();
 
         return new DiscardPhase(getGame(), this);
