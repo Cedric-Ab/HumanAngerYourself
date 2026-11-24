@@ -231,6 +231,7 @@ public class Economy {
     private Stream<Tile> findPlayersPositions(Player player) {
         return player.getPieces()
                 .stream()
-                .map(Piece::getCurrentTile);
+                .map(Piece::getCurrentTile)
+                .distinct();
     }
 }

@@ -441,6 +441,18 @@ class EconomyTest {
         assertTrue(economy.getBuyableProperties(playerWithoutPieces, board).isEmpty());
     }
 
+    @Test
+    void noDuplicatePropertyOffers() {
+        visitSameTileTwice();
+        assertEquals(1, economy.getBuyableProperties(player, board).size());
+    }
+
+    @Test
+    void noDuplicateCardOffers() {
+        visitSameTileTwice();
+        assertEquals(1, economy.getBuyableCards(player).size());
+    }
+
     private Tile visitPropertyTile(long balance) {
         player = newPlayer(PlayerColor.RED, balance);
         Tile tile = board.getTileById(1);
@@ -456,6 +468,15 @@ class EconomyTest {
         player.getPieces().get(1).moveTo(board.getTileById(16));
         player.getPieces().get(2).moveTo(board.getTileById(5));
         player.getPieces().get(3).moveTo(occupied);
+    }
+
+    private void visitSameTileTwice() {
+        player = newPlayer(PlayerColor.RED, 100);
+        Tile tile = new Tile(1, TileType.TRACK, 0, new Npc("Jimmy", List.of(
+                new CardOffer(CardType.SPEED_BOOST, 100),
+                new CardOffer(CardType.SWITCH, 101))));
+        player.getPieces().get(0).moveTo(tile);
+        player.getPieces().get(1).moveTo(tile);
     }
 
     private void visitQuarters(int propertyCount) {
