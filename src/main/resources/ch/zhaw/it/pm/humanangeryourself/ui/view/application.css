@@ -97,6 +97,12 @@
 }
 
 
+.property {
+    -fx-fill: -player-color;
+    -fx-stroke: black;
+    -fx-stroke-width: 1;
+}
+
 .piece.movable {
     -fx-stroke: white;
     -fx-stroke-width: 3;
@@ -107,6 +113,11 @@
     -fx-stroke: -color-highlight;
     -fx-stroke-width: 6;
     -fx-effect: dropshadow(gaussian, black, 10, 0.6, 0, 0);
+}
+
+.buyable {
+    -fx-stroke: -color-highlight;
+    -fx-stroke-width: 3;
 }
 
 .selected-source {
