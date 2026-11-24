@@ -6,6 +6,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.BuyProperty;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.CardOffer;
 import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 import ch.zhaw.it.pm.humanangeryourself.config.PropertyPrice;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
@@ -62,7 +63,7 @@ public class Economy {
      */
     public void buyCard(Player player, CardOffer cardOffer) {
         player.changeBalanceBy(-cardOffer.price());
-        player.addCard(cardOffer.cardType());
+        player.addCard(Card.fromType(cardOffer.cardType()));
     }
 
     /**
@@ -144,7 +145,6 @@ public class Economy {
      * @return the possible {@link BuyCard} actions, empty if none are available
      */
     public List<BuyCard> getBuyableCards(Player player) {
-        // TODO: needs to be tested
         long budget = player.getMoney();
 
         if (budget <= 0) {
@@ -168,7 +168,6 @@ public class Economy {
      * @return the possible {@link BuyProperty} actions, empty if none are available
      */
     public List<BuyProperty> getBuyableProperties(Player player, Board board) {
-        // TODO: needs to be tested
         long budget = player.getMoney();
         Map<PropertySize, PropertyPrice> propertyPrices = config.propertyPrices();
 

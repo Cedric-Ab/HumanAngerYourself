@@ -8,6 +8,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.BuyProperty;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.CardOffer;
 import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 import ch.zhaw.it.pm.humanangeryourself.config.PropertyPrice;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Npc;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
@@ -89,7 +90,7 @@ class EconomyTest {
 
     @Test
     void buyCardChargesPrice() {
-        player.addCard(CardType.SWITCH);
+        player.addCard(Card.fromType(CardType.SWITCH));
         CardOffer offer = new CardOffer(CardType.TRY_AGAIN, 125);
 
         economy.buyCard(player, offer);
@@ -99,12 +100,13 @@ class EconomyTest {
 
     @Test
     void buyCardAddsToHand() {
-        player.addCard(CardType.SWITCH);
+        player.addCard(Card.fromType(CardType.SWITCH));
         CardOffer offer = new CardOffer(CardType.TRY_AGAIN, 125);
 
         economy.buyCard(player, offer);
 
-        assertEquals(List.of(CardType.SWITCH, CardType.TRY_AGAIN), player.getCards());
+        List<CardType> expected = List.of(CardType.SWITCH, CardType.TRY_AGAIN);
+        assertEquals(expected, player.getCards().stream().map(Card::type).toList());
     }
 
     @ParameterizedTest
