@@ -1,6 +1,7 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game.phase;
 
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
+import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.DecisionInfo;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
@@ -100,11 +101,11 @@ public abstract class GamePhaseBase implements GamePhase {
      * Validates that the provided action is a possible action in the context of this game phase.
      *
      * @param action the action to be validated
-     * @throws IllegalArgumentException if the provided action is illegal in this game phase
+     * @throws InvalidActionException if the provided action is illegal in this game phase
      */
     protected void validateAction(@NotNull Action action) {
         if (isIllegalAction(action)) {
-            throw new IllegalArgumentException("Action is not available in this phase.");
+            throw new InvalidActionException(action, "Action is not available in this phase.");
         }
     }
 
@@ -112,11 +113,11 @@ public abstract class GamePhaseBase implements GamePhase {
      * Validates that the provided player is the one associated with the current decision in this game phase.
      *
      * @param player the player to be validated
-     * @throws IllegalArgumentException if the provided player is not the one associated with the current decision
+     * @throws InvalidActionException if the provided player is not the one associated with the current decision
      */
     protected void validatePlayer(@NotNull Player player) {
         if (!getDecision().decider().equals(player.getColor())) {
-            throw new IllegalArgumentException(
+            throw new InvalidActionException(player,
                     "Only the player associated with this decision can perform actions in this phase.");
         }
     }
