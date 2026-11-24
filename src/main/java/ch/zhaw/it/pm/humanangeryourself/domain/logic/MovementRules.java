@@ -9,9 +9,12 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.TileType;
 
+import javafx.util.Pair;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 /**
@@ -123,47 +126,77 @@ public class MovementRules {
         List<Piece> pieces = player.getPieces();
 
         for (Piece piece : pieces) {
-            int currentTile = piece.getCurrentTile().getId();
-            if (piece.getCurrentTile().getType() == TileType.HOME) {
-                if (roll == 5 || roll == 6) {
-                    possibleActions.add(new MovePiece(currentTile, getStartTileId(player)));
-                }
-            } else if (piece.getCurrentTile().getType() == TileType.TRACK
-                    || piece.getCurrentTile().getType() == TileType.SAFE) {
-
-                int dest = calculateDestinationTile(currentTile, roll);
-
-                if (wouldEnterStaircase(currentTile, roll, player)) {
-                    int endTile = getEndTileId(player);
-                    int firstStaircaseTile = getFirstStaircaseTileId(player);
-
-                    int stepsToEnd = (endTile - currentTile + 60) % 60;
-                    int remainingRoll = roll - stepsToEnd;
-
-                    int staircaseDestination = firstStaircaseTile + remainingRoll - 1;
-
-                    possibleActions.add(new MovePiece(currentTile, staircaseDestination));
-                } else {
-                    possibleActions.add(new MovePiece(currentTile, dest));
-                }
-
-            } else if (piece.getCurrentTile().getType() == TileType.STAIRCASE) {
-                int lastTile = getLastStaircaseTileId(player);
-                int remainingSteps = lastTile - currentTile + 1;
-
-                if (roll == remainingSteps && !player.isInDebt()) {
-                    possibleActions.add(new MovePiece(currentTile, FINISH_AREA_ID));
-                } else if(roll == remainingSteps && player.isInDebt()){
-                    throw new InvalidActionException("You must be debt free to enter the finish area.");
-                } else if (roll < remainingSteps) {
-                    possibleActions.add(new MovePiece(currentTile, currentTile + roll));
-                } else {
-                    int destination = lastTile - (roll - remainingSteps);
-                    possibleActions.add(new MovePiece(currentTile, destination));
-                }
-            }
+            getPossibleMoveOfPiece(player, piece, roll).ifPresent(possibleActions::add);
         }
         return possibleActions;
+    }
+
+    public Optional<MovePiece> getPossibleMoveOfPiece(Player player, Piece piece, int roll) {
+        int startTile = piece.getCurrentTile().getId();
+
+        int intermediateDestination = startTile;
+        int remainingSteps = roll;
+        while (remainingSteps > 0) {
+            Pair<Integer, Integer> result = partialMove(intermediateDestination, remainingSteps, player);
+            intermediateDestination = result.getKey();
+            remainingSteps = result.getValue();
+        }
+        if (intermediateDestination == startTile) {
+            return Optional.empty();
+        }
+
+        return Optional.of(new MovePiece(startTile, intermediateDestination));
+    }
+
+    private Pair<Integer, Integer> partialMove(int currentTile, int steps, Player player) {
+        TileType currentTileType = board.getTileById(currentTile).getType();
+
+        return switch (currentTileType) {
+            case HOME -> (steps == 5 || steps == 6)
+                    ? new Pair<>(getStartTileId(player), 0) // move onto the track
+                    : new Pair<>(currentTile, 0); // stay put
+            case TRACK, SAFE -> partialMoveOnTrack(currentTile, steps, player);
+            case STAIRCASE -> partialMoveOnStaircase(currentTile, steps, player);
+            default -> null;
+        };
+    }
+
+    private Pair<Integer, Integer> partialMoveOnTrack(int currentTile, int steps, Player player) {
+        int endOfTrack = getEndTileId(player);
+        int stepsToEnd = (endOfTrack - currentTile + 60) % 60;
+
+        if (steps > stepsToEnd) { // when reaching the end of the track...
+            return new Pair<>(getFirstStaircaseTileId(player), steps - stepsToEnd - 1); // ...move onto the staircase
+        } else {
+            return new Pair<>(currentTile + steps % 60, 0); // otherwise, simply move along the track the remaining steps
+        }
+    }
+
+    private Pair<Integer, Integer> partialMoveOnStaircase(int currentTile, int steps, Player player) {
+        int topOfStaircase = getLastStaircaseTileId(player);
+
+        if (currentTile == topOfStaircase) { // when starting at the top...
+            // ...move down
+            int bottomOfStaircase = getFirstStaircaseTileId(player);
+            int stepsToBottom = currentTile - bottomOfStaircase;
+
+            if (steps > stepsToBottom) { // when reaching the bottom of the staircase...
+                return new Pair<>(bottomOfStaircase, steps - stepsToBottom); // ...stop the partial move
+            } else {
+                return new Pair<>(currentTile - steps, 0); // otherwise, simply move down the remaining steps
+            }
+        } else { // when starting anywhere else on the staircase...
+            // ...move up
+            int stepsToTop = topOfStaircase - currentTile;
+
+            if (steps == stepsToTop && !player.isInDebt()) { // only with the exact roll and no debt...
+                return new Pair<>(FINISH_AREA_ID, 0); // ...may you enter the finish area
+            } else if (steps > stepsToTop) { // when reaching the top of the staircase...
+                return new Pair<>(topOfStaircase, steps - stepsToTop); // ...stop the partial move
+            } else {
+                return new Pair<>(currentTile + steps, 0); // otherwise, simply move up the remaining steps
+            }
+        }
     }
 
     /**
