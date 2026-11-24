@@ -50,8 +50,8 @@ public class ChooseMovePhase extends GamePhaseBase {
     }
 
     /**
-     * Executes the move chosen by the player. The piece is moved to the target tile and all pieces
-     * that have to go back home because of this move (for example, pieces that were hit) are sent home.
+     * Executes the move chosen by the player. The piece is moved to the target tile and all pieces from other players
+     * on the same tile are sent back home.
      *
      * @param player the player who made the decision
      * @param action the chosen action, must be a {@link MovePiece}
@@ -80,6 +80,13 @@ public class ChooseMovePhase extends GamePhaseBase {
 
         if (getGame().getMovementRules().areAllPiecesInFinishArea(getCurrentPlayer())) {
             return new GameOverPhase(getGame(), getCurrentPlayer());
+        }
+
+        if (!(getGame().getTurn().getPrimaryActionResult() instanceof RollResult(int lastRoll))) {
+            throw new IllegalStateException("There is no RollResult even though the player just moved");
+        }
+        if (lastRoll == 6 || lastRoll == 12) {
+            return new RollAgainPhase(getGame());
         }
 
         return new EndOfTurnPhase(getGame());
