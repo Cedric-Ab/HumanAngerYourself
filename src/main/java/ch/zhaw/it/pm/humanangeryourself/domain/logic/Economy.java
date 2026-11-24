@@ -8,6 +8,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.CardOffer;
 import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
+import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
 
@@ -99,15 +100,27 @@ public class Economy {
      */
     public void bankrupt(Board board, Player player) { }
 
+
     /**
-     * Returns all card purchases the given player can currently make.
+     * Returns all cards the given player can buy from NPCs right now.
+     * <p>
+     * A card can be bought if an NPC that sells it stands on the same tile as one of the player's pieces,
+     * the player is not in debt and the player can pay the price.
+     * Whether the player has already bought a card in this turn is not checked here.
+     * </p>
      *
      * @param player the player who wants to buy cards, must not be {@code null}
      * @return the possible {@link BuyCard} actions, empty if none are available
      */
     public List<BuyCard> getBuyableCards(@NotNull Player player) {
-        // TODO: medium priority
-        return List.of();
+        return player.getPieces().stream()
+                .map(Piece::getCurrentTile)
+                .distinct()
+                .flatMap(tile -> tile.getNpc().stream()
+                        .flatMap(npc -> npc.getOffers().stream())
+                        .filter(offer -> canBuyCard(player, offer))
+                        .map(offer -> new BuyCard(tile.getId(), offer.cardType())))
+                .toList();
     }
 
     /**
