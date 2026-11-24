@@ -4,6 +4,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Contains all relevant game information for the UI.
@@ -30,4 +31,17 @@ public record GameSnapshot(
         PrimaryActionResult primaryActionResult,
         DecisionInfo decision,
         PlayerColor winner
-) { }
+) {
+
+    /**
+     * Returns the NPC that stands on the given tile.
+     *
+     * @param tile id of the tile
+     * @return the NPC, or an empty Optional if there is no NPC on the tile
+     */
+    public Optional<NpcInfo> npcAt(int tile) {
+        return npcs.stream()
+                .filter(npc -> npc.tile() == tile)
+                .findFirst();
+    }
+}

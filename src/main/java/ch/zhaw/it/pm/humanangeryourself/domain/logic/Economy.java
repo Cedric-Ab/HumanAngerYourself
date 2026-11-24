@@ -1,8 +1,11 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.logic;
 
+import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.PropertySize;
 import ch.zhaw.it.pm.humanangeryourself.api.action.BuyCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.BuyProperty;
+import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.CardOffer;
 import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
@@ -11,6 +14,7 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Game logic for everything related to money: buying properties and cards,
@@ -55,9 +59,21 @@ public class Economy {
     public void buyProperty() { }
 
     /**
-     * Executes the purchase of an action card. Not implemented yet.
+     * Pays for a card bought from the NPC on the given tile.
+     * <p>
+     * Only the money is changed here.
+     * </p>
+     *
+     * @param player   the player who buys the card
+     * @param npcTile  the tile the selling NPC stands on
+     * @param cardType the type of card to buy
      */
-    public void buyCard() { }
+    public void buyCard(Player player, Tile npcTile, CardType cardType) {
+        CardOffer offer = findBuyableOffer(player, npcTile, cardType)
+                .orElseThrow(() -> new InvalidActionException(player, new BuyCard(npcTile.getId(), cardType),
+                        player.getName() + " cannot buy " + cardType + " from the NPC on tile " + npcTile.getId()));
+        player.changeBalanceBy(-offer.price());
+    }
 
     /**
      * Collects rent from a player who landed on a property owned by another player.
@@ -104,4 +120,35 @@ public class Economy {
         // TODO: low priority
         return List.of();
     }
+
+
+    /**
+     * Finds the offer for the given card at the NPC on the given tile if the player may buy it.
+     *
+     * @param player   the player who wants to buy the card
+     * @param npcTile  the tile the NPC stands on
+     * @param cardType the type of card to buy
+     * @return the offer, or an empty Optional if the player may not buy the card there
+     */
+    private Optional<CardOffer> findBuyableOffer(Player player, Tile npcTile, CardType cardType) {
+        if (player.getPieces(npcTile).isEmpty()) {
+            return Optional.empty();
+        }
+        return npcTile.getNpc()
+                .flatMap(npc -> npc.findOffer(cardType))
+                .filter(offer -> canBuyCard(player, offer));
+    }
+
+    /**
+     * Returns whether the player's money allows buying the offered card.
+     * Players in debt cannot buy anything and a purchase must not lead into debt.
+     *
+     * @param player the player who wants to buy
+     * @param offer  the offered card with its price
+     * @return {@code true} if the player can pay for the card
+     */
+    private boolean canBuyCard(Player player, CardOffer offer) {
+        return !player.isInDebt() && player.getMoney() >= offer.price();
+    }
+
 }

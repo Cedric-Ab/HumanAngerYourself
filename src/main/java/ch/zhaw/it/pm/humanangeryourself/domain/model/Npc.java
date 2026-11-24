@@ -1,18 +1,24 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.model;
 
+import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.CardOffer;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * A non-player character on the board that sells action cards.
  */
 public class Npc {
-    /** Name of the NPC. */
+    /**
+     * Name of the NPC.
+     */
     private final String name;
 
-    /** Cards this NPC sells, with their prices. */
+    /**
+     * Cards this NPC sells, with their prices.
+     */
     private final List<CardOffer> offers;
 
     /**
@@ -34,6 +40,18 @@ public class Npc {
      */
     public List<CardOffer> getOffers() {
         return offers;
+    }
+
+    /**
+     * Returns the offer of this NPC for the given card type.
+     *
+     * @param cardType type of the card to look for
+     * @return the offer, or an empty Optional if this NPC does not sell the card
+     */
+    public Optional<CardOffer> findOffer(CardType cardType) {
+        return offers.stream()
+                .filter(offer -> offer.cardType() == cardType)
+                .findFirst();
     }
 
     /**

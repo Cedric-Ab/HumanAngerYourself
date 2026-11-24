@@ -5,6 +5,8 @@ import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -44,17 +46,23 @@ public class Board {
     private final List<Tile> tiles = new ArrayList<>();
 
     /**
-     * Creates the board.
+     * Creates the board and places the given NPCs on it.
+     *
+     * @param npcsByTileId NPCs to place, by the id of the safe tile they stand on
+     * @throws NullPointerException     if {@code npcsByTileId} is {@code null}
+     * @throws IllegalArgumentException if an NPC is placed on a tile that does not exist or is not a safe space
      */
-    public Board() {
+    public Board(Map<Integer, Npc> npcsByTileId) {
+        Objects.requireNonNull(npcsByTileId, "npcsByTileId must not be null");
         for (int quarter = 0; quarter < QUARTER_COUNT; quarter++) {
-            addTrackTiles(quarter);
+            addTrackTiles(quarter, npcsByTileId);
         }
         tiles.add(new Tile(FINISH_TILE_ID, TileType.FINISH_AREA, NO_QUARTER, null, null));
         for (int quarter = 0; quarter < QUARTER_COUNT; quarter++) {
             addHomeAndStaircaseTiles(quarter);
         }
         requireUniqueIds();
+        requireAllNpcsPlaced(npcsByTileId);
     }
 
     /**
@@ -147,16 +155,31 @@ public class Board {
     }
 
     /**
+     * Checks that every given NPC was placed on its tile.
+     *
+     * @param npcsByTileId NPCs that should be on the board, by tile id
+     * @throws IllegalArgumentException if a tile does not exist or is not part of the track
+     */
+    private void requireAllNpcsPlaced(Map<Integer, Npc> npcsByTileId) {
+        for (int tileId : npcsByTileId.keySet()) {
+            if (getTileById(tileId).getNpc().isEmpty()) {
+                throw new IllegalArgumentException("NPC on tile " + tileId + " could not be placed, tile is not on the track");
+            }
+        }
+    }
+
+    /**
      * Adds the track tiles of one quarter, in moving direction.
      * Every 5th tile is a safe space.
      *
-     * @param quarter quarter to add the tiles for, from 0 to 3
+     * @param quarter      quarter to add the tiles for, from 0 to 3
+     * @param npcsByTileId NPCs to place, by tile id
      */
-    private void addTrackTiles(int quarter) {
+    private void addTrackTiles(int quarter, Map<Integer, Npc> npcsByTileId) {
         for (int i = 1; i <= TILES_PER_QUARTER; i++) {
             int id = quarter * TILES_PER_QUARTER + i;
             TileType type = id % SAFE_INTERVAL == 0 ? TileType.SAFE : TileType.TRACK;
-            tiles.add(new Tile(id, type, quarter, null, null));
+            tiles.add(new Tile(id, type, quarter, null, npcsByTileId.get(id)));
         }
     }
 

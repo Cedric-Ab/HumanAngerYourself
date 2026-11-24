@@ -36,11 +36,15 @@ public class Tile {
      * @param npc      NPC on this tile, or {@code null} if there is none
      * @throws NullPointerException     if {@code type} is {@code null}
      * @throws IllegalArgumentException if a property is placed on a tile that is not part of the track
+     * @throws IllegalArgumentException if an NPC is placed on a tile that is not a safe space
      */
     public Tile(int id, TileType type, int quarter, Property property, Npc npc) {
         this.type = Objects.requireNonNull(type, "type must not be null");
         if (property != null && type != TileType.TRACK) {
             throw new IllegalArgumentException("Properties can only be placed on TRACK tiles");
+        }
+        if (npc != null && type != TileType.SAFE) {
+            throw new IllegalArgumentException("NPCs can only be placed on SAFE tiles, tile " + id + " is " + type);
         }
         this.id = id;
         this.quarter = quarter;

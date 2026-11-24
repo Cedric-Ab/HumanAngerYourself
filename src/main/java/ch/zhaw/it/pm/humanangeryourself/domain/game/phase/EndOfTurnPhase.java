@@ -7,6 +7,8 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.EndTurn;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
+import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -84,15 +86,21 @@ public class EndOfTurnPhase extends GamePhaseBase {
     }
 
     /**
-     * Buys a card for the player. Not implemented yet, the phase is only offered again.
+     * Buys a card from an NPC for the player, the player pays the price and gets the card.
+     * Afterwards no further NPC card can be bought in this turn. If the player now holds more cards
+     * than allowed, a card has to be discarded first, then the player is back in this phase.
      *
      * @param player  the player who buys the card
      * @param buyCard the chosen purchase
-     * @return this phase with an updated decision
+     * @return a {@link DiscardPhase} that leads back to this phase
      */
     private GamePhase buyCard(Player player, BuyCard buyCard) {
-        // TODO: medium priority
-        return process();
+        Tile npcTile = getGame().getBoard().getTileById(buyCard.tile());
+        getGame().getEconomy().buyCard(player, npcTile, buyCard.card());
+        player.addCard(Game.cardFromType(buyCard.card()));
+        getGame().getTurn().markNpcCardBought();
+
+        return new DiscardPhase(getGame(), this);
     }
 
     /**
