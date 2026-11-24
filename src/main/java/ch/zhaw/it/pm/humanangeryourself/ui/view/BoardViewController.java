@@ -8,6 +8,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.BuyProperty;
 import ch.zhaw.it.pm.humanangeryourself.api.action.MovePiece;
 import ch.zhaw.it.pm.humanangeryourself.api.action.TargetPiece;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.NpcInfo;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PieceInfo;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PropertyInfo;
 import ch.zhaw.it.pm.humanangeryourself.ui.viewmodel.GameViewModel;
@@ -17,7 +18,10 @@ import javafx.beans.binding.NumberBinding;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
@@ -71,7 +75,15 @@ public class BoardViewController {
     /** Distance between the property squares and the short end of the tile. */
     private static final double PROPERTY_EDGE_INSET = 4;
 
+    /** Diameter of the NPC shop marker. */
+    private static final double NPC_MARKER_SIZE = 16;
+    /** Distance between the NPC marker and the short end of the tile (opposite of the properties). */
+    private static final double NPC_EDGE_INSET = 3;
+    /** Symbol shown on the NPC shop marker. */
+    private static final String NPC_SYMBOL = "$";
+
     private static final String PIECE_STYLE = "piece";
+    private static final String NPC_STYLE = "npc";
     private static final String PROPERTY_STYLE = "property";
     private static final String CLICKABLE_STYLE = "clickable";
     private static final String SELECTED_SOURCE_STYLE = "selected-source";
@@ -89,6 +101,8 @@ public class BoardViewController {
     private Pane boardPane;
     @FXML
     private Pane propertyPane;
+    @FXML
+    private Pane npcPane;
     @FXML
     private Pane piecePane;
     @FXML
@@ -140,6 +154,7 @@ public class BoardViewController {
     private void render(GameSnapshot snapshot) {
         highlightActiveHome(snapshot.currentPlayer());
         drawProperties(snapshot.properties());
+        drawNpcs(snapshot.npcs());
         drawPieces(snapshot.pieces(), movablePieceTiles(snapshot), snapshot.decision().decider());
         enableInteractions(snapshot);
     }
@@ -237,6 +252,45 @@ public class BoardViewController {
             case MEDIUM -> 2;
             case LARGE -> 3;
         };
+    }
+
+    private void drawNpcs(List<NpcInfo> npcs) {
+        npcPane.getChildren().clear();
+        for (NpcInfo npc : npcs) {
+            Shape tile = tile(npc.tile());
+            npcPane.getChildren().add(createNpcMarker(tile));
+            Tooltip.install(tile, new Tooltip(shopDescription(npc)));
+        }
+    }
+
+    /**
+     * Creates a round "$" marker near the short end of the tile opposite of the property squares,
+     * so the shop stays visible next to properties and pieces.
+     */
+    private static Label createNpcMarker(Shape tile) {
+        Bounds bounds = tile.getBoundsInLocal();
+        double inset = NPC_EDGE_INSET + NPC_MARKER_SIZE / 2;
+        Point2D center = bounds.getWidth() >= bounds.getHeight()
+                ? tile.localToParent(bounds.getMaxX() - inset, bounds.getCenterY())
+                : tile.localToParent(bounds.getCenterX(), bounds.getMaxY() - inset);
+
+        Label marker = new Label(NPC_SYMBOL);
+        marker.getStyleClass().add(NPC_STYLE);
+        marker.setAlignment(Pos.CENTER);
+        marker.setMinSize(NPC_MARKER_SIZE, NPC_MARKER_SIZE);
+        marker.setPrefSize(NPC_MARKER_SIZE, NPC_MARKER_SIZE);
+        marker.setMaxSize(NPC_MARKER_SIZE, NPC_MARKER_SIZE);
+        marker.relocate(center.getX() - NPC_MARKER_SIZE / 2, center.getY() - NPC_MARKER_SIZE / 2);
+        return marker;
+    }
+
+    /**
+     * Describes the shop of an NPC with all its offers, e.g. "Trader\nANGER_REVERSE: 35000".
+     */
+    private static String shopDescription(NpcInfo npc) {
+        return npc.name() + npc.offers().stream()
+                .map(offer -> "\n" + offer.cardType() + ": " + offer.price())
+                .collect(Collectors.joining());
     }
 
     private Circle createPiece(PlayerColor color, double centerX, double centerY, double radius) {
