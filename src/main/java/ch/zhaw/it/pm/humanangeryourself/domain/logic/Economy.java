@@ -69,6 +69,7 @@ public class Economy {
      * Collects rent from a player who landed on a property owned by another player.
      * <p>
      * If there is no property on the tile, this function does nothing and returns without throwing.
+     * </p>
      *
      * @param debtor the player who moved their piece
      * @param tile   the tile the player landed on
@@ -80,9 +81,14 @@ public class Economy {
 
         Property property = tile.getProperty().get();
         long rent = property.getRent(config);
+        Player owner = property.getOwner();
+
+        if (owner == debtor) {
+            return;
+        }
 
         debtor.changeBalanceBy(-rent);
-        property.getOwner().changeBalanceBy(rent);
+        owner.changeBalanceBy(rent);
     }
 
     /**
@@ -92,11 +98,19 @@ public class Economy {
      * @return {@code true} if the player is over the debt limit and has to go bankrupt
      */
     public boolean isOverDebtLimit(Player player) {
-        return player.getMoney() < config.debtLimit();
+        return player.getMoney() < -config.debtLimit();
     }
 
     /**
      * Declares the given player bankrupt and updates the board accordingly.
+     * <p>
+     * This includes:
+     * <ul>
+     *     <li>sending all the player's pieces home</li>
+     *     <li>resetting the players balance to the starting balance</li>
+     *     <li>removing all the player's properties from the board</li>
+     * </ul>
+     * </p>
      *
      * @param board  the board the player is playing on
      * @param player the player who goes bankrupt
