@@ -15,8 +15,6 @@ import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PropertyInfo;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-// TODO: enable once the property system is fully implemented
-@Disabled
 @DisplayName("Property Integration Test")
 public class PropertyIntegrationTest extends BaseIntegrationTest {
 
