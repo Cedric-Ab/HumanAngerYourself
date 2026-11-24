@@ -8,96 +8,53 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
- * Controller of the start screen, where the four players enter their names before the game starts.
- * Empty name fields are highlighted with a red border.
+ * Controller of the start screen, where up to four players enter their names
+ * before the game starts.
+ * Each name field belongs to one color, empty fields are left out of the game.
  */
 public class StartScreenViewController {
-    /**
-     * Minimum number of names needed to start a game.
-     */
+    /** Minimum number of names needed to start a game. */
     private static final int MIN_PLAYERS = 2;
+    /** Style class of a name field that has to be filled in. */
+    private static final String INVALID_STYLE = "invalid";
 
-    /**
-     * Name field of the first player, injected by the FXML loader.
-     */
     @FXML
-    private TextField player1Field;
-
-    /**
-     * Name field of the second player, injected by the FXML loader.
-     */
+    private TextField redPlayerField;
     @FXML
-    private TextField player2Field;
-
-    /**
-     * Name field of the third player, injected by the FXML loader.
-     */
+    private TextField yellowPlayerField;
     @FXML
-    private TextField player3Field;
-
-    /**
-     * Name field of the fourth player, injected by the FXML loader.
-     */
+    private TextField bluePlayerField;
     @FXML
-    private TextField player4Field;
+    private TextField greenPlayerField;
 
-    /**
-     * All four name fields in player order, for validating them together.
-     */
-    private TextField[] fields;
+    /** Name field of every color, in the order the fields are shown. */
+    private final Map<PlayerColor, TextField> nameFields = new LinkedHashMap<>();
 
-    /**
-     * Called with the entered players when the game is started.
-     */
+    /** Called with the entered players when the game is started. */
     private Consumer<List<PlayerSetup>> onGameStart;
 
     /**
-     * Called by the FXML loader after the FXML file has been loaded. Collects the name fields
-     * into an array.
+     * Creates the controller. Called by the FXML loader.
+     */
+    public StartScreenViewController() {
+    }
+
+    /**
+     * Called by the FXML loader. Assigns every name field its color.
      */
     @FXML
     public void initialize() {
-        fields = new TextField[]{player1Field, player2Field, player3Field, player4Field};
-    }
-
-    /**
-     * Starts the game after validating the player names. Starting the game is not implemented yet.
-     *
-     * @throws RuntimeException if at least one player name is missing
-     */
-    @FXML
-    void startGame() {
-        if (onGameStart == null) {
-            throw new IllegalStateException("no start action set");
-        }
-        List<PlayerSetup> playerSetups = readPlayerSetups();
-        if (playerSetups.size() < MIN_PLAYERS) {
-            // TODO: show error maybe?
-            return;
-        }
-        onGameStart.accept(playerSetups);
-    }
-
-    /**
-     * Reads the entered names and assigns each one the color of its field. Empty fields are skipped.
-     *
-     * @return name and color of every entered player, in field order
-     */
-    private List<PlayerSetup> readPlayerSetups() {
-        List<PlayerSetup> playerSetups = new ArrayList<>();
-        // TODO implement properly
-        playerSetups.add(new PlayerSetup("Bob", PlayerColor.BLUE));
-        playerSetups.add(new PlayerSetup("Alice", PlayerColor.YELLOW));
-        playerSetups.add(new PlayerSetup("Jane", PlayerColor.RED));
-        playerSetups.add(new PlayerSetup("Max", PlayerColor.GREEN));
-        return playerSetups;
+        nameFields.put(PlayerColor.RED, redPlayerField);
+        nameFields.put(PlayerColor.YELLOW, yellowPlayerField);
+        nameFields.put(PlayerColor.BLUE, bluePlayerField);
+        nameFields.put(PlayerColor.GREEN, greenPlayerField);
     }
 
     /**
@@ -111,51 +68,61 @@ public class StartScreenViewController {
     }
 
     /**
-     * Validates the text field that triggered the event. The border turns red if the field is
-     * blank and black otherwise.
-     *
-     * @param event the event fired by a name field, whose source must be a {@link TextField}
+     * Starts the game with every player who entered a name. If fewer than
+     * {@value #MIN_PLAYERS}
+     * names are entered, the empty fields are marked and a warning is shown
+     * instead.
      */
     @FXML
-    void validateField(Event event) {
-        TextField field = (TextField) event.getSource();
-        field.setStyle("-fx-border-color: %s;".formatted(
-                field.getText().isBlank() ? "red" : "black"
-        ));
-    }
-
-    /**
-     * Checks that every player has entered a name. Blank fields get a red border, and a warning
-     * dialog is shown if at least one is blank.
-     *
-     * @return {@code true} if all name fields are filled in
-     */
-    private boolean areFieldsValid() {
-        // TODO: Game might be started with 2 - 4 players, don't enforce 4 players
-        List<TextField> invalidFields = Arrays.stream(fields)
-                .filter(f -> f.getText().isBlank())
-                .toList();
-
-        invalidFields
-                .forEach(f -> f.setStyle("-fx-border-color: red;"));
-
-        if (!invalidFields.isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Missing Player Names");
-            alert.setHeaderText(null);
-            alert.setContentText("Please enter a name for every player before starting the game.");
-            alert.showAndWait();
+    private void startGame() {
+        List<PlayerSetup> playerSetups = readPlayerSetups();
+        if (playerSetups.size() < MIN_PLAYERS) {
+            markEmptyFields();
+            showNotEnoughPlayersWarning();
+            return;
         }
-        return invalidFields.isEmpty();
+        onGameStart.accept(playerSetups);
     }
 
     /**
-     * Opens the settings screen. Not implemented yet.
+     * Removes the invalid mark of the edited field as soon as it contains a name.
      *
-     * @throws UnsupportedOperationException always, until the settings are implemented
+     * @param event the event fired by a name field, whose source must be a
+     *              {@link TextField}
      */
     @FXML
-    void openSettings() {
-        throw new UnsupportedOperationException("Settings are not implemented yet.");
+    private void validateField(Event event) {
+        TextField field = (TextField) event.getSource();
+        if (!field.getText().isBlank()) {
+            field.getStyleClass().remove(INVALID_STYLE);
+        }
+    }
+
+    /**
+     * Reads the entered names and assigns each one the color of its field. Empty
+     * fields are skipped.
+     *
+     * @return name and color of every entered player, in field order
+     */
+    private List<PlayerSetup> readPlayerSetups() {
+        return nameFields.entrySet().stream()
+                .filter(entry -> !entry.getValue().getText().isBlank())
+                .map(entry -> new PlayerSetup(entry.getValue().getText().strip(), entry.getKey()))
+                .toList();
+    }
+
+    private void markEmptyFields() {
+        nameFields.values().stream()
+                .filter(field -> field.getText().isBlank())
+                .filter(field -> !field.getStyleClass().contains(INVALID_STYLE))
+                .forEach(field -> field.getStyleClass().add(INVALID_STYLE));
+    }
+
+    private void showNotEnoughPlayersWarning() {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Not Enough Players");
+        alert.setHeaderText(null);
+        alert.setContentText("Please enter the names of at least %d players.".formatted(MIN_PLAYERS));
+        alert.showAndWait();
     }
 }

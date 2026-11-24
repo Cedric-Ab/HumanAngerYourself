@@ -8,17 +8,18 @@ import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 import java.util.Objects;
 
 /**
  * View model between the UI and the {@link GameService}.
  * <p>
- * It turns user input into actions that are sent to the service and exposes the
- * latest
- * {@link GameSnapshot} as a JavaFX property the UI can bind to. It only knows
- * the
+ * It sends the actions chosen in the UI to the service and exposes the latest
+ * {@link GameSnapshot} as a JavaFX property the UI can listen to. It only knows the
  * {@link GameService} interface and never accesses domain objects.
  * </p>
  */
@@ -26,9 +27,11 @@ public class GameViewModel implements GameListener {
     /** Service that receives the actions and provides the game state. */
     private final GameService service;
 
-    /** The latest snapshot of the game state. */
+    // latest snapshot of the game state, never null
     private final ObjectProperty<GameSnapshot> snapshot = new SimpleObjectProperty<>();
-    private final ObjectProperty<String> message = new SimpleObjectProperty<>("");
+
+    // message of the last rejected action, empty if the last action was accepted
+    private final StringProperty errorMessage = new SimpleStringProperty("");
 
     /**
      * Creates a view model for the given game service.
@@ -37,7 +40,6 @@ public class GameViewModel implements GameListener {
      */
     public GameViewModel(GameService service) {
         this.service = Objects.requireNonNull(service, "service");
-
         snapshot.set(service.getSnapshot());
         service.addListener(this);
     }
@@ -49,20 +51,21 @@ public class GameViewModel implements GameListener {
      */
     @Override
     public void onGameChanged(GameSnapshot snapshot) {
-        this.snapshot.set(snapshot);
+        this.snapshot.set(Objects.requireNonNull(snapshot, "snapshot"));
     }
 
     /**
-     * Sends an action to the service and exposes validation errors to the UI.
+     * Sends an action to the service. If the service rejects it, the reason is exposed
+     * through {@link #errorMessageProperty()}.
      *
-     * @param action action selected by the player
+     * @param action action selected by the player, should be one of the available actions of the snapshot
      */
     public void submit(Action action) {
+        errorMessage.set("");
         try {
             service.submit(Objects.requireNonNull(action, "action"));
-            message.set("");
         } catch (InvalidActionException exception) {
-            message.set(exception.getMessage());
+            errorMessage.set(exception.getMessage());
         }
     }
 
@@ -76,11 +79,11 @@ public class GameViewModel implements GameListener {
     }
 
     /**
-     * Returns the latest action-validation message as a read-only property.
+     * Returns the message of the last rejected action as a read-only property.
      *
-     * @return property holding the current message
+     * @return property holding the error message, empty if the last action was accepted
      */
-    public ReadOnlyObjectProperty<String> messageProperty() {
-        return message;
+    public ReadOnlyStringProperty errorMessageProperty() {
+        return errorMessage;
     }
 }
