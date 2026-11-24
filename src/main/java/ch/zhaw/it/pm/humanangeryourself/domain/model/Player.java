@@ -95,6 +95,17 @@ public class Player {
     }
 
     /**
+     * Removes a card of the given type from the player's hand.
+     *
+     * @param card card type to remove
+     * @throws IllegalStateException if the player does not hold a card of the given type
+     */
+    public void removeCard(CardType card) {
+        Card cardToRemove = getCard(card);
+        removeCard(cardToRemove);
+    }
+
+    /**
      * Returns whether the player has the given card in their hand.
      *
      * @param card card to look for

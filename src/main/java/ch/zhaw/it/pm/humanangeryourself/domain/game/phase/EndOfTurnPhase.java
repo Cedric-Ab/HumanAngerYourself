@@ -92,7 +92,7 @@ public class EndOfTurnPhase extends GamePhaseBase {
      */
     private GamePhase buyCard(Player player, BuyCard buyCard) {
         // TODO: medium priority
-        return process();
+        return new DiscardPhase(getGame(), this, player);
     }
 
     /**
