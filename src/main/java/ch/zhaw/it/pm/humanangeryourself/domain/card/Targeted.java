@@ -1,27 +1,39 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.card;
 
-import ch.zhaw.it.pm.humanangeryourself.api.action.TargetPiece;
+import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
+import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
+import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
+
+import java.util.List;
 
 /**
  * Interface for cards that require a target to be played.
  */
-public sealed interface Targeted extends Card {
+public interface Targeted<T extends Action> extends Card {
     /**
-     * Interface for cards that require two piece targets to be played.
+     * Determines whether the card requires further targeting based on the current game state and player.
+     *
+     * @param game   the current game instance
+     * @param player the player who is playing the card
+     * @return true if the card requires further targeting, false otherwise
      */
-    non-sealed interface DualPieceTargeted extends Targeted {
-        /**
-         * Sets the first target of the card.
-         *
-         * @param target the first target piece
-         */
-        void setFirstTarget(TargetPiece target);
-
-        /**
-         * Sets the second target of the card.
-         *
-         * @param target the second target piece
-         */
-        void setSecondTarget(TargetPiece target);
+    default boolean requiresFurtherTarget(Game game, Player player) {
+        return getPossibleTargets(game, player).isEmpty();
     }
+
+    /**
+     * Returns a list of possible targets for the card based on the current game state and player.
+     *
+     * @param game   the current game instance
+     * @param player the player who is playing the card
+     * @return a list of possible targets for the card
+     */
+    List<T> getPossibleTargets(Game game, Player player);
+
+    /**
+     * Sets a target for the card.
+     *
+     * @param target the target to set for the card
+     */
+    void setTarget(Action target);
 }
