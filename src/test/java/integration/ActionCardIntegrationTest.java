@@ -15,6 +15,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.PlayCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
 import ch.zhaw.it.pm.humanangeryourself.api.action.TargetPiece;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult;
+import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 
@@ -298,7 +299,7 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
         @Test
         @DisplayName("Jackpot grants money when drawn")
         void jackpotGrantsMoneyWhenDrawn() {
-            final long jackpotAmount = 250000L;
+            final long jackpotAmount = GameConfig.defaults().cards().jackpot();
 
             long balanceBefore = getDeciderInfo().money();
 
@@ -315,7 +316,7 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
         @Test
         @DisplayName("Charity removes money when drawn")
         void charityRemovesMoneyWhenDrawn() {
-            final long charityAmount = 100000L;
+            final long charityAmount = GameConfig.defaults().cards().charity();
 
             long balanceBefore = getDeciderInfo().money();
 
@@ -325,7 +326,7 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
 
             long balanceAfter = getDeciderInfo().money();
 
-            assertEquals(balanceBefore - charityAmount, balanceAfter,
+            assertEquals(balanceBefore + charityAmount, balanceAfter,
                     "Expected Charity to remove " + charityAmount + " money when drawn");
         }
     }
