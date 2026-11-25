@@ -1,15 +1,15 @@
-package ch.zhaw.it.pm.humanangeryourself.domain.card;
+package ch.zhaw.it.pm.humanangeryourself.domain.card.types;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
-import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.GambleResult.CardResult;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 /**
  * Hand card that performs a gambling spin for a new card instead of money.
  */
-public class TryAgainCard implements HandCard {
+public class TryAgainCard implements Card {
 
     /**
      * Spins for a card, adds the won card
@@ -17,13 +17,17 @@ public class TryAgainCard implements HandCard {
      *
      * @param game   the game in which the card is played
      * @param player the player who receives the won card
-     * @param action the action that triggered the card play
      */
     @Override
-    public void apply(Game game, Player player, Action action) {
+    public void apply(Game game, Player player) {
         CardType cardType = game.getGamblingRules().spinCard().cardType();
-        player.addCard(cardType);
+        player.addCard(Card.fromType(cardType));
 
         game.getTurn().setPrimaryActionResult(new CardResult(cardType));
+    }
+
+    @Override
+    public CardType type() {
+        return CardType.TRY_AGAIN;
     }
 }

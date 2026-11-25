@@ -2,16 +2,19 @@ package ch.zhaw.it.pm.humanangeryourself.domain.game;
 
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerSetup;
 import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
+import ch.zhaw.it.pm.humanangeryourself.config.NpcConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.Economy;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.GamblingRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.MovementRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
+import ch.zhaw.it.pm.humanangeryourself.domain.model.Npc;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Creates a {@link Game} from the players entered on the start screen.
@@ -19,12 +22,10 @@ import java.util.Objects;
  */
 public final class GameFactory {
 
-
     /**
      * Utility class, no instances.
      */
     private GameFactory() { }
-
 
     /**
      * Creates a new game. The players are put into turn order by the position of their color on the board,
@@ -35,17 +36,52 @@ public final class GameFactory {
      * @return a new game, ready for the first turn
      * @throws NullPointerException     if there are not 2 to 4 players or a color is used more than once
      * @throws IllegalArgumentException if the players are not valid for a game
+     * @see Game#Game(GameConfig, MovementRules, GamblingRules, Economy, Board, List)
      */
     public static Game create(GameConfig config, List<PlayerSetup> playerSetups) {
-        Objects.requireNonNull(config, "config must not be null");
-        Objects.requireNonNull(playerSetups, "playerSetups must not be null");
-        Board board = new Board();
+        Board board = createBoard(config);
         List<Player> players = playerSetups.stream()
                 .sorted(Comparator.comparingInt(setup -> board.getQuarterOf(setup.color())))
                 .map(setup -> createPlayer(setup, board, config.startMoney()))
                 .toList();
         return new Game(config, new MovementRules(config, board), new GamblingRules(config.gambling()),
                 new Economy(config), board, players);
+    }
+
+    /**
+     * Creates a new game with the given configuration, board, players and rules.
+     *
+     * @param config        settings for start money, rules and limits
+     * @param board         the board to use for the game
+     * @param playerSetups  name and color of every player, in any order
+     * @param movementRules movement rules to use for the game
+     * @param gamblingRules gambling rules to use for the game
+     * @return a new game, ready for the first turn
+     * @throws NullPointerException     if there are not 2 to 4 players or
+     *                                  a color is used more than once or any argument is null
+     * @throws IllegalArgumentException if the players are not valid for a game
+     * @see Game#Game(GameConfig, MovementRules, GamblingRules, Economy, Board, List)
+     */
+    public static Game create(GameConfig config, Board board, List<PlayerSetup> playerSetups,
+                              MovementRules movementRules, GamblingRules gamblingRules) {
+        List<Player> players = playerSetups.stream()
+                .sorted(Comparator.comparingInt(setup -> board.getQuarterOf(setup.color())))
+                .map(setup -> createPlayer(setup, board, config.startMoney()))
+                .toList();
+        return new Game(config, movementRules, gamblingRules, new Economy(config), board, players);
+    }
+
+    /**
+     * Creates the board with the NPC shops from the configuration.
+     *
+     * @param config settings that contain the NPC shops
+     * @return a new board with the configured NPCs on their tiles
+     * @throws IllegalArgumentException if an NPC is configured on a tile that is not a safe space
+     */
+    public static Board createBoard(GameConfig config) {
+        Map<Integer, Npc> npcsByTileId = config.npcs().stream()
+                .collect(Collectors.toMap(NpcConfig::tile, npc -> new Npc(npc.name(), npc.offers())));
+        return new Board(npcsByTileId);
     }
 
     /**
@@ -63,6 +99,4 @@ public final class GameFactory {
                 .toList();
         return new Player(setup.name(), setup.color(), startMoney, pieces);
     }
-
-
 }

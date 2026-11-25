@@ -7,6 +7,8 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.EndTurn;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
+import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -34,11 +36,10 @@ public class EndOfTurnPhase extends GamePhaseBase {
      */
     @Override
     public @NotNull GamePhase process() {
-        List<BuyCard> buyCardList = getGame().getEconomy()
-                .getBuyableCards(getCurrentPlayer());
+        List<BuyCard> buyCardList = getBuyableNpcCards();
 
         List<BuyProperty> buyPropertyList = getGame().getEconomy()
-                .getBuyableProperties(getCurrentPlayer());
+                .getBuyableProperties(getCurrentPlayer(), getGame().getBoard());
 
         List<Action> actions = new ArrayList<>();
         actions.add(new EndTurn());
@@ -84,26 +85,45 @@ public class EndOfTurnPhase extends GamePhaseBase {
     }
 
     /**
-     * Buys a card for the player. Not implemented yet, the phase is only offered again.
+     * Buys a card from an NPC for the player, the player pays the price and gets the card.
+     * Afterwards no further NPC card can be bought in this turn. If the player now holds more cards
+     * than allowed, a card has to be discarded first, then the player is back in this phase.
      *
      * @param player  the player who buys the card
      * @param buyCard the chosen purchase
-     * @return this phase with an updated decision
+     * @return a {@link DiscardPhase} that leads back to this phase
      */
     private GamePhase buyCard(Player player, BuyCard buyCard) {
-        // TODO: medium priority
-        return process();
+        Tile npcTile = getGame().getBoard().getTileById(buyCard.tile());
+        getGame().getEconomy().buyCard(player, npcTile, buyCard.card());
+        getGame().getTurn().markNpcCardBought();
+
+        return new DiscardPhase(getGame(), this);
     }
 
     /**
-     * Buys a property for the player. Not implemented yet, the phase is only offered again.
+     * Buys a property for the player.
      *
      * @param player      the player who buys the property
      * @param buyProperty the chosen purchase
      * @return this phase with an updated decision
      */
     private GamePhase buyProperty(Player player, BuyProperty buyProperty) {
-        // TODO: low priority
+        getGame().getEconomy().buyProperty(player, getGame().getBoard().getTileById(buyProperty.tile()), buyProperty.size());
+        // TODO: enforce that the player cannot buy another property (maybe???)
         return process();
+    }
+
+    /**
+     * Returns the cards the current player can buy from NPCs.
+     * Only one NPC card can be bought per turn.
+     *
+     * @return the possible {@link BuyCard} actions, empty if a card was already bought this turn
+     */
+    private List<BuyCard> getBuyableNpcCards() {
+        if (getGame().getTurn().hasBoughtNpcCard()) {
+            return List.of();
+        }
+        return getGame().getEconomy().getBuyableCards(getCurrentPlayer());
     }
 }

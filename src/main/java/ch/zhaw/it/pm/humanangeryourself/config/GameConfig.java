@@ -2,6 +2,7 @@ package ch.zhaw.it.pm.humanangeryourself.config;
 
 import ch.zhaw.it.pm.humanangeryourself.api.PropertySize;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -15,6 +16,7 @@ import java.util.Objects;
  * @param gambling                gambling settings
  * @param cards                   ActionCard settings
  * @param propertyPrices          purchase price and rent for each size of property
+ * @param npcs                    NPC shops on the board
  */
 public record GameConfig(
         long startMoney,
@@ -23,7 +25,8 @@ public record GameConfig(
         int maxPropertiesPerQuarter,
         GamblingConfig gambling,
         CardConfig cards,
-        Map<PropertySize, PropertyPrice> propertyPrices
+        Map<PropertySize, PropertyPrice> propertyPrices,
+        List<NpcConfig> npcs
 ) {
     /**
      * Validates the configuration values.
@@ -36,6 +39,9 @@ public record GameConfig(
         propertyPrices = Map.copyOf(propertyPrices);
         if (startMoney < 0 || debtLimit < 0 || maxHandSize < 1 || maxPropertiesPerQuarter < 1) {
             throw new IllegalArgumentException("GameConfig invalid");
+        }
+        if (npcs.stream().map(NpcConfig::tile).distinct().count() != npcs.size()) {
+            throw new IllegalArgumentException("GameConfig invalid: two NPCs on the same tile");
         }
     }
 
@@ -51,6 +57,6 @@ public record GameConfig(
                 PropertySize.LARGE, new PropertyPrice(500_000, 20_000));
 
         return new GameConfig(100_000, 50_000, 10, 5,
-                GamblingConfig.defaults(), CardConfig.defaults(), propertyPrices);
+                GamblingConfig.defaults(), CardConfig.defaults(), propertyPrices, NpcConfig.defaults());
     }
 }

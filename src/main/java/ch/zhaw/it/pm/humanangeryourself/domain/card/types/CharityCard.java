@@ -1,13 +1,15 @@
-package ch.zhaw.it.pm.humanangeryourself.domain.card;
+package ch.zhaw.it.pm.humanangeryourself.domain.card.types;
 
+import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.config.CardConfig;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 /**
  * Instant card that deducts the configured amount of money from the player who drew it.
  */
-public class CharityCard implements InstantCard {
+public class CharityCard implements Card {
 
     /** The configuration providing the charity amount. */
     private final CardConfig config;
@@ -37,5 +39,10 @@ public class CharityCard implements InstantCard {
     @Override
     public void apply(Game game, Player player) {
         player.changeBalanceBy(config.charity());
+    }
+
+    @Override
+    public CardType type() {
+        return CardType.CHARITY;
     }
 }
