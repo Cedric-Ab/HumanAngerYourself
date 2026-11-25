@@ -8,18 +8,16 @@ import java.util.Optional;
 
 /**
  * Hand card that blocks another card.
- *
- * <p><strong>Note:</strong> not yet implemented.</p>
  */
 public class BlockCard implements Counter {
 
     @Override
     public CardType type() {
-        return CardType.ANGER_REVERSE;
+        return CardType.BLOCK;
     }
 
     @Override
     public Optional<ApplicableCard> apply(ApplicableCard card) {
-        return null;
+        return Optional.empty();
     }
 }
