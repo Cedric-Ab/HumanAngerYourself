@@ -1,11 +1,17 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.logic;
 
+import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.GambleResult;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.GambleResult.CardResult;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.GambleResult.MoneyResult;
 import ch.zhaw.it.pm.humanangeryourself.config.GamblingConfig;
 import org.junit.jupiter.api.Test;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -59,5 +65,19 @@ class GamblingRulesTest {
             long amount = rules.spinWin().amount();
             assertTrue(amount >= 10 && amount < 500, "amount out of range: " + amount);
         }
+    }
+
+    /**
+     * Every type of card can be drawn.
+     */
+    @Test
+    void everyCardCanBeDrawn() {
+        GamblingRules rules = new GamblingRules();
+
+        Set<CardType> drawn = Stream.generate(() -> rules.spinCard().cardType())
+                .limit(1000)
+                .collect(Collectors.toSet());
+
+        assertEquals(Set.of(CardType.values()), drawn);
     }
 }

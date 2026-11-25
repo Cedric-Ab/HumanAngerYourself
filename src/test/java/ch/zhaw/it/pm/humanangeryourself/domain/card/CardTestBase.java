@@ -13,6 +13,7 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Mockito.mock;
 
@@ -32,7 +33,7 @@ abstract class CardTestBase {
     void setUpGame() {
         gamblingRules = mock(GamblingRules.class);
         movementRules = mock(MovementRules.class);
-        game = GameFactory.create(GameConfig.defaults(), new Board(), List.of(
+        game = GameFactory.create(GameConfig.defaults(), new Board(Map.of()), List.of(
                 new PlayerSetup("Red", PlayerColor.RED),
                 new PlayerSetup("Yellow", PlayerColor.YELLOW),
                 new PlayerSetup("Blue", PlayerColor.BLUE)), movementRules, gamblingRules);

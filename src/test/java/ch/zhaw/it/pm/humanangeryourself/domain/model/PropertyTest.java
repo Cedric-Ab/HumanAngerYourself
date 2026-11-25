@@ -27,7 +27,7 @@ class PropertyTest {
     private static GameConfig configWith(Map<PropertySize, PropertyPrice> prices) {
         GameConfig defaults = GameConfig.defaults();
         return new GameConfig(defaults.startMoney(), defaults.debtLimit(), defaults.maxHandSize(),
-                defaults.maxPropertiesPerQuarter(), defaults.gambling(), defaults.cards(), prices);
+                defaults.maxPropertiesPerQuarter(), defaults.gambling(), defaults.cards(), prices, List.of());
     }
 
     /**

@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class InstantCardTest extends CardTestBase {
 
-    private static final CardConfig CONFIG = new CardConfig(500, -300, 10);
+    private static final CardConfig CONFIG = new CardConfig(500, -300);
 
     /**
      * The jackpot pays the configured amount, whatever the player owned before.

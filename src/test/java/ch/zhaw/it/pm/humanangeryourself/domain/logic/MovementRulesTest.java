@@ -13,6 +13,10 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -28,7 +32,7 @@ class MovementRulesTest {
 
     @BeforeEach
     void setUp() {
-        board = new Board();
+        board = new Board(Map.of());
         rules = new MovementRules(board);
     }
 
@@ -40,6 +44,16 @@ class MovementRulesTest {
         piece.moveTo(board.getTileById(tileId));
         Player player = new Player("Test", color, 0, List.of(piece));
         return rules.getPossibleMoves(player, roll);
+    }
+
+    /**
+     * The die shows every number from 1 to 6 and nothing else.
+     */
+    @Test
+    void rollsOneToSix() {
+        Set<Integer> rolls = Stream.generate(rules::rollDie).limit(1000).collect(Collectors.toSet());
+
+        assertEquals(Set.of(1, 2, 3, 4, 5, 6), rolls);
     }
 
     /**

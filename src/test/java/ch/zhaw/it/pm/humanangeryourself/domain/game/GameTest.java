@@ -4,6 +4,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerSetup;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.RollResult;
 import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
+import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -70,6 +72,33 @@ class GameTest {
         game.nextTurn();
 
         assertNull(game.getTurn().getPrimaryActionResult());
+    }
+
+    /**
+     * Buying a card from an NPC only counts for the current turn.
+     */
+    @Test
+    void newTurnAllowsNpcCard() {
+        assertFalse(game.getTurn().hasBoughtNpcCard());
+
+        game.getTurn().markNpcCardBought();
+        assertTrue(game.getTurn().hasBoughtNpcCard());
+
+        game.nextTurn();
+        assertFalse(game.getTurn().hasBoughtNpcCard());
+    }
+
+    /**
+     * Players start with the configured money, no cards and all pieces at home.
+     */
+    @Test
+    void playersStartAtHome() {
+        Player red = game.getPlayer(PlayerColor.RED);
+
+        assertEquals(GameConfig.defaults().startMoney(), red.getMoney());
+        assertTrue(red.getCards().isEmpty());
+        assertEquals(game.getBoard().getHomeTiles(PlayerColor.RED),
+                red.getPieces().stream().map(Piece::getCurrentTile).toList());
     }
 
     /**

@@ -18,7 +18,7 @@ class SpeedBoostCardTest extends CardTestBase {
      * The rolled number is doubled.
      */
     @ParameterizedTest
-    @ValueSource(ints = {1, 2, 3})
+    @ValueSource(ints = {1, 2, 3, 4, 5, 6})
     void doublesRoll(int roll) {
         when(movementRules.rollDie()).thenReturn(roll);
 

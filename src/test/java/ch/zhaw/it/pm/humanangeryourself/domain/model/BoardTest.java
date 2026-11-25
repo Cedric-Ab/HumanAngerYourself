@@ -9,8 +9,10 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -23,7 +25,7 @@ class BoardTest {
 
     @BeforeEach
     void setUp() {
-        board = new Board();
+        board = new Board(Map.of());
     }
 
     /**
@@ -112,5 +114,31 @@ class BoardTest {
         Property second = placeProperty(3, alice);
 
         assertEquals(List.of(first, second), board.getPropertiesOfPlayer(alice));
+    }
+
+    /**
+     * NPCs stand on the configured tile and nowhere else.
+     */
+    @Test
+    void placesNpcOnItsTile() {
+        Npc npc = new Npc("Trader", List.of());
+
+        Board boardWithNpc = new Board(Map.of(10, npc));
+
+        assertEquals(List.of(boardWithNpc.getTileById(10)), boardWithNpc.getTiles().stream()
+                .filter(tile -> tile.getNpc().isPresent())
+                .toList());
+        assertSame(npc, boardWithNpc.getTileById(10).getNpc().orElseThrow());
+    }
+
+    /**
+     * NPCs can't be placed on track, finish, home, staircase or unknown tiles.
+     */
+    @ParameterizedTest
+    @ValueSource(ints = {1, 100, 101, 105, 999})
+    void rejectsMisplacedNpc(int tileId) {
+        Map<Integer, Npc> npcs = Map.of(tileId, new Npc("Trader", List.of()));
+
+        assertThrows(IllegalArgumentException.class, () -> new Board(npcs));
     }
 }
