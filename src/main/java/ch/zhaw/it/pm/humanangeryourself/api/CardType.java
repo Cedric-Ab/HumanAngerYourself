@@ -22,9 +22,9 @@ public enum CardType {
      */
     MONEY_TIGER(false, false, false),
     /**
-     * Counters Double It, Switch or another Anger Reverse. Can be countered.
+     * Blocks a counterable card played by a player.
      */
-    ANGER_REVERSE(false, false, true),
+    BLOCK(false, false, false),
     /**
      * Doubles the number rolled for the next movement.
      */
@@ -62,6 +62,15 @@ public enum CardType {
     }
 
     /**
+     * Returns a list of the CardTypes.
+     *
+     * @return List of CardType
+     */
+    public static List<CardType> all() {
+        return VALUES;
+    }
+
+    /**
      * Returns whether the card takes effect immediately when it is drawn instead of being kept in hand.
      *
      * @return {@code true} if the card is played instantly
@@ -86,15 +95,6 @@ public enum CardType {
      */
     public boolean isCounterable() {
         return counterable;
-    }
-
-    /**
-     * Returns a list of the CardTypes.
-     *
-     * @return List of CardType
-     */
-    public static List<CardType> all() {
-        return VALUES;
     }
 
 }

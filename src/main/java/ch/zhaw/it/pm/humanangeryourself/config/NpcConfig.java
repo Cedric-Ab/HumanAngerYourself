@@ -53,11 +53,11 @@ public record NpcConfig(String name, int tile, List<CardOffer> offers) {
                         new CardOffer(CardType.TRY_AGAIN, 30_000),
                         new CardOffer(CardType.MONEY_TIGER, 50_000))),
                 new NpcConfig("Trader", 40, List.of(
-                        new CardOffer(CardType.ANGER_REVERSE, 35_000),
+                        new CardOffer(CardType.BLOCK, 35_000),
                         new CardOffer(CardType.DOUBLE_IT, 60_000))),
                 new NpcConfig("Trickster", 55, List.of(
                         new CardOffer(CardType.SWITCH, 45_000),
-                        new CardOffer(CardType.ANGER_REVERSE, 40_000),
+                        new CardOffer(CardType.BLOCK, 40_000),
                         new CardOffer(CardType.SPEED_BOOST, 25_000))));
     }
 

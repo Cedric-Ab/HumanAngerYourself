@@ -26,7 +26,7 @@ public interface Card {
      */
     static Card fromType(CardType type) {
         return switch (type) {
-            case ANGER_REVERSE -> new BlockCard();
+            case BLOCK -> new BlockCard();
             case CHARITY -> new CharityCard();
             case DOUBLE_IT -> new DoubleItCard();
             case JACKPOT -> new JackpotCard();
