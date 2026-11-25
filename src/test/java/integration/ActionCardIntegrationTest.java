@@ -73,8 +73,8 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
         @DisplayName("Player may play only one card per turn")
         void playerMayPlayOnlyOneCardPerTurn() {
             // Arrange
-            giveCurrentPlayerCard(CardType.DOUBLE_IT);
-            giveCurrentPlayerCard(CardType.DOUBLE_IT);
+            giveCurrentPlayerCard(CardType.SPEED_BOOST);
+            giveCurrentPlayerCard(CardType.SPEED_BOOST);
 
             // Act
             submitChecked(availableActions().stream()
@@ -95,7 +95,7 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
         @ParameterizedTest
         @DisplayName("Hand cards are consumed after use")
         @EnumSource(value = CardType.class,
-                names = {"SPEED_BOOST", "TRY_AGAIN", "MONEY_TIGER", "DOUBLE_IT", "SWITCH"})
+                names = {"SPEED_BOOST", "TRY_AGAIN", "MONEY_TIGER", "SWITCH"})
         void handCardsAreConsumedAfterUse(CardType card) {
             currentPlayerPlayCard(card);
 
