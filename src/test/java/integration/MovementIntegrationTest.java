@@ -116,6 +116,12 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         }
 
         @Test
+        @DisplayName("Target tile is calculated correctly without wrap around")
+        void targetTileIsCalculatedCorrectlyAtEdgeOfWraparound() {
+            assertEquals(60, getTargetTile(54, 6));
+        }
+
+        @Test
         @DisplayName("Selected piece is moved to the target tile")
         void selectedPieceIsMovedToTargetTile() {
             placeCurrentPlayerPieceAndRoll(10, 3);
