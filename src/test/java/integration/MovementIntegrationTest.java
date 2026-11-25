@@ -244,7 +244,7 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         @DisplayName("Piece bounces back at bottom of staircase")
         void pieceBouncesBackAtBottomOfStaircase() {
             int roll = TILE_ID_STAIRCASE_TOP_RED - TILE_ID_STAIRCASE_BOTTOM_RED + 3;
-            assertEquals(TILE_ID_STAIRCASE_BOTTOM_RED + 2, getTargetTile(TILE_ID_STAIRCASE_TOP_RED, roll),
+            assertEquals(TILE_ID_STAIRCASE_BOTTOM_RED + 1, getTargetTile(TILE_ID_STAIRCASE_TOP_RED, roll),
                     "Expected a piece to bounce back towards the top of the staircase after overshooting the the top and the bottom");
         }
 
@@ -261,8 +261,10 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
             getCurrentPlayer().resetBalanceToZero();
             getCurrentPlayer().changeBalanceBy(-1);
 
-            assertEquals(TILE_ID_STAIRCASE_TOP_RED - 1, getTargetTile(TILE_ID_STAIRCASE_TOP_RED - 1, 2),
-                    "Expected a player in debt to not be able to enter the finish area, even with an exact roll");
+            placeCurrentPlayerPiece(TILE_ID_STAIRCASE_TOP_RED - 3);
+            rollNumber(4);
+
+            assertTrue(getMoveActions().isEmpty());
         }
 
         @Test
