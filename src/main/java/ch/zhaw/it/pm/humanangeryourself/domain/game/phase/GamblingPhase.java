@@ -39,7 +39,8 @@ public class GamblingPhase extends GamePhaseBase {
                 break;
             case GambleResult.CardResult c:
                 if (c.cardType().isInstant()) {
-                    // TODO: activate card effect
+                    return new ActionCardPhase(getGame(), new EndOfTurnPhase(getGame()),
+                            getCurrentPlayer(), Card.fromType(c.cardType()));
                 } else {
                     getCurrentPlayer().addCard(Card.fromType(c.cardType()));
                 }
