@@ -8,9 +8,6 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
  * Base abstraction for all cards in the game.
  */
 public interface Card {
-
-    boolean preconditionsMet();
-
     /**
      * Returns the type of this card.
      *
