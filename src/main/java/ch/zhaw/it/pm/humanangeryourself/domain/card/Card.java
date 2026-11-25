@@ -1,6 +1,14 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.card;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.types.AngerReverseCard;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.types.CharityCard;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.types.DoubleItCard;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.types.JackpotCard;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.types.MoneyTigerCard;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.types.SpeedBoostCard;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.types.SwitchCard;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.types.TryAgainCard;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 

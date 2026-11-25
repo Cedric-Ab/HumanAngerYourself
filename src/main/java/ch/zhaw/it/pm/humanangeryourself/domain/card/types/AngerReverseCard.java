@@ -1,6 +1,7 @@
-package ch.zhaw.it.pm.humanangeryourself.domain.card;
+package ch.zhaw.it.pm.humanangeryourself.domain.card.types;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
@@ -9,7 +10,7 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
  *
  * <p><strong>Note:</strong> not yet implemented.</p>
  */
-public class AngerReverseCard implements Card{
+public class AngerReverseCard implements Card {
 
     /**
      * Applies the card's effect. Currently a placeholder that does nothing.
