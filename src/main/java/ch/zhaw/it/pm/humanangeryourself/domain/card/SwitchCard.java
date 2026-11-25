@@ -9,7 +9,7 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
  *
  * <p><strong>Note:</strong> not yet implemented.</p>
  */
-public class SwitchCard implements HandCard{
+public class SwitchCard implements Card{
 
     /**
      * Applies the card's effect. Currently a placeholder that does nothing.

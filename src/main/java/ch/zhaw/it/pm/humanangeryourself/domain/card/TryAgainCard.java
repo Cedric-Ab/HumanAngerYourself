@@ -8,7 +8,7 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 /**
  * Hand card that performs a gambling spin for a new card instead of money.
  */
-public class TryAgainCard implements HandCard {
+public class TryAgainCard implements Card {
 
     /**
      * Spins for a card, adds the won card

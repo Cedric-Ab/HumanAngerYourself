@@ -8,7 +8,7 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 /**
  * Hand card that performs a gambling spin and pays out double the winnings.
  */
-public class MoneyTigerCard implements HandCard {
+public class MoneyTigerCard implements Card {
 
     /**
      * Spins the win amount according to the game's gambling rules, doubles it,

@@ -11,7 +11,7 @@ import java.util.List;
  * Hand card that lets an indebted player pass their debt, doubled, on to the
  * next player in turn order.
  */
-public class DoubleItCard implements HandCard {
+public class DoubleItCard implements Card {
 
     /**
      * Doubles the player's debt, adds it to the balance of the next player in turn

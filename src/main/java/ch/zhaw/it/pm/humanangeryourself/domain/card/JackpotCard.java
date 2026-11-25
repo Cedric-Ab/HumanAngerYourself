@@ -8,7 +8,7 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 /**
  * Instant card that awards the configured amount of money to the player who drew it.
  */
-public class JackpotCard implements InstantCard {
+public class JackpotCard implements Card {
 
     /**
      * The configuration providing the jackpot amount.

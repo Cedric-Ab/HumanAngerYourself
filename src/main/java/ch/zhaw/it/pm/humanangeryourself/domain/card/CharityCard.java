@@ -8,7 +8,7 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 /**
  * Instant card that deducts the configured amount of money from the player who drew it.
  */
-public class CharityCard implements InstantCard {
+public class CharityCard implements Card {
 
     /** The configuration providing the charity amount. */
     private final CardConfig config;

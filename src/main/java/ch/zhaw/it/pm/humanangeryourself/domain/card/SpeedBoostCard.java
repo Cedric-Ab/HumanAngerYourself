@@ -8,7 +8,7 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 /**
  * Hand card that replaces the current die roll with a new roll that is doubled.
  */
-public class SpeedBoostCard implements HandCard {
+public class SpeedBoostCard implements Card {
 
     /**
      * Rolls the die, doubles the result and sets it as the roll outcome
