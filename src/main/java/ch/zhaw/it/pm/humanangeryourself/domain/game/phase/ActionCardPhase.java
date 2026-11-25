@@ -1,8 +1,9 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game.phase;
 
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.ActionModifier;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
-import ch.zhaw.it.pm.humanangeryourself.domain.card.InstantCard;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.Targeted;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
@@ -28,20 +29,35 @@ public class ActionCardPhase extends NonFlowGamePhase {
 
     @Override
     public @NotNull GamePhase process() {
-        if (actionCard instanceof InstantCard instantCard) {
-            return applyInstantCard(instantCard);
-        }
-        // TODO: implement properly
-        return getNextPhase();
-    }
+        if (actionCard instanceof Targeted<?> targeted && targeted.requiresFurtherTarget(getGame(), player)) {
+            setDecisionInfo(player, targeted.getPossibleTargets(getGame(), player));
+            return this;
+        } else {
+            actionCard.apply(getGame(), player);
 
-    private GamePhase applyInstantCard(InstantCard card) {
-        card.apply(getGame(), player);
-        return getNextPhase();
+            if (actionCard instanceof ActionModifier modifier) {
+                GamePhase gamePhase = getNextPhase().process();
+                if (gamePhase != getNextPhase()) {
+                    throw new IllegalStateException("Next phase should not be skipped before forced action is applied.");
+                }
+                return getNextPhase().handle(player, modifier.forcedAction());
+            } else {
+                return getNextPhase();
+            }
+        }
     }
 
     @Override
     public @NotNull GamePhase handle(Player player, Action action) {
-        return null;
+        validatePlayer(player);
+        validateAction(action);
+
+        if (!(actionCard instanceof Targeted<?> targeted)) {
+            throw new IllegalStateException("Action card does not require a target.");
+        }
+
+        targeted.setTarget(action);
+
+        return process();
     }
 }
