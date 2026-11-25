@@ -1,17 +1,7 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.game;
 
-import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
 import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
-import ch.zhaw.it.pm.humanangeryourself.domain.card.AngerReverseCard;
-import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
-import ch.zhaw.it.pm.humanangeryourself.domain.card.CharityCard;
-import ch.zhaw.it.pm.humanangeryourself.domain.card.DoubleItCard;
-import ch.zhaw.it.pm.humanangeryourself.domain.card.JackpotCard;
-import ch.zhaw.it.pm.humanangeryourself.domain.card.MoneyTigerCard;
-import ch.zhaw.it.pm.humanangeryourself.domain.card.SpeedBoostCard;
-import ch.zhaw.it.pm.humanangeryourself.domain.card.SwitchCard;
-import ch.zhaw.it.pm.humanangeryourself.domain.card.TryAgainCard;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.Economy;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.GamblingRules;
 import ch.zhaw.it.pm.humanangeryourself.domain.logic.MovementRules;
@@ -98,19 +88,6 @@ public class Game {
         requireValidPlayers();
 
         turn = new Turn(this.players.getFirst());
-    }
-
-    public static Card cardFromType(CardType type) {
-        return switch (type) {
-            case DOUBLE_IT -> new DoubleItCard();
-            case TRY_AGAIN -> new TryAgainCard();
-            case MONEY_TIGER -> new MoneyTigerCard();
-            case ANGER_REVERSE -> new AngerReverseCard();
-            case SPEED_BOOST -> new SpeedBoostCard();
-            case SWITCH -> new SwitchCard();
-            case JACKPOT -> new JackpotCard();
-            case CHARITY -> new CharityCard();
-        };
     }
 
     /**

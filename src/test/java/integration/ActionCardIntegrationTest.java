@@ -1,5 +1,7 @@
 package integration;
 
+import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +37,7 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
     }
 
     private void giveCurrentPlayerCard(CardType cardType) {
-        getCurrentPlayer().addCard(Game.cardFromType(cardType));
+        getCurrentPlayer().addCard(Card.fromType(cardType));
 
         // so that the available actions are recalculated
         rushThroughRound();

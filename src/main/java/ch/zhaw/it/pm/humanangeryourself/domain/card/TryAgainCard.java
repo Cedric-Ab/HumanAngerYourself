@@ -20,7 +20,7 @@ public class TryAgainCard implements Card {
     @Override
     public void apply(Game game, Player player) {
         CardType cardType = game.getGamblingRules().spinCard().cardType();
-        player.addCard(Game.cardFromType(cardType));
+        player.addCard(Card.fromType(cardType));
 
         game.getTurn().setPrimaryActionResult(new CardResult(cardType));
     }

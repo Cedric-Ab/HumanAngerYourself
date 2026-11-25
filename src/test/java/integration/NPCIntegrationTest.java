@@ -7,6 +7,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.EndTurn;
 import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.CardOffer;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.NpcInfo;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 
 import org.junit.jupiter.api.DisplayName;
@@ -170,7 +171,7 @@ class NPCIntegrationTest extends BaseIntegrationTest {
     void buyingEleventhCardRequiresDiscardingOne() {
         setPieceOntoTile(getFirstPiece(), GRUMPY_OLD_WOMAN_TILE);
         for (int i = 0; i < getGame().getConfig().maxHandSize(); i++) {
-            getCurrentPlayer().addCard(Game.cardFromType(CardType.TRY_AGAIN));
+            getCurrentPlayer().addCard(Card.fromType(CardType.TRY_AGAIN));
         }
         rushThroughPrimaryAction();
 
