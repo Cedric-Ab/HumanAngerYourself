@@ -175,7 +175,7 @@ public class MovementRules {
                     ? Optional.of(new PartialMove(getStartTileId(player), 0)) // move onto the track
                     : Optional.empty(); // stay put
             case TRACK, SAFE -> Optional.of(partialMoveOnTrack(currentTile, steps, player));
-            case STAIRCASE -> Optional.of(partialMoveOnStaircase(currentTile, steps, player));
+            case STAIRCASE -> partialMoveOnStaircase(currentTile, steps, player);
             default -> Optional.empty();
         };
     }
@@ -193,9 +193,16 @@ public class MovementRules {
         int stepsToEnd = (endOfTrack - currentTile + 60) % 60;
 
         if (steps > stepsToEnd) { // when reaching the end of the track...
-            return new PartialMove(getFirstStaircaseTileId(player), steps - stepsToEnd - 1); // ...move onto the staircase
+            if (player.isInDebt()) {
+                // ...stick to the bottom of the staircase
+                return new PartialMove(getFirstStaircaseTileId(player), 0);
+            } else {
+                // ...move onto the staircase
+                return new PartialMove(getFirstStaircaseTileId(player), steps - stepsToEnd - 1);
+            }
         } else {
-            return new PartialMove((currentTile + steps) % 60, 0); // otherwise, simply move along the track the remaining steps
+            // otherwise, simply move along the track for the remaining steps
+            return new PartialMove((currentTile + steps - 1) % 60 + 1, 0);
         }
     }
 
@@ -207,30 +214,36 @@ public class MovementRules {
      * @param player      the player whose partial move is calculated
      * @return a partial move (new position plus remaining steps)
      */
-    private PartialMove partialMoveOnStaircase(int currentTile, int steps, Player player) {
+    private Optional<PartialMove> partialMoveOnStaircase(int currentTile, int steps, Player player) {
         int topOfStaircase = getLastStaircaseTileId(player);
 
-        if (currentTile == topOfStaircase) { // when starting at the top...
-            // ...move down
+        int stepsToFinish = topOfStaircase - currentTile + 1;
+
+        if (player.isInDebt()) {
+            return Optional.empty();
+        }
+
+        if (steps == stepsToFinish) { // only with the exact roll and no debt...
+            return Optional.of(new PartialMove(FINISH_AREA_ID, 0)); // ...may you enter the finish area
+        } else if (currentTile == topOfStaircase) { // when reaching the top of the staircase...
+            steps -= 2; // ...use two steps to move onto the finish area and back
+            // then move down the staircase
             int bottomOfStaircase = getFirstStaircaseTileId(player);
             int stepsToBottom = currentTile - bottomOfStaircase;
 
             if (steps > stepsToBottom) { // when reaching the bottom of the staircase...
-                return new PartialMove(bottomOfStaircase, steps - stepsToBottom); // ...stop the partial move
+                // ...stop the partial move
+                return Optional.of(new PartialMove(bottomOfStaircase, steps - stepsToBottom));
             } else {
-                return new PartialMove(currentTile - steps, 0); // otherwise, simply move down the remaining steps
+                // otherwise, simply move down the remaining steps
+                return Optional.of(new PartialMove(currentTile - steps, 0));
             }
-        } else { // when starting anywhere else on the staircase...
-            // ...move up
-            int stepsToTop = topOfStaircase - currentTile;
-
-            if (steps == stepsToTop + 1 && !player.isInDebt()) { // only with the exact roll and no debt...
-                return new PartialMove(FINISH_AREA_ID, 0); // ...may you enter the finish area
-            } else if (steps > stepsToTop) { // when reaching the top of the staircase...
-                return new PartialMove(topOfStaircase, steps - stepsToTop); // ...stop the partial move
-            } else {
-                return new PartialMove(currentTile + steps, 0); // otherwise, simply move up the remaining steps
-            }
+        } else if (steps > stepsToFinish) { // when reaching the top of the staircase...
+            // ...stop the partial move at the top of the staircase
+            return Optional.of(new PartialMove(topOfStaircase, steps - stepsToFinish + 1));
+        } else {
+            // otherwise, simply move up the remaining steps
+            return Optional.of(new PartialMove(currentTile + steps, 0));
         }
     }
 
