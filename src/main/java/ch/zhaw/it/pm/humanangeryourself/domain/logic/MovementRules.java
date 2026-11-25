@@ -32,9 +32,17 @@ public class MovementRules {
     private static final int END_BLUE_TILE_ID = 30;
     private static final int END_YELLOW_TILE_ID = 15;
 
-    private static final int FINISH_AREA_ID = 100;
+    private static final int STAIRCASE_RED_START_ID = 105;
+    private static final int STAIRCASE_YELLOW_START_ID = 205;
+    private static final int STAIRCASE_BLUE_START_ID = 305;
+    private static final int STAIRCASE_GREEN_START_ID = 405;
 
-    private record PartialMove(int intermediateDestination, int remainingSteps) { }
+    private static final int STAIRCASE_RED_END_ID = 114;
+    private static final int STAIRCASE_YELLOW_END_ID = 214;
+    private static final int STAIRCASE_BLUE_END_ID = 314;
+    private static final int STAIRCASE_GREEN_END_ID = 414;
+
+    private static final int FINISH_AREA_ID = 100;
 
     private static final Random RANDOM = new Random();
 
@@ -272,10 +280,10 @@ public class MovementRules {
      */
     private int getFirstStaircaseTileId(Player player) {
         return switch (player.getColor()) {
-            case RED -> 105;
-            case YELLOW -> 205;
-            case BLUE -> 305;
-            case GREEN -> 405;
+            case RED -> STAIRCASE_RED_START_ID;
+            case YELLOW -> STAIRCASE_YELLOW_START_ID;
+            case BLUE -> STAIRCASE_BLUE_START_ID;
+            case GREEN -> STAIRCASE_GREEN_START_ID;
         };
     }
 
@@ -287,10 +295,12 @@ public class MovementRules {
      */
     private int getLastStaircaseTileId(Player player) {
         return switch (player.getColor()) {
-            case RED -> 114;
-            case YELLOW -> 214;
-            case BLUE -> 314;
-            case GREEN -> 414;
+            case RED -> STAIRCASE_RED_END_ID;
+            case YELLOW -> STAIRCASE_YELLOW_END_ID;
+            case BLUE -> STAIRCASE_BLUE_END_ID;
+            case GREEN -> STAIRCASE_GREEN_END_ID;
         };
     }
+
+    private record PartialMove(int intermediateDestination, int remainingSteps) { }
 }
