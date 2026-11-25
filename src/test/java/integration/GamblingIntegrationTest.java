@@ -1,5 +1,7 @@
 package integration;
 
+import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
+
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -101,7 +103,7 @@ public class GamblingIntegrationTest extends BaseIntegrationTest {
 
             // Fill Hand Cards to the limit
             for (int i = 0; i < handLimit; i++) {
-                getCurrentPlayer().addCard(Game.cardFromType(CardType.SWITCH));
+                getCurrentPlayer().addCard(Card.fromType(CardType.SWITCH));
             }
 
             submitChecked(new Gamble());
