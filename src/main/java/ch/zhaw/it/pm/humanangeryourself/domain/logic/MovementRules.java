@@ -18,7 +18,7 @@ import java.util.Random;
  * Defines the movement rules for pieces on the game board.
  * <p>
  * Responsible for rolling the die, calculating possible moves, determining when pieces
- * enter their colour-specific staircase and determining which pieces must
+ * enter their color-specific staircase and determining which pieces must
  * be sent back home.
  */
 public class MovementRules {
@@ -119,7 +119,7 @@ public class MovementRules {
      *
      * <p>
      * Pieces in their home area can only enter the board when rolling a 5 or 6.
-     * Pieces on the main track can move to their colour-specific staircase
+     * Pieces on the main track can move to their color-specific staircase
      * when passing its endpoint. Pieces already in the staircase move towards
      * the finish area, with excess steps causing them to move backwards.
      *
@@ -132,7 +132,7 @@ public class MovementRules {
         List<Piece> pieces = player.getPieces();
 
         for (Piece piece : pieces) {
-            getPossibleMoveOfPiece(player, piece, roll).ifPresent(possibleActions::add);
+            getPossibleMoveOfPiece(piece, player, roll).ifPresent(possibleActions::add);
         }
         return possibleActions;
     }
@@ -140,12 +140,12 @@ public class MovementRules {
     /**
      * Calculates the possible move of a single piece for a given player and die roll.
      *
-     * @param player the player whose possible moves are calculated
      * @param piece  the piece whose possible move is calculated
+     * @param player the player whose possible moves are calculated
      * @param roll   the result of the die roll
      * @return an optional move action, or empty if no move is possible
      */
-    public Optional<MovePiece> getPossibleMoveOfPiece(Player player, Piece piece, int roll) {
+    public Optional<MovePiece> getPossibleMoveOfPiece(Piece piece, Player player, int roll) {
         int startTile = piece.getCurrentTile().getId();
 
         int intermediateDestination = startTile;
@@ -165,10 +165,14 @@ public class MovementRules {
 
     /**
      * Calculates the partial move of a piece on the board for a given player and die roll.
-     * A partial move is either a complete move (uses all remaining steps) or a move that moves the piece
-     * to the next stage, where movement will be different
-     * (for example, from the track to start of the staircase
-     * or from the middle of staircase to the top of the staircase, from where the piece will move back down).
+     * <p>
+     *     A partial move will either:
+     *     <ul>
+     *         <li>use all remaining steps to move the piece to its final destination</li>
+     *         <li>use some of the remaining steps to move the piece to an intermediate destination,
+     *             where the movement will behave differently</li>
+     *     </ul>
+     * </p>
      *
      * @param currentTile the current tile of the piece
      * @param steps       the number of remaining steps to move
@@ -190,6 +194,15 @@ public class MovementRules {
 
     /**
      * Calculates the partial move of a piece on the track for a given player and remaining steps.
+     * <p>
+     * There are two types of partial moves that can happen on the track:
+     * <ul>
+     *     <li>A simple move that uses all steps to move along the track.</li>
+     *     <li>A move that would enter the staircase instead moves onto the bottom tile of the staircase
+     *         and leaves the remaining steps for the next partial move.
+     *         If the player is in debt, the partial move ends on this tile.</li>
+     * </ul>
+     * </p>
      *
      * @param currentTile the current tile of the piece
      * @param steps       the number of remaining steps to move
@@ -216,11 +229,23 @@ public class MovementRules {
 
     /**
      * Calculates the partial move of a piece on the staircase for a given player and remaining steps.
+     * <p>
+     * When the player is in debt, pieces on the staircase cannot move.
+     * Otherwise, there are three types of partial moves that can happen on a staircase:
+     * <ul>
+     *     <li>A move that uses all steps to reach the finish area.</li>
+     *     <li>A move with too many steps to enter the finish area instead moves onto the top tile of the staircase
+     *         and leaves the remaining steps for the next partial move.</li>
+     *     <li>A move starting on the top tile (and has at least two steps left) will step into the finish area
+     *         and move back down the staircase. It stops when it runs out of steps or reaches the bottom of the staircase,
+     *         where it leaves the remaining steps for the next partial move.</li>
+     * </ul>
+     * </p>
      *
      * @param currentTile the current tile of the piece
      * @param steps       the number of remaining steps to move
      * @param player      the player whose partial move is calculated
-     * @return a partial move (new position plus remaining steps)
+     * @return a partial move (new position plus remaining steps), or an empty optional if there is no move
      */
     private Optional<PartialMove> partialMoveOnStaircase(int currentTile, int steps, Player player) {
         int topOfStaircase = getLastStaircaseTileId(player);
@@ -246,7 +271,7 @@ public class MovementRules {
     }
 
     /**
-     * Returns the starting tile ID corresponding to the given player's colour.
+     * Returns the starting tile ID corresponding to the given player's color.
      *
      * @param player the player whose starting tile is required
      * @return the ID of the player's starting tile
@@ -261,7 +286,7 @@ public class MovementRules {
     }
 
     /**
-     * Returns the endpoint tile ID of the main track for the given player's colour.
+     * Returns the endpoint tile ID of the main track for the given player's color.
      *
      * @param player the player whose track endpoint is required
      * @return the ID of the player's track endpoint
@@ -276,7 +301,7 @@ public class MovementRules {
     }
 
     /**
-     * Returns the first tile ID of the staircase corresponding to the given player's colour.
+     * Returns the first tile ID of the staircase corresponding to the given player's color.
      *
      * @param player the player whose staircase is required
      * @return the ID of the first staircase tile
@@ -291,7 +316,7 @@ public class MovementRules {
     }
 
     /**
-     * Returns the last tile ID of the staircase corresponding to the given player's colour.
+     * Returns the last tile ID of the staircase corresponding to the given player's color.
      *
      * @param player the player whose staircase is required
      * @return the ID of the last staircase tile
