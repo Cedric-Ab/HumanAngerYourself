@@ -26,11 +26,6 @@ public class TryAgainCard implements Card {
     }
 
     @Override
-    public boolean preconditionsMet() {
-        return true;
-    }
-
-    @Override
     public CardType type() {
         return CardType.TRY_AGAIN;
     }

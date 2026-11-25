@@ -23,12 +23,6 @@ public class AngerReverseCard implements Card{
     }
 
     @Override
-    public boolean preconditionsMet() {
-        //TODO
-        return false;
-    }
-
-    @Override
     public CardType type() {
         return CardType.ANGER_REVERSE;
     }

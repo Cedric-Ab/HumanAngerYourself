@@ -26,11 +26,6 @@ public class MoneyTigerCard implements Card {
     }
 
     @Override
-    public boolean preconditionsMet() {
-        return true;
-    }
-
-    @Override
     public CardType type() {
         return CardType.MONEY_TIGER;
     }
