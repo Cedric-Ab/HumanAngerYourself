@@ -40,7 +40,7 @@ public enum CardType {
     /**
      * The player pays money. Takes effect instantly when drawn.
      */
-    CHARITY(false, false, false);
+    CHARITY(true, false, false);
 
     private final boolean instant;
     private final boolean targeting;
