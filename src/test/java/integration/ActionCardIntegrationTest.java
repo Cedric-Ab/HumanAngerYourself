@@ -1,7 +1,5 @@
 package integration;
 
-import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -17,7 +15,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.PlayCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
 import ch.zhaw.it.pm.humanangeryourself.api.action.TargetPiece;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult;
-import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,8 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-// TODO: enable these tests once action cards are implemented
-@Disabled
 @DisplayName("ActionCard Integration Test")
 public class ActionCardIntegrationTest extends BaseIntegrationTest {
     private void rushThroughRound() {
