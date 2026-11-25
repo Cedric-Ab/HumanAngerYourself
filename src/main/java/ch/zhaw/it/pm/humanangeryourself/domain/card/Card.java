@@ -1,7 +1,7 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.card;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
-import ch.zhaw.it.pm.humanangeryourself.domain.card.types.AngerReverseCard;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.types.BlockCard;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.types.CharityCard;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.types.DoubleItCard;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.types.JackpotCard;
@@ -9,8 +9,6 @@ import ch.zhaw.it.pm.humanangeryourself.domain.card.types.MoneyTigerCard;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.types.SpeedBoostCard;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.types.SwitchCard;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.types.TryAgainCard;
-import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
-import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 /**
  * Represents a card in the game.
@@ -28,7 +26,7 @@ public interface Card {
      */
     static Card fromType(CardType type) {
         return switch (type) {
-            case ANGER_REVERSE -> new AngerReverseCard();
+            case ANGER_REVERSE -> new BlockCard();
             case CHARITY -> new CharityCard();
             case DOUBLE_IT -> new DoubleItCard();
             case JACKPOT -> new JackpotCard();
@@ -46,11 +44,4 @@ public interface Card {
      */
     CardType type();
 
-    /**
-     * Applies the effect of this card.
-     *
-     * @param game   the game on which the card is applied
-     * @param player the player on which the card is applied
-     */
-    void apply(Game game, Player player);
 }
