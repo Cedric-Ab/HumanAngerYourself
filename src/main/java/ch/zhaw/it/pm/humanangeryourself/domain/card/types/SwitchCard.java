@@ -1,7 +1,7 @@
-package ch.zhaw.it.pm.humanangeryourself.domain.card;
+package ch.zhaw.it.pm.humanangeryourself.domain.card.types;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
-import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
@@ -10,24 +10,17 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
  *
  * <p><strong>Note:</strong> not yet implemented.</p>
  */
-public class SwitchCard implements HandCard{
+public class SwitchCard implements Card {
 
     /**
      * Applies the card's effect. Currently a placeholder that does nothing.
      *
      * @param game   the game in which the card is played
      * @param player the player who plays the card
-     * @param action the action that triggered the card play
      */
     @Override
-    public void apply(Game game, Player player, Action action) {
+    public void apply(Game game, Player player) {
         //TODO implement
-    }
-
-    @Override
-    public boolean preconditionsMet() {
-        //TODO
-        return false;
     }
 
     @Override

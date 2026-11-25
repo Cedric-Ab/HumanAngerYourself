@@ -1,14 +1,15 @@
-package ch.zhaw.it.pm.humanangeryourself.domain.card;
+package ch.zhaw.it.pm.humanangeryourself.domain.card.types;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.config.CardConfig;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 /**
  * Instant card that awards the configured amount of money to the player who drew it.
  */
-public class JackpotCard implements InstantCard {
+public class JackpotCard implements Card {
 
     /**
      * The configuration providing the jackpot amount.
@@ -40,11 +41,6 @@ public class JackpotCard implements InstantCard {
     @Override
     public void apply(Game game, Player player) {
         player.changeBalanceBy(config.jackpot());
-    }
-
-    @Override
-    public boolean preconditionsMet() {
-        return true;
     }
 
     @Override
