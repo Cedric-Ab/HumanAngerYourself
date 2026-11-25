@@ -1,397 +1,415 @@
 package ch.zhaw.it.pm.humanangeryourself.ui.view;
 
 import ch.zhaw.it.pm.humanangeryourself.api.PlayerColor;
+import ch.zhaw.it.pm.humanangeryourself.api.PropertySize;
+import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
+import ch.zhaw.it.pm.humanangeryourself.api.action.BuyCard;
+import ch.zhaw.it.pm.humanangeryourself.api.action.BuyProperty;
 import ch.zhaw.it.pm.humanangeryourself.api.action.MovePiece;
 import ch.zhaw.it.pm.humanangeryourself.api.action.TargetPiece;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.GameSnapshot;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.NpcInfo;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PieceInfo;
+import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PropertyInfo;
 import ch.zhaw.it.pm.humanangeryourself.ui.viewmodel.GameViewModel;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.NumberBinding;
 import javafx.fxml.FXML;
-import javafx.scene.Cursor;
-import javafx.scene.effect.DropShadow;
+import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 
-import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+/**
+ * Controller of the board. Draws the pieces of the snapshot and lets the
+ * deciding player
+ * choose one of the available {@link MovePiece} or {@link TargetPiece} actions
+ * by clicking on the board.
+ * <p>
+ * Every board location has the fx:id {@code "tile" + tile id}, so tile ids from
+ * the snapshot
+ * are mapped directly to their shape without knowing how the board is numbered.
+ * </p>
+ */
 public class BoardViewController {
-    public static final int NUM_TILES = 60;
-    public static final int NUM_COLORS = 4;
-    public static final int LENGHT_FINISH_LANE = 10;
+    /**
+     * Width and height of the board in the FXML file, used to scale it to the
+     * available space.
+     */
+    private static final double BOARD_SIZE = 720;
+    /** Prefix of the fx:id of every board location, followed by the tile id. */
+    private static final String TILE_ID_PREFIX = "tile";
 
-    private final List<Rectangle> homes = new ArrayList<>(NUM_COLORS);
-    private final List<List<Rectangle>> homeSlots = new ArrayList<>(NUM_COLORS);
-    private final List<Rectangle> tiles = new ArrayList<>(NUM_TILES);
-    private final List<List<Rectangle>> finishLanes = new ArrayList<>(NUM_COLORS);
+    /** Largest radius of a piece, used when a tile holds a single piece. */
+    private static final double MAX_PIECE_RADIUS = 10;
+    /** Smallest radius of a piece, so pieces stay visible on crowded tiles. */
+    private static final double MIN_PIECE_RADIUS = 4;
+    /** Largest distance between the centers of two pieces on the same tile. */
+    private static final double MAX_PIECE_SPACING = 36;
+    /** Radius of a piece relative to the spacing between pieces. */
+    private static final double RADIUS_TO_SPACING_RATIO = 0.35;
 
-    @FXML
-    private Pane boardPane;
-    @FXML
-    private Pane piecePane;
+    /** Edge length of one property square. */
+    private static final double PROPERTY_SQUARE_SIZE = 7;
+    /** Gap between two property squares on the same tile. */
+    private static final double PROPERTY_SQUARE_GAP = 2;
+    /** Distance between the property squares and the short end of the tile. */
+    private static final double PROPERTY_EDGE_INSET = 4;
+
+    /** Diameter of the NPC shop marker. */
+    private static final double NPC_MARKER_SIZE = 16;
+    /** Distance between the NPC marker and the short end of the tile (opposite of the properties). */
+    private static final double NPC_EDGE_INSET = 3;
+    /** Symbol shown on the NPC shop marker. */
+    private static final String NPC_SYMBOL = "$";
+
+    private static final String PIECE_STYLE = "piece";
+    private static final String NPC_STYLE = "npc";
+    private static final String PROPERTY_STYLE = "property";
+    private static final String CLICKABLE_STYLE = "clickable";
+    private static final String SELECTED_SOURCE_STYLE = "selected-source";
+    private static final String MOVE_TARGET_STYLE = "move-target";
+    private static final String BUYABLE_STYLE = "buyable";
+    private static final String ACTIVE_HOME_STYLE = "active-home";
+    private static final String MOVABLE_PIECE_STYLE = "movable";
+
+    private final Map<Integer, Shape> tiles = new HashMap<>();
+    private final Map<PlayerColor, Shape> homes = new EnumMap<>(PlayerColor.class);
+
     @FXML
     private StackPane boardRoot;
     @FXML
-    private Rectangle finishArea;
-    private GameViewModel viewModel;
-    private Rectangle selectedSource;
-    private Rectangle highlightedTarget;
-    private PlayerColor activePlayer;
-
-    // region Initialization
-
+    private Pane boardPane;
     @FXML
-    public void initialize() {
-        initializeTiles();
-        initializeFinishLanes();
-        initializeHomes();
-        piecePane.setMouseTransparent(true);
-        boardPane.scaleXProperty()
-                .bind(Bindings.min(boardRoot.widthProperty().divide(790), boardRoot.heightProperty().divide(790)));
-        boardPane.scaleYProperty()
-                .bind(Bindings.min(boardRoot.widthProperty().divide(790), boardRoot.heightProperty().divide(790)));
+    private Pane propertyPane;
+    @FXML
+    private Pane npcPane;
+    @FXML
+    private Pane piecePane;
+    @FXML
+    private Shape redHome;
+    @FXML
+    private Shape yellowHome;
+    @FXML
+    private Shape greenHome;
+    @FXML
+    private Shape blueHome;
+
+    private GameViewModel viewModel;
+
+    /**
+     * Creates the controller. Called by the FXML loader.
+     */
+    public BoardViewController() {
     }
 
+    /**
+     * Called by the FXML loader. Collects the board locations and scales the board
+     * to the available space.
+     */
+    @FXML
+    public void initialize() {
+        collectTiles();
+        homes.putAll(Map.of(
+                PlayerColor.RED, redHome,
+                PlayerColor.YELLOW, yellowHome,
+                PlayerColor.GREEN, greenHome,
+                PlayerColor.BLUE, blueHome));
+        bindBoardScale();
+    }
+
+    /**
+     * Connects the board to the view model and redraws it after every change of the
+     * game state.
+     *
+     * @param viewModel the view model of the game to display
+     */
     public void setViewModel(GameViewModel viewModel) {
         this.viewModel = viewModel;
-        viewModel.snapshotProperty().addListener((ignored, oldSnapshot, newSnapshot) -> render(newSnapshot));
+        viewModel.snapshotProperty().addListener((observable, oldSnapshot, newSnapshot) -> render(newSnapshot));
+        viewModel.selectedTileProperty().addListener((observable, oldTile, newTile) ->
+                enableInteractions(viewModel.snapshotProperty().get()));
         render(viewModel.snapshotProperty().get());
     }
 
     private void render(GameSnapshot snapshot) {
-        selectedSource = null;
-        activePlayer = snapshot == null ? null : snapshot.currentPlayer();
-        clearPreview();
-        clearBoardInteractions();
+        highlightActiveHome(snapshot.currentPlayer());
+        drawProperties(snapshot.properties());
+        drawNpcs(snapshot.npcs());
+        drawPieces(snapshot.pieces(), movablePieceTiles(snapshot), snapshot.decision().decider());
+        enableInteractions(snapshot);
+    }
+
+    /**
+     * Returns the tiles of the pieces the deciding player can move with the
+     * available {@link MovePiece} actions, e.g. after rolling the die.
+     */
+    private static Set<Integer> movablePieceTiles(GameSnapshot snapshot) {
+        return availableActions(snapshot, MovePiece.class).stream()
+                .map(MovePiece::startTile)
+                .collect(Collectors.toSet());
+    }
+
+    private void highlightActiveHome(PlayerColor currentPlayer) {
+        homes.forEach((color, home) -> setStyle(home, ACTIVE_HOME_STYLE, color == currentPlayer));
+    }
+
+    private void drawPieces(List<PieceInfo> pieces, Set<Integer> movableTiles, PlayerColor decider) {
         piecePane.getChildren().clear();
+        Map<Integer, List<PieceInfo>> piecesByTile = pieces.stream()
+                .collect(Collectors.groupingBy(PieceInfo::tile, LinkedHashMap::new, Collectors.toList()));
+        piecesByTile.forEach((tileId, piecesOnTile) -> drawPiecesOnTile(tile(tileId), piecesOnTile,
+                piece -> piece.color() == decider && movableTiles.contains(piece.tile())));
+    }
 
-        if (snapshot == null) {
-            return;
-        }
+    /**
+     * Draws the pieces of one tile in a square grid centered on the tile and
+     * highlights the pieces that can be moved.
+     * <p>
+     * The grid is laid out in the tile's own (unrotated) coordinates and then
+     * transformed to the board, so rotated tiles (the diagonal track tiles) get
+     * the same piece size as straight ones instead of being measured by their
+     * larger axis-aligned bounding box.
+     * </p>
+     */
+    private void drawPiecesOnTile(Shape tile, List<PieceInfo> piecesOnTile, Predicate<PieceInfo> isMovable) {
+        Bounds bounds = tile.getBoundsInLocal();
+        int gridSize = (int) Math.ceil(Math.sqrt(piecesOnTile.size()));
+        double spacing = Math.min(MAX_PIECE_SPACING,
+                Math.min(bounds.getWidth(), bounds.getHeight()) / (gridSize + 1));
+        double radius = Math.clamp(spacing * RADIUS_TO_SPACING_RATIO, MIN_PIECE_RADIUS, MAX_PIECE_RADIUS);
+        double gridCenter = (gridSize - 1) / 2.0;
 
-        List<PieceInfo> pieces = snapshot.pieces();
-
-        for (int index = 0; index < pieces.size(); index++) {
-            PieceInfo piece = pieces.get(index);
-
-            Rectangle location = locationFor(piece);
-            if (location == null) {
-                continue;
-            }
-
-            Circle token = createToken(piece.color());
-
-            positionToken(
-                    token,
-                    location,
-                    indexOnLocation(pieces, piece, index),
-                    countOnLocation(pieces, piece));
-
-            MovePiece move = movableMove(snapshot, piece);
-
-            if (move != null) {
-                enableMoveInteraction(location, move);
-            } else {
-                TargetPiece target = targetableAction(snapshot, piece);
-                if (target != null) {
-                    enableTargetInteraction(location, target);
-                }
-            }
-
-            piecePane.getChildren().add(token);
+        for (int slot = 0; slot < piecesOnTile.size(); slot++) {
+            Point2D center = tile.localToParent(
+                    bounds.getCenterX() + (slot % gridSize - gridCenter) * spacing,
+                    bounds.getCenterY() + (slot / gridSize - gridCenter) * spacing);
+            PieceInfo pieceInfo = piecesOnTile.get(slot);
+            Circle piece = createPiece(pieceInfo.color(), center.getX(), center.getY(), radius);
+            setStyle(piece, MOVABLE_PIECE_STYLE, isMovable.test(pieceInfo));
+            piecePane.getChildren().add(piece);
         }
     }
 
-    private int indexOnLocation(List<PieceInfo> pieces, PieceInfo piece, int index) {
-        int slot = 0;
-        for (int i = 0; i < index; i++) {
-            PieceInfo previous = pieces.get(i);
-            if (sameLocation(previous, piece))
-                slot++;
+    private void drawProperties(List<PropertyInfo> properties) {
+        propertyPane.getChildren().clear();
+        for (PropertyInfo property : properties) {
+            drawProperty(tile(property.tile()), property);
         }
-        return slot;
     }
 
-    private int countOnLocation(List<PieceInfo> pieces, PieceInfo piece) {
-        return (int) pieces.stream().filter(other -> sameLocation(other, piece)).count();
+    /**
+     * Draws a property as 1 (small), 2 (medium) or 3 (large) squares in the owner's color.
+     * <p>
+     * The squares are lined up across the tile near one of its short ends, so they are not
+     * hidden by the pieces in the middle of the tile. Like the pieces, they are laid out in the
+     * tile's own (unrotated) coordinates and rotated together with the tile.
+     * </p>
+     */
+    private void drawProperty(Shape tile, PropertyInfo property) {
+        Bounds bounds = tile.getBoundsInLocal();
+        boolean horizontal = bounds.getWidth() >= bounds.getHeight();
+        int squareCount = squareCountOf(property.size());
+        double along = (horizontal ? bounds.getMinX() : bounds.getMinY())
+                + PROPERTY_EDGE_INSET + PROPERTY_SQUARE_SIZE / 2;
+        double acrossCenter = horizontal ? bounds.getCenterY() : bounds.getCenterX();
+        double step = PROPERTY_SQUARE_SIZE + PROPERTY_SQUARE_GAP;
+
+        for (int i = 0; i < squareCount; i++) {
+            double across = acrossCenter + (i - (squareCount - 1) / 2.0) * step;
+            Point2D center = horizontal ? tile.localToParent(along, across) : tile.localToParent(across, along);
+            Rectangle square = new Rectangle(
+                    center.getX() - PROPERTY_SQUARE_SIZE / 2, center.getY() - PROPERTY_SQUARE_SIZE / 2,
+                    PROPERTY_SQUARE_SIZE, PROPERTY_SQUARE_SIZE);
+            square.setRotate(tile.getRotate());
+            square.getStyleClass().addAll(PROPERTY_STYLE, styleClassOf(property.owner()));
+            propertyPane.getChildren().add(square);
+        }
     }
 
-    private boolean sameLocation(PieceInfo first, PieceInfo second) {
-        return first.tile() == second.tile()
-                && ((first.tile() >= 1 && first.tile() <= NUM_TILES) || first.color() == second.color());
+    private static int squareCountOf(PropertySize size) {
+        return switch (size) {
+            case SMALL -> 1;
+            case MEDIUM -> 2;
+            case LARGE -> 3;
+        };
     }
 
-    private Circle createToken(PlayerColor color) {
-        Circle token = new Circle(10, colorFor(color));
-        token.setStroke(Color.BLACK);
-        token.setStrokeWidth(1.5);
-        token.setMouseTransparent(true);
-        return token;
+    private void drawNpcs(List<NpcInfo> npcs) {
+        npcPane.getChildren().clear();
+        for (NpcInfo npc : npcs) {
+            Shape tile = tile(npc.tile());
+            npcPane.getChildren().add(createNpcMarker(tile));
+            Tooltip.install(tile, new Tooltip(shopDescription(npc)));
+        }
     }
 
-    private void positionToken(Circle token, Rectangle tile, int slot, int total) {
-        var bounds = tile.getBoundsInParent();
-        int sideLength = (int) Math.ceil(Math.sqrt(total));
-        int column = slot % sideLength;
-        int row = slot / sideLength;
-        double spacing = Math.min(36, Math.min(bounds.getWidth(), bounds.getHeight()) / (sideLength + 1));
-        token.setRadius(Math.min(10, Math.max(4, spacing * 0.35)));
-        token.setCenterX(bounds.getCenterX() + (column - (sideLength - 1) / 2.0) * spacing);
-        token.setCenterY(bounds.getCenterY() + (row - (sideLength - 1) / 2.0) * spacing);
+    /**
+     * Creates a round "$" marker near the short end of the tile opposite of the property squares,
+     * so the shop stays visible next to properties and pieces.
+     */
+    private static Label createNpcMarker(Shape tile) {
+        Bounds bounds = tile.getBoundsInLocal();
+        double inset = NPC_EDGE_INSET + NPC_MARKER_SIZE / 2;
+        Point2D center = bounds.getWidth() >= bounds.getHeight()
+                ? tile.localToParent(bounds.getMaxX() - inset, bounds.getCenterY())
+                : tile.localToParent(bounds.getCenterX(), bounds.getMaxY() - inset);
+
+        Label marker = new Label(NPC_SYMBOL);
+        marker.getStyleClass().add(NPC_STYLE);
+        marker.setAlignment(Pos.CENTER);
+        marker.setMinSize(NPC_MARKER_SIZE, NPC_MARKER_SIZE);
+        marker.setPrefSize(NPC_MARKER_SIZE, NPC_MARKER_SIZE);
+        marker.setMaxSize(NPC_MARKER_SIZE, NPC_MARKER_SIZE);
+        marker.relocate(center.getX() - NPC_MARKER_SIZE / 2, center.getY() - NPC_MARKER_SIZE / 2);
+        return marker;
     }
 
-    private MovePiece movableMove(GameSnapshot snapshot, PieceInfo piece) {
-        if (snapshot.decision() == null || piece.color() != snapshot.decision().decider())
-            return null;
+    /**
+     * Describes the shop of an NPC with all its offers, e.g. "Trader\nANGER_REVERSE: 35000".
+     */
+    private static String shopDescription(NpcInfo npc) {
+        return npc.name() + npc.offers().stream()
+                .map(offer -> "\n" + offer.cardType() + ": " + offer.price())
+                .collect(Collectors.joining());
+    }
+
+    private Circle createPiece(PlayerColor color, double centerX, double centerY, double radius) {
+        Circle piece = new Circle(centerX, centerY, radius);
+        piece.getStyleClass().addAll(PIECE_STYLE, styleClassOf(color));
+        return piece;
+    }
+
+    /**
+     * Makes the start tile of every available move and every targetable piece
+     * clickable.
+     */
+    private void enableInteractions(GameSnapshot snapshot) {
+        resetInteractions();
+
+        availableActions(snapshot, MovePiece.class).stream()
+                .collect(Collectors.groupingBy(MovePiece::startTile))
+                .forEach((startTile, moves) -> {
+                    Shape source = tile(startTile);
+                    onClick(source, () -> selectSource(source, moves));
+                });
+
+        availableActions(snapshot, TargetPiece.class)
+                .forEach(target -> onClick(tile(target.targetTile()), () -> viewModel.submit(target)));
+
+        enableShopSelection(snapshot);
+    }
+
+    /**
+     * Highlights every tile the player can buy a property or an NPC card on and lets the player
+     * select one of them by clicking. The selected tile is highlighted differently.
+     */
+    private void enableShopSelection(GameSnapshot snapshot) {
+        Set<Integer> shopTiles = snapshot.decision().availableActions().stream()
+                .flatMap(action -> switch (action) {
+                    case BuyProperty buyProperty -> Stream.of(buyProperty.tile());
+                    case BuyCard buyCard -> Stream.of(buyCard.tile());
+                    default -> Stream.<Integer>empty();
+                })
+                .collect(Collectors.toSet());
+
+        Integer selectedTile = viewModel.selectedTileProperty().get();
+        for (int tileId : shopTiles) {
+            Shape shopTile = tile(tileId);
+            setStyle(shopTile, BUYABLE_STYLE, true);
+            setStyle(shopTile, SELECTED_SOURCE_STYLE, selectedTile != null && selectedTile == tileId);
+            onClick(shopTile, () -> viewModel.selectTile(tileId));
+        }
+    }
+
+    /**
+     * Highlights the selected start tile and lets the player click one of its move
+     * targets.
+     */
+    private void selectSource(Shape source, List<MovePiece> moves) {
+        enableInteractions(viewModel.snapshotProperty().get());
+        setStyle(source, SELECTED_SOURCE_STYLE, true);
+        for (MovePiece move : moves) {
+            Shape target = tile(move.targetTile());
+            setStyle(target, MOVE_TARGET_STYLE, true);
+            onClick(target, () -> viewModel.submit(move));
+        }
+    }
+
+    private void resetInteractions() {
+        for (Shape tile : tiles.values()) {
+            tile.setOnMouseClicked(null);
+            tile.getStyleClass().removeAll(CLICKABLE_STYLE, SELECTED_SOURCE_STYLE, MOVE_TARGET_STYLE, BUYABLE_STYLE);
+        }
+    }
+
+    private void onClick(Shape shape, Runnable action) {
+        setStyle(shape, CLICKABLE_STYLE, true);
+        shape.setOnMouseClicked(event -> action.run());
+    }
+
+    private static <A extends Action> List<A> availableActions(GameSnapshot snapshot, Class<A> type) {
         return snapshot.decision().availableActions().stream()
-                .filter(MovePiece.class::isInstance)
-                .map(MovePiece.class::cast)
-                .filter(move -> move.startTile() == piece.tile())
-                .findFirst().orElse(null);
+                .filter(type::isInstance)
+                .map(type::cast)
+                .toList();
     }
 
-    private TargetPiece targetableAction(GameSnapshot snapshot, PieceInfo piece) {
-        if (snapshot.decision() == null) {
-            return null;
+    private Shape tile(int tileId) {
+        Shape tile = tiles.get(tileId);
+        if (tile == null) {
+            throw new IllegalStateException("The board has no location for tile id " + tileId);
         }
-        return snapshot.decision().availableActions().stream()
-                .filter(TargetPiece.class::isInstance)
-                .map(TargetPiece.class::cast)
-                .filter(target -> target.targetPlayer() == piece.color() && target.targetTile() == piece.tile())
-                .findFirst()
-                .orElse(null);
+        return tile;
     }
 
-    private void enableMoveInteraction(Rectangle source, MovePiece move) {
-        source.setCursor(Cursor.HAND);
-        source.setOnMouseClicked(event -> selectMove(source, move));
-    }
-
-    private void enableTargetInteraction(Rectangle location, TargetPiece target) {
-        location.setCursor(Cursor.HAND);
-        location.setOnMouseClicked(event -> viewModel.submit(target));
-    }
-
-    private void selectMove(Rectangle source, MovePiece move) {
-        selectedSource = source;
-        clearPreview();
-        selectedSource.setStroke(Color.ORANGE);
-        selectedSource.setStrokeWidth(4);
-        Rectangle target = locationForTarget(move);
-        if (target != null) {
-            highlightedTarget = target;
-            target.setStroke(Color.GOLD);
-            target.setStrokeWidth(4);
-            target.setCursor(Cursor.HAND);
-            target.setOnMouseClicked(event -> viewModel.submit(move));
+    private static void setStyle(Node node, String styleClass, boolean enabled) {
+        node.getStyleClass().remove(styleClass);
+        if (enabled) {
+            node.getStyleClass().add(styleClass);
         }
     }
 
-    private void clearPreview() {
-        clearDestinationInteraction();
-        for (Rectangle tile : tiles) {
-            tile.setStroke(Color.BLACK);
-            tile.setStrokeWidth(1);
-        }
-        for (List<Rectangle> lane : finishLanes) {
-            for (Rectangle tile : lane) {
-                tile.setStroke(Color.BLACK);
-                tile.setStrokeWidth(1);
-            }
-        }
-        finishArea.setStroke(Color.SADDLEBROWN);
-        finishArea.setStrokeWidth(4);
-        for (int colorIndex = 0; colorIndex < NUM_COLORS; colorIndex++) {
-            Rectangle home = homes.get(colorIndex);
-            home.setStroke(homeColor(colorIndex));
-            home.setStrokeWidth(4);
-            home.setEffect(null);
-            for (Rectangle slot : homeSlots.get(colorIndex)) {
-                slot.setStroke(homeColor(colorIndex));
-                slot.setStrokeWidth(2);
-            }
-        }
-        if (activePlayer != null) {
-            Rectangle activeHome = homes.get(homeIndex(activePlayer));
-            activeHome.setStroke(Color.GOLD);
-            activeHome.setStrokeWidth(6);
-            activeHome.setEffect(new DropShadow(18, Color.GOLD));
-        }
+    private static String styleClassOf(PlayerColor color) {
+        return color.name().toLowerCase(Locale.ROOT);
     }
 
-    private void clearDestinationInteraction() {
-        if (highlightedTarget != null) {
-            highlightedTarget.setCursor(Cursor.DEFAULT);
-            highlightedTarget.setOnMouseClicked(null);
-            highlightedTarget = null;
-        }
-    }
-
-    private void clearBoardInteractions() {
-        forEachBoardLocation(location -> {
-            location.setCursor(Cursor.DEFAULT);
-            location.setOnMouseClicked(null);
-        });
-    }
-
-    private void forEachBoardLocation(java.util.function.Consumer<Rectangle> action) {
-        tiles.forEach(action);
-        finishLanes.forEach(lane -> lane.forEach(action));
-        homes.forEach(action);
-        homeSlots.forEach(slots -> slots.forEach(action));
-        action.accept(finishArea);
-    }
-
-    private Rectangle locationFor(PieceInfo piece) {
-        int tile = piece.tile();
-        if (tile >= 1 && tile <= NUM_TILES)
-            return tiles.get(tile - 1);
-        if (tile == 100)
-            return finishArea;
-        if (isHomeSlot(tile))
-            return homeSlots.get(homeIndexForTile(tile)).get(tile % 100 - 1);
-        if (isFinishLaneTile(tile))
-            return finishLanes.get(tile / 100 - 1).get(tile % 100 - 5);
-        return homes.get(homeIndex(piece.color()));
-    }
-
-    private Rectangle locationForTarget(MovePiece move) {
-        int tile = move.targetTile();
-        if (tile >= 1 && tile <= NUM_TILES)
-            return tiles.get(tile - 1);
-        if (tile == 100)
-            return finishArea;
-        if (isFinishLaneTile(tile))
-            return finishLanes.get(tile / 100 - 1).get(tile % 100 - 5);
-        return null;
-    }
-
-    private boolean isHomeSlot(int tile) {
-        return tile / 100 >= 1 && tile / 100 <= 4 && tile % 100 >= 1 && tile % 100 <= 4;
-    }
-
-    private boolean isFinishLaneTile(int tile) {
-        return tile / 100 >= 1 && tile / 100 <= 4 && tile % 100 >= 5 && tile % 100 <= 14;
-    }
-
-    private int homeIndexForTile(int tile) {
-        return switch (tile / 100) {
-            case 1 -> 0;
-            case 2 -> 1;
-            case 4 -> 2;
-            case 3 -> 3;
-            default -> throw new IllegalArgumentException("Not a home tile: " + tile);
-        };
-    }
-
-    private int homeIndex(PlayerColor color) {
-        return switch (color) {
-            case RED -> 0;
-            case YELLOW -> 1;
-            case GREEN -> 2;
-            case BLUE -> 3;
-        };
-    }
-
-    private Color homeColor(int colorIndex) {
-        return switch (colorIndex) {
-            case 0 -> Color.RED;
-            case 1 -> Color.GOLD;
-            case 2 -> Color.LIMEGREEN;
-            case 3 -> Color.DODGERBLUE;
-            default -> throw new IllegalArgumentException("Unknown home index: " + colorIndex);
-        };
-    }
-
-    private Color colorFor(PlayerColor color) {
-        return switch (color) {
-            case RED -> Color.RED;
-            case YELLOW -> Color.GOLD;
-            case GREEN -> Color.LIMEGREEN;
-            case BLUE -> Color.DODGERBLUE;
-        };
-    }
-
-    private void initializeTiles() {
-        for (int i = 1; i <= NUM_TILES; i++) {
-            String tileId = "#tile" + i;
-            Rectangle tile = (Rectangle) boardPane.lookup(tileId);
-
-            if (tile == null) {
-                throw new IllegalStateException("Missing tile: " + tileId);
-            }
-
-            tiles.add(tile);
-        }
-        if (tiles.size() != NUM_TILES) {
-            throw new IllegalStateException("Missing tiles, expected: " + NUM_TILES + ", found: " + tiles.size());
-        }
-    }
-
-    private void initializeFinishLanes() {
-        for (int i = 0; i < NUM_COLORS; i++) {
-            finishLanes.add(new ArrayList<>(LENGHT_FINISH_LANE));
-            for (int j = 0; j < LENGHT_FINISH_LANE; j++) {
-                String tileId = "#tile%d".formatted((i + 1) * 100 + 5 + j);
-                Rectangle tile = (Rectangle) boardPane.lookup(tileId);
-
-                if (tile == null) {
-                    throw new IllegalStateException("Missing tile: " + tileId);
-                }
-
-                finishLanes.get(i).add(tile);
-            }
-        }
-        if (finishLanes.size() != NUM_COLORS) {
-            throw new IllegalStateException(
-                    "Missing finish lanes, expected: %d, found: %d".formatted(NUM_COLORS, finishLanes.size()));
-        }
-        for (int i = 0; i < NUM_COLORS; i++) {
-            if (finishLanes.get(i).size() != LENGHT_FINISH_LANE) {
-                throw new IllegalStateException(
-                        "Missing finish lane tiles for color %d, expected: %d, found: %d".formatted(
-                                i, LENGHT_FINISH_LANE, finishLanes.get(i).size()));
+    /**
+     * Maps every node with the fx:id {@code "tile<id>"} to its tile id.
+     */
+    private void collectTiles() {
+        for (Node node : boardPane.getChildren()) {
+            String fxId = node.getId();
+            if (fxId != null && fxId.startsWith(TILE_ID_PREFIX)) {
+                tiles.put(Integer.parseInt(fxId.substring(TILE_ID_PREFIX.length())), (Shape) node);
             }
         }
     }
 
-    private void initializeHomes() {
-        for (int i = 0; i < NUM_COLORS; i++) {
-            String tileId = "#home" + i;
-            Rectangle tile = (Rectangle) boardPane.lookup(tileId);
-
-            if (tile == null) {
-                throw new IllegalStateException("Missing home: " + tileId);
-            }
-
-            homes.add(tile);
-
-            int homeId = switch (i) {
-                case 0 -> 100;
-                case 1 -> 200;
-                case 2 -> 400;
-                case 3 -> 300;
-                default -> throw new IllegalStateException("Unknown home index: " + i);
-            };
-            List<Rectangle> slots = new ArrayList<>(4);
-            for (int slot = 1; slot <= 4; slot++) {
-                Rectangle homeSlot = (Rectangle) boardPane.lookup("#tile" + (homeId + slot));
-                if (homeSlot == null) {
-                    throw new IllegalStateException("Missing home slot: #tile" + (homeId + slot));
-                }
-                slots.add(homeSlot);
-            }
-            homeSlots.add(slots);
-        }
-        if (homes.size() != NUM_COLORS || homeSlots.size() != NUM_COLORS) {
-            throw new IllegalStateException("Missing homes, expected: " + NUM_COLORS + ", found: " + homes.size());
-        }
+    private void bindBoardScale() {
+        NumberBinding scale = Bindings.min(
+                boardRoot.widthProperty().divide(BOARD_SIZE),
+                boardRoot.heightProperty().divide(BOARD_SIZE));
+        boardPane.scaleXProperty().bind(scale);
+        boardPane.scaleYProperty().bind(scale);
     }
-
-    // endregion initializing
 }
