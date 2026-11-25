@@ -5,14 +5,15 @@ import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 /**
- * Base abstraction for all cards in the game.
+ * Represents a card in the game.
+ * <p>
+ * Each card has a specific type and can apply its effect to a player in the game.
  */
 public interface Card {
     /**
      * Constructs a {@code Card} object from the given {@link CardType}.
      * <p>
-     * This is the inverse lookup of Card.type(), i.e. someType == Card.fromType(someType).type() should always be true.
-     * </p>
+     * This is the inverse lookup of {@link Card#type()}, i.e. {@code someType == Card.fromType(someType).type()} should always be true.
      *
      * @param type the {@link CardType} of the card to create
      * @return a {@code Card} object representing the specified card type

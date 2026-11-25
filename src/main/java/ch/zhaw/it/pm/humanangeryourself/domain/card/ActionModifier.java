@@ -6,9 +6,20 @@ import ch.zhaw.it.pm.humanangeryourself.config.GamblingConfig;
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * Represents a modifier that can be applied to an action in the game.
+ */
 public sealed interface ActionModifier extends Card {
+    /**
+     * Returns the action that is forced to be executed next by this modifier.
+     *
+     * @return the action that is forced by this modifier
+     */
     Action forcedAction();
 
+    /**
+     * Represents a modifier that can be applied to an action in the game that involves gambling.
+     */
     non-sealed interface GambleModifier extends ActionModifier {
         /**
          * Returns the gambling configuration for this modifier.
@@ -19,8 +30,10 @@ public sealed interface ActionModifier extends Card {
         GamblingConfig getGamblingConfig(GamblingConfig currentConfig);
     }
 
+    /**
+     * Represents a modifier that can be applied to an action in the game that involves rolling a die.
+     */
     non-sealed interface RollModifier extends ActionModifier {
-
         /**
          * Returns the possible values that can be rolled with this modifier.
          *
