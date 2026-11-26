@@ -22,6 +22,8 @@ import java.util.Random;
  * be sent back home.
  */
 public class MovementRules {
+    private static final int TRACK_LENGTH = 60;
+
     private static final int START_RED_TILE_ID = 1;
     private static final int START_GREEN_TILE_ID = 46;
     private static final int START_BLUE_TILE_ID = 31;
@@ -145,7 +147,7 @@ public class MovementRules {
      * @param roll   the result of the die roll
      * @return an optional move action, or empty if no move is possible
      */
-    public Optional<MovePiece> getPossibleMoveOfPiece(Piece piece, Player player, int roll) {
+    private Optional<MovePiece> getPossibleMoveOfPiece(Piece piece, Player player, int roll) {
         int startTile = piece.getCurrentTile().getId();
 
         int intermediateDestination = startTile;
@@ -166,7 +168,7 @@ public class MovementRules {
     /**
      * Calculates the partial move of a piece on the board for a given player and die roll.
      * <p>
-     *     A partial move will either:
+     * A partial move will either:
      *     <ul>
      *         <li>use all remaining steps to move the piece to its final destination</li>
      *         <li>use some of the remaining steps to move the piece to an intermediate destination,
@@ -188,7 +190,7 @@ public class MovementRules {
                     : Optional.empty(); // stay put
             case TRACK, SAFE -> Optional.of(partialMoveOnTrack(currentTile, steps, player));
             case STAIRCASE -> partialMoveOnStaircase(currentTile, steps, player);
-            default -> Optional.empty();
+            case FINISH_AREA -> Optional.empty(); // no moves allowed from the finish area
         };
     }
 
@@ -211,7 +213,7 @@ public class MovementRules {
      */
     private PartialMove partialMoveOnTrack(int currentTile, int steps, Player player) {
         int endOfTrack = getEndTileId(player);
-        int stepsToEnd = (endOfTrack - currentTile + 60) % 60;
+        int stepsToEnd = (endOfTrack - currentTile + TRACK_LENGTH) % TRACK_LENGTH;
 
         if (steps > stepsToEnd) { // when reaching the end of the track...
             if (player.isInDebt()) {
@@ -223,7 +225,7 @@ public class MovementRules {
             }
         } else {
             // otherwise, simply move along the track for the remaining steps
-            return new PartialMove((currentTile + steps - 1) % 60 + 1, 0);
+            return new PartialMove((currentTile + steps - 1) % TRACK_LENGTH + 1, 0);
         }
     }
 
@@ -259,7 +261,7 @@ public class MovementRules {
             steps -= 2; // ...use two steps to move onto the finish area and back
             // then move down the staircase, but stop the partial move when reaching the bottom of the staircase
             int bottomOfStaircase = getFirstStaircaseTileId(player);
-            int stepsToBottom = currentTile - bottomOfStaircase;
+            int stepsToBottom = topOfStaircase - bottomOfStaircase;
 
             int stepsTaken = Math.min(steps, stepsToBottom); // number of steps this partial move will use up
             return Optional.of(new PartialMove(currentTile - stepsTaken, steps - stepsTaken));
