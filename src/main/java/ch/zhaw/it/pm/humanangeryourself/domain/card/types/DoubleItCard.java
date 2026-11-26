@@ -2,7 +2,7 @@ package ch.zhaw.it.pm.humanangeryourself.domain.card.types;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
-import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.ApplicableCard;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
@@ -12,7 +12,7 @@ import java.util.List;
  * Hand card that lets an indebted player pass their debt, doubled, on to the
  * next player in turn order.
  */
-public class DoubleItCard implements Card {
+public class DoubleItCard implements ApplicableCard {
 
     /**
      * Doubles the player's debt, adds it to the balance of the next player in turn

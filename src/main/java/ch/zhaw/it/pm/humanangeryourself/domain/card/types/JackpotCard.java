@@ -2,14 +2,14 @@ package ch.zhaw.it.pm.humanangeryourself.domain.card.types;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.config.CardConfig;
-import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.ApplicableCard;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 /**
  * Instant card that awards the configured amount of money to the player who drew it.
  */
-public class JackpotCard implements Card {
+public class JackpotCard implements ApplicableCard {
 
     /**
      * The configuration providing the jackpot amount.
