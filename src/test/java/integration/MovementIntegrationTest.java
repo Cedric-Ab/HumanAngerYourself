@@ -262,24 +262,51 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         }
 
         @Test
-        @DisplayName("Piece cannot enter finish area with debt")
-        void pieceCannotEnterFinishAreaWithDebt() {
-            getCurrentPlayer().resetBalanceToZero();
-            getCurrentPlayer().changeBalanceBy(-1);
-
-            placeCurrentPlayerPiece(TILE_ID_STAIRCASE_TOP_RED - 3);
-            rollNumber(4);
-
-            assertTrue(getMoveActions().isEmpty());
-        }
-
-        @Test
         @DisplayName("Finished pieces cannot be moved")
         void finishedPiecesCannotBeMoved() {
             placeCurrentPlayerPieceAndRoll(TILE_ID_FINISH_AREA, 1);
 
             assertTrue(getMoveActions().isEmpty(),
                     "Expected no move actions to be available for a finished piece");
+        }
+
+        @Nested
+        @DisplayName("With Debt")
+        class Debt {
+            private void putCurrentPlayerIntoDebt() {
+                getCurrentPlayer().resetBalanceToZero();
+                getCurrentPlayer().changeBalanceBy(-1);
+            }
+
+            @Test
+            @DisplayName("Piece cannot move")
+            void pieceCannotMoveWithDebt() {
+                putCurrentPlayerIntoDebt();
+
+                placeCurrentPlayerPieceAndRoll(TILE_ID_STAIRCASE_BOTTOM_RED + 3, 3);
+
+                assertTrue(getMoveActions().isEmpty(),
+                        "Expected no move actions to be available for a piece with debt");
+            }
+
+            @Test
+            @DisplayName("Piece gets stuck at bottom of staircase")
+            void pieceGetsStuckAtBottomOfStaircaseWithDebt() {
+                putCurrentPlayerIntoDebt();
+
+                assertEquals(TILE_ID_STAIRCASE_BOTTOM_RED, getTargetTile(TILE_ID_LAST_TRACK_TILE_RED - 1, 4),
+                        "Expected a piece to get stuck at the bottom of the staircase with debt");
+            }
+
+            @Test
+            @DisplayName("Piece cannot enter finish area")
+            void pieceCannotEnterFinishAreaWithDebt() {
+                putCurrentPlayerIntoDebt();
+
+                placeCurrentPlayerPieceAndRoll(TILE_ID_STAIRCASE_TOP_RED - 3, 4);
+
+                assertTrue(getMoveActions().isEmpty());
+            }
         }
     }
 
