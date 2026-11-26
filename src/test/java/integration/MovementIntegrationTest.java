@@ -116,7 +116,7 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
         }
 
         @Test
-        @DisplayName("Target tile is calculated correctly without wrap around")
+        @DisplayName("Target tile is calculated correctly at edge of wrap around")
         void targetTileIsCalculatedCorrectlyAtEdgeOfWraparound() {
             assertEquals(60, getTargetTile(54, 6));
         }
