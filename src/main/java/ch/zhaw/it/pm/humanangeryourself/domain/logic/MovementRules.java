@@ -1,6 +1,5 @@
 package ch.zhaw.it.pm.humanangeryourself.domain.logic;
 
-import ch.zhaw.it.pm.humanangeryourself.api.action.InvalidActionException;
 import ch.zhaw.it.pm.humanangeryourself.api.action.MovePiece;
 import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Board;
@@ -12,16 +11,19 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.TileType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 /**
  * Defines the movement rules for pieces on the game board.
  * <p>
  * Responsible for rolling the die, calculating possible moves, determining when pieces
- * enter their colour-specific staircase and determining which pieces must
+ * enter their color-specific staircase and determining which pieces must
  * be sent back home.
  */
 public class MovementRules {
+    private static final int TRACK_LENGTH = 60;
+
     private static final int START_RED_TILE_ID = 1;
     private static final int START_GREEN_TILE_ID = 46;
     private static final int START_BLUE_TILE_ID = 31;
@@ -32,8 +34,17 @@ public class MovementRules {
     private static final int END_BLUE_TILE_ID = 30;
     private static final int END_YELLOW_TILE_ID = 15;
 
-    private static final int FINISH_AREA_ID = 100;
+    private static final int STAIRCASE_RED_START_ID = 105;
+    private static final int STAIRCASE_YELLOW_START_ID = 205;
+    private static final int STAIRCASE_BLUE_START_ID = 305;
+    private static final int STAIRCASE_GREEN_START_ID = 405;
 
+    private static final int STAIRCASE_RED_END_ID = 114;
+    private static final int STAIRCASE_YELLOW_END_ID = 214;
+    private static final int STAIRCASE_BLUE_END_ID = 314;
+    private static final int STAIRCASE_GREEN_END_ID = 414;
+
+    private static final int FINISH_AREA_ID = 100;
 
     private static final Random RANDOM = new Random();
 
@@ -110,7 +121,7 @@ public class MovementRules {
      *
      * <p>
      * Pieces in their home area can only enter the board when rolling a 5 or 6.
-     * Pieces on the main track can move to their colour-specific staircase
+     * Pieces on the main track can move to their color-specific staircase
      * when passing its endpoint. Pieces already in the staircase move towards
      * the finish area, with excess steps causing them to move backwards.
      *
@@ -123,84 +134,146 @@ public class MovementRules {
         List<Piece> pieces = player.getPieces();
 
         for (Piece piece : pieces) {
-            int currentTile = piece.getCurrentTile().getId();
-            if (piece.getCurrentTile().getType() == TileType.HOME) {
-                if (roll == 5 || roll == 6) {
-                    possibleActions.add(new MovePiece(currentTile, getStartTileId(player)));
-                }
-            } else if (piece.getCurrentTile().getType() == TileType.TRACK
-                    || piece.getCurrentTile().getType() == TileType.SAFE) {
-
-                int dest = calculateDestinationTile(currentTile, roll);
-
-                if (wouldEnterStaircase(currentTile, roll, player)) {
-                    int endTile = getEndTileId(player);
-                    int firstStaircaseTile = getFirstStaircaseTileId(player);
-
-                    int stepsToEnd = (endTile - currentTile + 60) % 60;
-                    int remainingRoll = roll - stepsToEnd;
-
-                    int staircaseDestination = firstStaircaseTile + remainingRoll - 1;
-
-                    possibleActions.add(new MovePiece(currentTile, staircaseDestination));
-                } else {
-                    possibleActions.add(new MovePiece(currentTile, dest));
-                }
-
-            } else if (piece.getCurrentTile().getType() == TileType.STAIRCASE) {
-                int lastTile = getLastStaircaseTileId(player);
-                int remainingSteps = lastTile - currentTile + 1;
-
-                if (roll == remainingSteps && !player.isInDebt()) {
-                    possibleActions.add(new MovePiece(currentTile, FINISH_AREA_ID));
-                } else if(roll == remainingSteps && player.isInDebt()){
-                    throw new InvalidActionException("You must be debt free to enter the finish area.");
-                } else if (roll < remainingSteps) {
-                    possibleActions.add(new MovePiece(currentTile, currentTile + roll));
-                } else {
-                    int destination = lastTile - (roll - remainingSteps);
-                    possibleActions.add(new MovePiece(currentTile, destination));
-                }
-            }
+            getPossibleMoveOfPiece(piece, player, roll).ifPresent(possibleActions::add);
         }
         return possibleActions;
     }
 
     /**
-     * Calculates the destination tile after moving a given number of steps
-     * along the main game track.
+     * Calculates the possible move of a single piece for a given player and die roll.
      *
+     * @param piece  the piece whose possible move is calculated
+     * @param player the player whose possible moves are calculated
+     * @param roll   the result of the die roll
+     * @return an optional move action, or empty if no move is possible
+     */
+    private Optional<MovePiece> getPossibleMoveOfPiece(Piece piece, Player player, int roll) {
+        int startTile = piece.getCurrentTile().getId();
+
+        int intermediateDestination = startTile;
+        int remainingSteps = roll;
+        while (remainingSteps > 0) {
+            Optional<PartialMove> result = partialMove(intermediateDestination, remainingSteps, player);
+            if (result.isEmpty()) {
+                return Optional.empty();
+            }
+
+            intermediateDestination = result.get().intermediateDestination();
+            remainingSteps = result.get().remainingSteps();
+        }
+
+        return Optional.of(new MovePiece(startTile, intermediateDestination));
+    }
+
+    /**
+     * Calculates the partial move of a piece on the board for a given player and die roll.
      * <p>
-     * The calculation accounts for the circular layout of the track,
-     * where the tile after the last track tile is the first track tile.
+     * A partial move will either:
+     *     <ul>
+     *         <li>use all remaining steps to move the piece to its final destination</li>
+     *         <li>use some of the remaining steps to move the piece to an intermediate destination,
+     *             where the movement will behave differently</li>
+     *     </ul>
+     * </p>
      *
-     * @param currentTile the current tile ID
-     * @param roll        the number of steps to move
-     * @return the calculated destination tile ID
+     * @param currentTile the current tile of the piece
+     * @param steps       the number of remaining steps to move
+     * @param player      the player whose partial move is calculated
+     * @return a partial move (new position plus remaining steps), or empty if no move is possible
      */
-    private int calculateDestinationTile(int currentTile, int roll) {
-        return (currentTile - 1 + roll) % 60 + 1;
+    private Optional<PartialMove> partialMove(int currentTile, int steps, Player player) {
+        TileType currentTileType = board.getTileById(currentTile).getType();
+
+        return switch (currentTileType) {
+            case HOME -> (steps == 5 || steps == 6)
+                    ? Optional.of(new PartialMove(getStartTileId(player), 0)) // move onto the track
+                    : Optional.empty(); // stay put
+            case TRACK, SAFE -> Optional.of(partialMoveOnTrack(currentTile, steps, player));
+            case STAIRCASE -> partialMoveOnStaircase(currentTile, steps, player);
+            case FINISH_AREA -> Optional.empty(); // no moves allowed from the finish area
+        };
     }
 
     /**
-     * Checks whether a move passes the endpoint of the player's main track
-     * and therefore enters their colour-specific staircase.
+     * Calculates the partial move of a piece on the track for a given player and remaining steps.
+     * <p>
+     * There are two types of partial moves that can happen on the track:
+     * <ul>
+     *     <li>A simple move that uses all steps to move along the track.</li>
+     *     <li>A move that would enter the staircase instead moves onto the bottom tile of the staircase
+     *         and leaves the remaining steps for the next partial move.
+     *         If the player is in debt, the partial move ends on this tile.</li>
+     * </ul>
+     * </p>
      *
-     * @param currentTile the piece's current tile ID
-     * @param roll        the number of steps to move
-     * @param player      the player whose staircase is being checked
-     * @return {@code true} if the move passes the track endpoint,
-     *         otherwise {@code false}
+     * @param currentTile the current tile of the piece
+     * @param steps       the number of remaining steps to move
+     * @param player      the player whose partial move is calculated
+     * @return a partial move (new position plus remaining steps)
      */
-    private boolean wouldEnterStaircase(int currentTile, int roll, Player player) {
-        int endTile = getEndTileId(player);
-        int stepsToEnd = (endTile - currentTile + 60) % 60;
+    private PartialMove partialMoveOnTrack(int currentTile, int steps, Player player) {
+        int endOfTrack = getEndTileId(player);
+        int stepsToEnd = (endOfTrack - currentTile + TRACK_LENGTH) % TRACK_LENGTH;
 
-        return roll > stepsToEnd;
+        if (steps > stepsToEnd) { // when reaching the end of the track...
+            if (player.isInDebt()) {
+                // ...stick to the bottom of the staircase
+                return new PartialMove(getFirstStaircaseTileId(player), 0);
+            } else {
+                // ...move onto the staircase
+                return new PartialMove(getFirstStaircaseTileId(player), steps - stepsToEnd - 1);
+            }
+        } else {
+            // otherwise, simply move along the track for the remaining steps
+            return new PartialMove((currentTile + steps - 1) % TRACK_LENGTH + 1, 0);
+        }
     }
 
     /**
-     * Returns the starting tile ID corresponding to the given player's colour.
+     * Calculates the partial move of a piece on the staircase for a given player and remaining steps.
+     * <p>
+     * When the player is in debt, pieces on the staircase cannot move.
+     * Otherwise, there are three types of partial moves that can happen on a staircase:
+     * <ul>
+     *     <li>A move that uses all steps to reach the finish area.</li>
+     *     <li>A move with too many steps to enter the finish area instead moves onto the top tile of the staircase
+     *         and leaves the remaining steps for the next partial move.</li>
+     *     <li>A move starting on the top tile (and has at least two steps left) will step into the finish area
+     *         and move back down the staircase. It stops when it runs out of steps or reaches the bottom of the staircase,
+     *         where it leaves the remaining steps for the next partial move.</li>
+     * </ul>
+     * </p>
+     *
+     * @param currentTile the current tile of the piece
+     * @param steps       the number of remaining steps to move
+     * @param player      the player whose partial move is calculated
+     * @return a partial move (new position plus remaining steps), or an empty optional if there is no move
+     */
+    private Optional<PartialMove> partialMoveOnStaircase(int currentTile, int steps, Player player) {
+        int topOfStaircase = getLastStaircaseTileId(player);
+        int stepsToFinish = topOfStaircase - currentTile + 1; // number of steps to reach the finish area
+
+        if (player.isInDebt()) {
+            return Optional.empty(); // no moves allowed on staircase for players in debt
+        } else if (steps == stepsToFinish) { // only with the exact roll and no debt...
+            return Optional.of(new PartialMove(FINISH_AREA_ID, 0)); // ...may you enter the finish area
+        } else if (currentTile == topOfStaircase) { // only when starting at the top of the staircase...
+            steps -= 2; // ...use two steps to move onto the finish area and back
+            // then move down the staircase, but stop the partial move when reaching the bottom of the staircase
+            int bottomOfStaircase = getFirstStaircaseTileId(player);
+            int stepsToBottom = topOfStaircase - bottomOfStaircase;
+
+            int stepsTaken = Math.min(steps, stepsToBottom); // number of steps this partial move will use up
+            return Optional.of(new PartialMove(currentTile - stepsTaken, steps - stepsTaken));
+        } else {
+            // move up the staircase, but stop the partial move at the top of the staircase
+            int stepsTaken = Math.min(steps, stepsToFinish - 1); // number of steps this partial move will use up
+            return Optional.of(new PartialMove(currentTile + stepsTaken, steps - stepsTaken));
+        }
+    }
+
+    /**
+     * Returns the starting tile ID corresponding to the given player's color.
      *
      * @param player the player whose starting tile is required
      * @return the ID of the player's starting tile
@@ -215,7 +288,7 @@ public class MovementRules {
     }
 
     /**
-     * Returns the endpoint tile ID of the main track for the given player's colour.
+     * Returns the endpoint tile ID of the main track for the given player's color.
      *
      * @param player the player whose track endpoint is required
      * @return the ID of the player's track endpoint
@@ -230,32 +303,34 @@ public class MovementRules {
     }
 
     /**
-     * Returns the first tile ID of the staircase corresponding to the given player's colour.
+     * Returns the first tile ID of the staircase corresponding to the given player's color.
      *
      * @param player the player whose staircase is required
      * @return the ID of the first staircase tile
      */
     private int getFirstStaircaseTileId(Player player) {
         return switch (player.getColor()) {
-            case RED -> 105;
-            case YELLOW -> 205;
-            case BLUE -> 305;
-            case GREEN -> 405;
+            case RED -> STAIRCASE_RED_START_ID;
+            case YELLOW -> STAIRCASE_YELLOW_START_ID;
+            case BLUE -> STAIRCASE_BLUE_START_ID;
+            case GREEN -> STAIRCASE_GREEN_START_ID;
         };
     }
 
     /**
-     * Returns the last tile ID of the staircase corresponding to the given player's colour.
+     * Returns the last tile ID of the staircase corresponding to the given player's color.
      *
      * @param player the player whose staircase is required
      * @return the ID of the last staircase tile
      */
     private int getLastStaircaseTileId(Player player) {
         return switch (player.getColor()) {
-            case RED -> 114;
-            case YELLOW -> 214;
-            case BLUE -> 314;
-            case GREEN -> 414;
+            case RED -> STAIRCASE_RED_END_ID;
+            case YELLOW -> STAIRCASE_YELLOW_END_ID;
+            case BLUE -> STAIRCASE_BLUE_END_ID;
+            case GREEN -> STAIRCASE_GREEN_END_ID;
         };
     }
+
+    private record PartialMove(int intermediateDestination, int remainingSteps) { }
 }
