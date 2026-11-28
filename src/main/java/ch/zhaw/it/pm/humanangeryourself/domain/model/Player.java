@@ -117,6 +117,18 @@ public class Player {
     }
 
     /**
+     * Returns the player's piece that stands on the tile with the given id.
+     *
+     * @param tileId id of the tile to look at
+     * @return the piece on the tile, or an empty Optional if none of the player's pieces is there
+     */
+    public Optional<Piece> getPiece(int tileId) {
+        return pieces.stream()
+                .filter(piece -> (piece.getCurrentTile().getId() == tileId))
+                .findFirst();
+    }
+
+    /**
      * Returns all the player's pieces that stand on the given tile.
      *
      * @param tile tile to look at
