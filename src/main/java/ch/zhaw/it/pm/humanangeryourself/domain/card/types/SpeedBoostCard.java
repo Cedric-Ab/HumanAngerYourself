@@ -2,14 +2,14 @@ package ch.zhaw.it.pm.humanangeryourself.domain.card.types;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.RollResult;
-import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.ApplicableCard;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 /**
  * Hand card that replaces the current die roll with a new roll that is doubled.
  */
-public class SpeedBoostCard implements Card {
+public class SpeedBoostCard implements ApplicableCard {
 
     /**
      * Rolls the die, doubles the result and sets it as the roll outcome

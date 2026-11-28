@@ -2,14 +2,14 @@ package ch.zhaw.it.pm.humanangeryourself.domain.card.types;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.GambleResult.MoneyResult;
-import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.ApplicableCard;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 /**
  * Hand card that performs a gambling spin and pays out double the winnings.
  */
-public class MoneyTigerCard implements Card {
+public class MoneyTigerCard implements ApplicableCard {
 
     /**
      * Spins the win amount according to the game's gambling rules, doubles it,

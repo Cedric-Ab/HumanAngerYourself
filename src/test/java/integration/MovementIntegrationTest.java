@@ -1,6 +1,5 @@
 package integration;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -114,6 +113,12 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
             rushThroughTurn(); // skip turn as RED doesn't have to wrap around
 
             assertEquals(2, getTargetTile(TILE_ID_LAST_TRACK_TILE - 1, 3));
+        }
+
+        @Test
+        @DisplayName("Target tile is calculated correctly at edge of wrap around")
+        void targetTileIsCalculatedCorrectlyAtEdgeOfWraparound() {
+            assertEquals(60, getTargetTile(54, 6));
         }
 
         @Test
@@ -234,8 +239,6 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
                     "Expected movement within the staircase to advance by the rolled amount");
         }
 
-        // TODO: enable this test once fixed
-        @Disabled
         @Test
         @DisplayName("Piece bounces back at top of staircase")
         void pieceBouncesBackAtTopOfStaircase() {
@@ -243,13 +246,11 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
                     "Expected movement beyond the top of the staircase / finish area to bounce back");
         }
 
-        // TODO: enable this test once fixed
-        @Disabled
         @Test
         @DisplayName("Piece bounces back at bottom of staircase")
         void pieceBouncesBackAtBottomOfStaircase() {
             int roll = TILE_ID_STAIRCASE_TOP_RED - TILE_ID_STAIRCASE_BOTTOM_RED + 3;
-            assertEquals(TILE_ID_STAIRCASE_BOTTOM_RED + 2, getTargetTile(TILE_ID_STAIRCASE_TOP_RED, roll),
+            assertEquals(TILE_ID_STAIRCASE_BOTTOM_RED + 1, getTargetTile(TILE_ID_STAIRCASE_TOP_RED, roll),
                     "Expected a piece to bounce back towards the top of the staircase after overshooting the the top and the bottom");
         }
 
@@ -260,18 +261,6 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
                     "Expected a piece at the top of the staircase to enter the finish area with a exact roll");
         }
 
-        // TODO: enable this test once fixed
-        @Disabled
-        @Test
-        @DisplayName("Piece cannot enter finish area with debt")
-        void pieceCannotEnterFinishAreaWithDebt() {
-            getCurrentPlayer().resetBalanceToZero();
-            getCurrentPlayer().changeBalanceBy(-1);
-
-            assertEquals(TILE_ID_STAIRCASE_TOP_RED - 1, getTargetTile(TILE_ID_STAIRCASE_TOP_RED - 1, 2),
-                    "Expected a player in debt to not be able to enter the finish area, even with an exact roll");
-        }
-
         @Test
         @DisplayName("Finished pieces cannot be moved")
         void finishedPiecesCannotBeMoved() {
@@ -279,6 +268,45 @@ public class MovementIntegrationTest extends BaseIntegrationTest {
 
             assertTrue(getMoveActions().isEmpty(),
                     "Expected no move actions to be available for a finished piece");
+        }
+
+        @Nested
+        @DisplayName("With Debt")
+        class Debt {
+            private void putCurrentPlayerIntoDebt() {
+                getCurrentPlayer().resetBalanceToZero();
+                getCurrentPlayer().changeBalanceBy(-1);
+            }
+
+            @Test
+            @DisplayName("Piece cannot move")
+            void pieceCannotMoveWithDebt() {
+                putCurrentPlayerIntoDebt();
+
+                placeCurrentPlayerPieceAndRoll(TILE_ID_STAIRCASE_BOTTOM_RED + 3, 3);
+
+                assertTrue(getMoveActions().isEmpty(),
+                        "Expected no move actions to be available for a piece with debt");
+            }
+
+            @Test
+            @DisplayName("Piece gets stuck at bottom of staircase")
+            void pieceGetsStuckAtBottomOfStaircaseWithDebt() {
+                putCurrentPlayerIntoDebt();
+
+                assertEquals(TILE_ID_STAIRCASE_BOTTOM_RED, getTargetTile(TILE_ID_LAST_TRACK_TILE_RED - 1, 4),
+                        "Expected a piece to get stuck at the bottom of the staircase with debt");
+            }
+
+            @Test
+            @DisplayName("Piece cannot enter finish area")
+            void pieceCannotEnterFinishAreaWithDebt() {
+                putCurrentPlayerIntoDebt();
+
+                placeCurrentPlayerPieceAndRoll(TILE_ID_STAIRCASE_TOP_RED - 3, 4);
+
+                assertTrue(getMoveActions().isEmpty());
+            }
         }
     }
 

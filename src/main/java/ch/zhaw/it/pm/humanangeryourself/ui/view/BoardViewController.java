@@ -285,7 +285,7 @@ public class BoardViewController {
     }
 
     /**
-     * Describes the shop of an NPC with all its offers, e.g. "Trader\nANGER_REVERSE: 35000".
+     * Describes the shop of an NPC with all its offers.
      */
     private static String shopDescription(NpcInfo npc) {
         return npc.name() + npc.offers().stream()

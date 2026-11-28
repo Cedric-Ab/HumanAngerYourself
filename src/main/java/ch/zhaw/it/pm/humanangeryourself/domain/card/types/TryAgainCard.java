@@ -2,6 +2,7 @@ package ch.zhaw.it.pm.humanangeryourself.domain.card.types;
 
 import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.GambleResult.CardResult;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.ApplicableCard;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
@@ -9,7 +10,7 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 /**
  * Hand card that performs a gambling spin for a new card instead of money.
  */
-public class TryAgainCard implements Card {
+public class TryAgainCard implements ApplicableCard {
 
     /**
      * Spins for a card, adds the won card

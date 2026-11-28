@@ -274,21 +274,16 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
         // TODO: implement
         @Nested
         @Disabled
-        @DisplayName("Anger Reverse")
-        class AngerReverse {
+        @DisplayName("Block")
+        class Block {
             @Test
-            @DisplayName("Anger Reverse counters Double It")
-            void angerReverseCountersDoubleIt() {
+            @DisplayName("Block counters Double It")
+            void blockCountersDoubleIt() {
             }
 
             @Test
-            @DisplayName("Anger Reverse counters Switch")
-            void angerReverseCountersSwitch() {
-            }
-
-            @Test
-            @DisplayName("Anger Reverse counters another Anger Reverse")
-            void angerReverseCountersAnotherAngerReverse() {
+            @DisplayName("Block counters Switch")
+            void blockCountersSwitch() {
             }
         }
     }
