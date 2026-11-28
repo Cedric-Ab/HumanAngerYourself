@@ -2,7 +2,7 @@ package ch.zhaw.it.pm.humanangeryourself.domain.game.phase;
 
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.ActionModifier;
-import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.ApplicableCard;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.Targeted;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ActionCardPhase extends NonFlowGamePhase {
     private final Player player;
-    private final Card actionCard;
+    private final ApplicableCard actionCard;
 
     /**
      * Creates a new instance of a game phase associated with the specified game.
@@ -21,7 +21,7 @@ public class ActionCardPhase extends NonFlowGamePhase {
      * @param player     the player who is playing the action card in this phase
      * @param actionCard the action card that is being played in this phase
      */
-    public ActionCardPhase(@NotNull Game game, @NotNull GamePhase nextPhase, Player player, Card actionCard) {
+    public ActionCardPhase(@NotNull Game game, @NotNull GamePhase nextPhase, Player player, ApplicableCard actionCard) {
         super(game, nextPhase);
         this.player = player;
         this.actionCard = actionCard;
@@ -33,17 +33,23 @@ public class ActionCardPhase extends NonFlowGamePhase {
             setDecisionInfo(player, targeted.getPossibleTargets(getGame(), player));
             return this;
         } else {
-            actionCard.apply(getGame(), player);
+            // TODO: implement countering
 
-            if (actionCard instanceof ActionModifier modifier) {
-                GamePhase gamePhase = getNextPhase().process();
-                if (gamePhase != getNextPhase()) {
-                    throw new IllegalStateException("Next phase should not be skipped before forced action is applied.");
-                }
-                return getNextPhase().handle(player, modifier.forcedAction());
-            } else {
-                return getNextPhase();
+            return applyCard();
+        }
+    }
+
+    private GamePhase applyCard() {
+        actionCard.apply(getGame(), player);
+
+        if (actionCard instanceof ActionModifier modifier) {
+            GamePhase gamePhase = getNextPhase().process();
+            if (gamePhase != getNextPhase()) {
+                throw new IllegalStateException("Next phase should not be skipped before forced action is applied.");
             }
+            return getNextPhase().handle(player, modifier.forcedAction());
+        } else {
+            return getNextPhase();
         }
     }
 

@@ -2,6 +2,7 @@ package ch.zhaw.it.pm.humanangeryourself.domain.game.phase;
 
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult.GambleResult;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.ApplicableCard;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
@@ -39,8 +40,11 @@ public class GamblingPhase extends GamePhaseBase {
                 break;
             case GambleResult.CardResult c:
                 if (c.cardType().isInstant()) {
+                    Card card = Card.fromType(c.cardType());
+                    if (!(card instanceof ApplicableCard))
+                        throw new IllegalStateException("Card type " + card.type() + " is not an applicable card.");
                     return new ActionCardPhase(getGame(), new EndOfTurnPhase(getGame()),
-                            getCurrentPlayer(), Card.fromType(c.cardType()));
+                            getCurrentPlayer(), (ApplicableCard) card);
                 } else {
                     getCurrentPlayer().addCard(Card.fromType(c.cardType()));
                 }

@@ -5,6 +5,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Gamble;
 import ch.zhaw.it.pm.humanangeryourself.api.action.PlayCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.ApplicableCard;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.HasPreconditions;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
@@ -83,7 +84,9 @@ public class StartOfTurnPhase extends GamePhaseBase {
     }
 
     private GamePhase playCard(Player player, Card card) {
+        if (!(card instanceof ApplicableCard applicableCard))
+            throw new IllegalStateException("Card type " + card.type() + " is not an applicable card.");
         player.removeCard(card);
-        return new ActionCardPhase(getGame(), new PrimaryActionChoicePhase(getGame()), player, card);
+        return new ActionCardPhase(getGame(), new PrimaryActionChoicePhase(getGame()), player, applicableCard);
     }
 }
