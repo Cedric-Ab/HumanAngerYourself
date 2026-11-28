@@ -31,7 +31,7 @@ public class SwitchCard implements ApplicableCard, Targeted<TargetPiece> {
     /**
      * The pieces selected so far, in the order of selection.
      */
-    private List<TargetPiece> selectedPieces = new ArrayList<>();
+    private final List<TargetPiece> selectedPieces = new ArrayList<>();
 
     /**
      * Swaps the tiles of the two selected pieces.
