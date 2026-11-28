@@ -13,6 +13,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
+/**
+ * Phase in which a player plays an action card.
+ *
+ * <p>The phase first collects all targets the card needs. If the card can be countered, counters
+ * are played automatically: the attacked player (the defender) blocks if they hold a counter card,
+ * then the original player blocks that block if they hold one, and so on. As soon as one side has
+ * no counter card left, the {@link CounterChain} decides whether the card takes effect or is blocked.</p>
+ */
 public class ActionCardPhase extends NonFlowGamePhase {
     private final Player player;
     private final ApplicableCard actionCard;
@@ -34,6 +42,15 @@ public class ActionCardPhase extends NonFlowGamePhase {
         this.counterChain = new CounterChain(actionCard);
     }
 
+    /**
+     * Processes the phase up to the point where a decision of the player is required.
+     *
+     * <p>If the card still needs a target, the possible targets are offered to the player and this
+     * phase is returned. Otherwise the counters are resolved and the card that remains in effect
+     * is applied.</p>
+     *
+     * @return this phase if the player still has to select a target, otherwise the next phase
+     */
     @Override
     public @NotNull GamePhase process() {
         if (actionCard instanceof Targeted<?> targeted && targeted.requiresFurtherTarget(getGame(), player)) {
@@ -45,6 +62,11 @@ public class ActionCardPhase extends NonFlowGamePhase {
         }
     }
 
+    /**
+     * Applies the card that remains in effect after all counters, if any.
+     *
+     * @return the next phase
+     */
     private GamePhase applyCard() {
         Optional<ApplicableCard> effectiveCard = counterChain.resolve();
         if (effectiveCard.isEmpty()) {
@@ -66,6 +88,14 @@ public class ActionCardPhase extends NonFlowGamePhase {
         }
     }
 
+    /**
+     * Handles the selection of a target for the played card and continues processing.
+     *
+     * @param player the player making the action, must be the player who has to decide
+     * @param action the selected target
+     * @return this phase if another target is required, otherwise the next phase
+     * @throws IllegalStateException if the played card does not take any targets
+     */
     @Override
     public @NotNull GamePhase handle(Player player, Action action) {
         validatePlayer(player);
@@ -80,6 +110,11 @@ public class ActionCardPhase extends NonFlowGamePhase {
         return process();
     }
 
+    /**
+     * Plays counter cards automatically, alternating between the defender and the original player,
+     * until one of them has no counter card left. Does nothing if the card cannot be countered
+     * or has no defender. Runs only once per phase.
+     */
     private void resolveCounters() {
         if (countersResolved) {
             return;
@@ -106,6 +141,12 @@ public class ActionCardPhase extends NonFlowGamePhase {
         }
     }
 
+    /**
+     * Removes a counter card from the player's hand, if they hold one.
+     *
+     * @param holder the player who has to react
+     * @return the removed counter card, or empty if the player holds none
+     */
     private static Optional<Counter> takeCounter(Player holder) {
         Optional<Counter> counter = holder.getCards().stream()
                 .filter(Counter.class::isInstance)
