@@ -7,6 +7,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.PlayCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.ApplicableCard;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.Counter;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.HasPreconditions;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
@@ -57,7 +58,7 @@ public class StartOfTurnPhase extends GamePhaseBase {
         if (card instanceof HasPreconditions withPreconditions) {
             return withPreconditions.isApplyable(getGame(), getCurrentPlayer());
         } else {
-            return true;
+            return !(card instanceof Counter);
         }
     }
 
