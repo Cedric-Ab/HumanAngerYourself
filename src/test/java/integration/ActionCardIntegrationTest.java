@@ -94,10 +94,10 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Hand Cards")
     class HandCards {
         @ParameterizedTest
-        @DisplayName("Hand cards are consumed after use")
+        @DisplayName("Applicable Hand cards are consumed after use")
         @EnumSource(value = CardType.class,
                 names = {"SPEED_BOOST", "TRY_AGAIN", "MONEY_TIGER", "SWITCH"})
-        void handCardsAreConsumedAfterUse(CardType card) {
+        void applicableHandCardsAreConsumedAfterUse(CardType card) {
             currentPlayerPlayCard(card);
 
             assertFalse(getSnapshot().viewerCards().contains(card),
