@@ -5,11 +5,16 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Gamble;
 import ch.zhaw.it.pm.humanangeryourself.api.action.PlayCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.ApplicableCard;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.Counter;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.HasPreconditions;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,9 +40,26 @@ public class StartOfTurnPhase extends GamePhaseBase {
      */
     @Override
     public @NotNull GamePhase process() {
-        // TODO: add cards to play
-        setDecisionInfo(getCurrentPlayer(), List.of(new Roll(), new Gamble()));
+        List<Action> availableActions = new ArrayList<>();
+        availableActions.add(new Roll());
+        availableActions.add(new Gamble());
+        availableActions.addAll(
+                getCurrentPlayer().getCards().stream()
+                        .filter(this::isCardPlayable)
+                        .map(Card::type)
+                        .map(PlayCard::new)
+                        .toList()
+        );
+        setDecisionInfo(getCurrentPlayer(), availableActions);
         return this;
+    }
+
+    private boolean isCardPlayable(Card card) {
+        if (card instanceof HasPreconditions withPreconditions) {
+            return withPreconditions.isApplyable(getGame(), getCurrentPlayer());
+        } else {
+            return !(card instanceof Counter);
+        }
     }
 
     /**
@@ -57,10 +79,15 @@ public class StartOfTurnPhase extends GamePhaseBase {
         return switch (action) {
             case Roll ignored -> new ChooseMovePhase(getGame());
             case Gamble ignored -> new GamblingPhase(getGame());
-            case PlayCard(CardType card) ->
-                // TODO: implement
-                    new PrimaryActionChoicePhase(getGame());
+            case PlayCard(CardType card) -> playCard(player, player.getCard(card));
             default -> throw new RuntimeException("Unexpected action type: " + action.getClass().getName());
         };
+    }
+
+    private GamePhase playCard(Player player, Card card) {
+        if (!(card instanceof ApplicableCard applicableCard))
+            throw new IllegalStateException("Card type " + card.type() + " is not an applicable card.");
+        player.removeCard(card);
+        return new ActionCardPhase(getGame(), new PrimaryActionChoicePhase(getGame()), player, applicableCard);
     }
 }

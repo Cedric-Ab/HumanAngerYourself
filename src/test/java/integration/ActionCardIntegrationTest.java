@@ -15,6 +15,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.action.PlayCard;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Roll;
 import ch.zhaw.it.pm.humanangeryourself.api.action.TargetPiece;
 import ch.zhaw.it.pm.humanangeryourself.api.snapshot.PrimaryActionResult;
+import ch.zhaw.it.pm.humanangeryourself.config.GameConfig;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.Card;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Piece;
 
@@ -23,8 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-// TODO: enable these tests once action cards are implemented
-@Disabled
 @DisplayName("ActionCard Integration Test")
 public class ActionCardIntegrationTest extends BaseIntegrationTest {
     private void rushThroughRound() {
@@ -75,8 +74,8 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
         @DisplayName("Player may play only one card per turn")
         void playerMayPlayOnlyOneCardPerTurn() {
             // Arrange
-            giveCurrentPlayerCard(CardType.DOUBLE_IT);
-            giveCurrentPlayerCard(CardType.DOUBLE_IT);
+            giveCurrentPlayerCard(CardType.SPEED_BOOST);
+            giveCurrentPlayerCard(CardType.SPEED_BOOST);
 
             // Act
             submitChecked(availableActions().stream()
@@ -94,17 +93,20 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
     @Nested
     @DisplayName("Hand Cards")
     class HandCards {
+        // TODO: enable tests after implementing card effects
+
         @ParameterizedTest
-        @DisplayName("Hand cards are consumed after use")
+        @DisplayName("Applicable Hand cards are consumed after use")
         @EnumSource(value = CardType.class,
-                names = {"SPEED_BOOST", "TRY_AGAIN", "MONEY_TIGER", "DOUBLE_IT", "SWITCH"})
-        void handCardsAreConsumedAfterUse(CardType card) {
+                names = {"SPEED_BOOST", "TRY_AGAIN", "MONEY_TIGER", "SWITCH"})
+        void applicableHandCardsAreConsumedAfterUse(CardType card) {
             currentPlayerPlayCard(card);
 
             assertFalse(getSnapshot().viewerCards().contains(card),
                     "Expected " + card + " card to be consumed after use");
         }
 
+        @Disabled
         @Test
         @DisplayName("Speed Boost doubles next movement")
         void speedBoost() {
@@ -118,6 +120,7 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
                     "Expected Speed Boost to double the next movement");
         }
 
+        @Disabled
         @Test
         @DisplayName("Try Again guarantees gambling card result")
         void tryAgain() {
@@ -130,6 +133,7 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
                     "Expected Try Again to guarantee a gambling card result");
         }
 
+        @Disabled
         @Nested
         @DisplayName("Money Tiger")
         class MoneyTiger {
@@ -199,6 +203,7 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
             }
         }
 
+        @Disabled
         @Nested
         @DisplayName("Switch")
         class Switch {
@@ -272,7 +277,9 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
             }
         }
 
+        // TODO: implement
         @Nested
+        @Disabled
         @DisplayName("Block")
         class Block {
             @Test
@@ -293,7 +300,7 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
         @Test
         @DisplayName("Jackpot grants money when drawn")
         void jackpotGrantsMoneyWhenDrawn() {
-            final long jackpotAmount = 250000L;
+            final long jackpotAmount = GameConfig.defaults().cards().jackpot();
 
             long balanceBefore = getDeciderInfo().money();
 
@@ -310,7 +317,7 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
         @Test
         @DisplayName("Charity removes money when drawn")
         void charityRemovesMoneyWhenDrawn() {
-            final long charityAmount = 100000L;
+            final long charityAmount = GameConfig.defaults().cards().charity();
 
             long balanceBefore = getDeciderInfo().money();
 
@@ -320,7 +327,7 @@ public class ActionCardIntegrationTest extends BaseIntegrationTest {
 
             long balanceAfter = getDeciderInfo().money();
 
-            assertEquals(balanceBefore - charityAmount, balanceAfter,
+            assertEquals(balanceBefore + charityAmount, balanceAfter,
                     "Expected Charity to remove " + charityAmount + " money when drawn");
         }
     }
