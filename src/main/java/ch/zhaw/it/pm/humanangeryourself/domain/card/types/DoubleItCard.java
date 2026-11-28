@@ -7,6 +7,7 @@ import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Hand card that lets an indebted player pass their debt, doubled, on to the
@@ -31,10 +32,7 @@ public class DoubleItCard implements ApplicableCard {
         }
 
         long debtDoubled = player.getMoney() * 2;
-        List<Player> players = game.getPlayers();
-        int currentPlayerIndex = players.indexOf(player);
-        int nextPlayerIndex = (currentPlayerIndex + 1) % players.size();
-        players.get(nextPlayerIndex).changeBalanceBy(debtDoubled);
+        nextPlayer(game, player).changeBalanceBy(debtDoubled);
         player.resetBalanceToZero();
     }
 
@@ -42,4 +40,30 @@ public class DoubleItCard implements ApplicableCard {
     public CardType type() {
         return CardType.DOUBLE_IT;
     }
+
+    /**
+     * Returns the player who receives the debt and may therefore counter the card.
+     *
+     * @param game   the game in which the card is played
+     * @param player the player who plays the card
+     * @return the next player in turn order
+     */
+    @Override
+    public Optional<Player> getDefender(Game game, Player player) {
+        return Optional.of(nextPlayer(game, player));
+    }
+
+    /**
+     * Returns the player after the given one in turn order, wrapping around at the end of the list.
+     *
+     * @param game   the game the players belong to
+     * @param player the player whose successor is looked up
+     * @return the next player in turn order
+     */
+    private static Player nextPlayer(Game game, Player player) {
+        List<Player> players = game.getPlayers();
+        int nextPlayerIndex = (players.indexOf(player) + 1) % players.size();
+        return players.get(nextPlayerIndex);
+    }
+
 }

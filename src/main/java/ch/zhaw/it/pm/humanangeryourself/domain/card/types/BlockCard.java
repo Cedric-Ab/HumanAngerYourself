@@ -4,6 +4,7 @@ import ch.zhaw.it.pm.humanangeryourself.api.CardType;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.ApplicableCard;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.Counter;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -18,6 +19,7 @@ public class BlockCard implements Counter {
 
     @Override
     public Optional<ApplicableCard> apply(ApplicableCard card) {
+        Objects.requireNonNull(card, "card must not be null");
         return Optional.empty();
     }
 }

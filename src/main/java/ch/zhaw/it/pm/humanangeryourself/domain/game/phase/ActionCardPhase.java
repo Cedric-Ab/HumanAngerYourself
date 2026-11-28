@@ -3,15 +3,21 @@ package ch.zhaw.it.pm.humanangeryourself.domain.game.phase;
 import ch.zhaw.it.pm.humanangeryourself.api.action.Action;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.ActionModifier;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.ApplicableCard;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.Counter;
+import ch.zhaw.it.pm.humanangeryourself.domain.card.CounterChain;
 import ch.zhaw.it.pm.humanangeryourself.domain.card.Targeted;
 import ch.zhaw.it.pm.humanangeryourself.domain.game.Game;
 import ch.zhaw.it.pm.humanangeryourself.domain.model.Player;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
+
 public class ActionCardPhase extends NonFlowGamePhase {
     private final Player player;
     private final ApplicableCard actionCard;
+    private final CounterChain counterChain;
+    private boolean countersResolved = false;
 
     /**
      * Creates a new instance of a game phase associated with the specified game.
@@ -25,6 +31,7 @@ public class ActionCardPhase extends NonFlowGamePhase {
         super(game, nextPhase);
         this.player = player;
         this.actionCard = actionCard;
+        this.counterChain = new CounterChain(actionCard);
     }
 
     @Override
@@ -33,16 +40,22 @@ public class ActionCardPhase extends NonFlowGamePhase {
             setDecisionInfo(player, targeted.getPossibleTargets(getGame(), player));
             return this;
         } else {
-            // TODO: implement countering
-
+            resolveCounters();
             return applyCard();
         }
     }
 
     private GamePhase applyCard() {
-        actionCard.apply(getGame(), player);
+        Optional<ApplicableCard> effectiveCard = counterChain.resolve();
+        if (effectiveCard.isEmpty()) {
+            return getNextPhase();
+        }
 
-        if (actionCard instanceof ActionModifier modifier) {
+        ApplicableCard card = effectiveCard.get();
+        card.apply(getGame(), player);
+
+
+        if (card instanceof ActionModifier modifier) {
             GamePhase gamePhase = getNextPhase().process();
             if (gamePhase != getNextPhase()) {
                 throw new IllegalStateException("Next phase should not be skipped before forced action is applied.");
@@ -65,5 +78,40 @@ public class ActionCardPhase extends NonFlowGamePhase {
         targeted.setTarget(action);
 
         return process();
+    }
+
+    private void resolveCounters() {
+        if (countersResolved) {
+            return;
+        }
+        countersResolved = true;
+
+        if (!actionCard.type().isCounterable()) {
+            return;
+        }
+        Optional<Player> defender = actionCard.getDefender(getGame(), player);
+        if (defender.isEmpty()) {
+            return;
+        }
+
+        Player reacting = defender.get();
+        Player other = player;
+        Optional<Counter> counter = takeCounter(reacting);
+        while (counter.isPresent()) {
+            counterChain.add(counter.get());
+            Player previouslyReacting = reacting;
+            reacting = other;
+            other = previouslyReacting;
+            counter = takeCounter(reacting);
+        }
+    }
+
+    private static Optional<Counter> takeCounter(Player holder) {
+        Optional<Counter> counter = holder.getCards().stream()
+                .filter(Counter.class::isInstance)
+                .map(Counter.class::cast)
+                .findFirst();
+        counter.ifPresent(holder::removeCard);
+        return counter;
     }
 }

@@ -13,6 +13,7 @@ import ch.zhaw.it.pm.humanangeryourself.domain.model.Tile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Hand card that swaps the positions of two pieces.
@@ -164,6 +165,24 @@ public class SwitchCard implements ApplicableCard, Targeted<TargetPiece> {
 
         first.moveTo(secondTile);
         second.moveTo(firstTile);
+    }
+
+
+    /**
+     * Returns the player whose piece is switched away and who may therefore counter the card:
+     * the owner of the first selected piece that does not belong to the playing player.
+     *
+     * @param game   the game in which the card is played
+     * @param player the player who plays the card
+     * @return the attacked player, or empty if both selected pieces belong to the playing player
+     */
+    @Override
+    public Optional<Player> getDefender(Game game, Player player) {
+        return selectedPieces.stream()
+                .map(TargetPiece::targetPlayer)
+                .filter(color -> color != player.getColor())
+                .findFirst()
+                .map(game::getPlayer);
     }
 
 }
